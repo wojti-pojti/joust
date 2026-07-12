@@ -116,11 +116,11 @@ public class GameManager : MonoBehaviour
         if (horse2 == null) horse2 = player2.GetComponentInChildren<HorseMovement>();
 
         // starts on the left
-        player1.transform.SetPositionAndRotation(LeftStartPos.position, player1.transform.rotation);
+        player1.GetComponent<Rigidbody2D>().MovePosition(LeftStartPos.position);
         horse1.Setup(false);
 
         // starts on the right
-        player2.transform.SetPositionAndRotation(LeftStartPos.position, player2.transform.rotation);
+        player2.GetComponent<Rigidbody2D>().MovePosition(RightStartPos.position);
         horse2.Setup(true);
 
         Debug.Log("New match prepared.");
@@ -137,6 +137,7 @@ public class GameManager : MonoBehaviour
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
         isFightActive = true;
+        CameraController.Instance.dynamic = true;
 
         pScript1.ResetPlayerState();
         pScript2.ResetPlayerState();
@@ -168,6 +169,7 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         isFightActive = false;
+        CameraController.Instance.dynamic = false;
     }
 
     /// <summary>
@@ -178,8 +180,10 @@ public class GameManager : MonoBehaviour
     IEnumerator EndMatch(int winnerIndex)
     {
         turnsPlayed++;
+        isFightActive = false;
+        CameraController.Instance.dynamic = false;
 
-        if(winnerIndex == 0)
+        if (winnerIndex == 0)
         {
             // draw
             StartCoroutine(ShowMessage("Draw!"));
@@ -215,8 +219,8 @@ public class GameManager : MonoBehaviour
     IEnumerator StartNewTurn()
     {
         isInCombat = false;
-        pScript1.state = PlayerState.IDLE;
-        pScript2.state = PlayerState.IDLE;
+        pScript1.Charge(false);
+        pScript2.Charge(false);
 
         turnsPlayed++;
         turnCounter.text = turnsPlayed.ToString();
@@ -225,16 +229,19 @@ public class GameManager : MonoBehaviour
         horse1.TurnAround();
         horse2.TurnAround();
 
+        hasPlayer1ArrivedToEndZone = false;
+        hasPlayer2ArrivedToEndZone = false;
+
         // visually turn both players around via scale
-        player1.transform.localScale.Set(-player1.transform.localScale.x, player1.transform.localScale.y, player1.transform.localScale.z);
-        player2.transform.localScale.Set(-player2.transform.localScale.x, player2.transform.localScale.y, player2.transform.localScale.z);
+        player1.transform.localScale.Set(-1f * player1.transform.localScale.x, player1.transform.localScale.y, player1.transform.localScale.z);
+        player2.transform.localScale.Set(-1f * player2.transform.localScale.x, player2.transform.localScale.y, player2.transform.localScale.z);
 
         yield return new WaitForSeconds(3f);
 
         Debug.Log("Beginning turn " + (turnsPlayed + 1).ToString());
         isInCombat = true;
-        pScript1.state = PlayerState.COMBAT;
-        pScript2.state = PlayerState.COMBAT;
+        pScript1.Charge(true);
+        pScript2.Charge(true);
     }
 
     /// <summary>
@@ -270,12 +277,13 @@ public class GameManager : MonoBehaviour
     {
         if(playerIndex == 1)
         {
-            hasPlayer1ArrivedToEndZone = false;
+            hasPlayer1ArrivedToEndZone = true;
         }
         else if (playerIndex == 2)
         {
-            hasPlayer2ArrivedToEndZone = false;
+            hasPlayer2ArrivedToEndZone = true;
         }
+        Debug.Log("Player " + playerIndex + " has arrived at the end zone");
     }
 
     IEnumerator ShowMessage(string content, float duration = 1.5f)

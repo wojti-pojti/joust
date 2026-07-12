@@ -6,7 +6,9 @@ TagManager:
   tags:
   - Ground
   - Background
-  - EndZone
+  - LeftEndZone
+  - RightEndZone
+  - Weapon
   layers:
   - Default
   - TransparentFX
@@ -15,9 +17,9 @@ TagManager:
   - Water
   - UI
   - Environment
-  - Player
-  - 
-  - 
+  - PlayerHurtBox
+  - PlayerHitBox
+  - Horse
   - 
   - 
   - 

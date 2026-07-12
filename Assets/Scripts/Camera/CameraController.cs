@@ -2,17 +2,20 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public bool dynamic;
     [SerializeField] float distanceBetweenPlayers;
-    float midpointX;
+    [SerializeField] float midpointX;
+    [SerializeField] float currentFOV;
     [Header("")]
     public GameObject player1;
     public GameObject player2;
 
     Camera cam;
-    float startFOV;
-    float startDistanceBetweenPlayers;
-    Vector3 startPosition;
-    Quaternion startRotation;
+    [Header("Starting values")]
+    [SerializeField] float startFOV;
+    [SerializeField] float startDistanceBetweenPlayers;
+    [SerializeField] Vector3 startPosition;
+    [SerializeField] Quaternion startRotation;
 
     #region Singleton
     public static CameraController Instance;
@@ -33,22 +36,27 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         cam = GetComponent<Camera>();
-        startFOV = cam.fieldOfView;
+        startFOV = cam.orthographicSize;
         startDistanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
-        startPosition = transform.position;
-        startRotation = transform.rotation;
+        this.transform.GetPositionAndRotation(out startPosition, out startRotation);
     }
 
     private void FixedUpdate()
     {
-        distanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
-        midpointX = Mathf.Min(player1.transform.position.x, player2.transform.position.x) + 0.5f * distanceBetweenPlayers;
+        if(dynamic)
+        {
+            distanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
+            midpointX = Mathf.Min(player1.transform.position.x, player2.transform.position.x) + 0.5f * distanceBetweenPlayers;
 
-        transform.position.Set(midpointX, 
-            transform.position.y + (distanceBetweenPlayers / 100f),
-            transform.position.z);
+            Vector3 newPos = new Vector3(midpointX,
+                Mathf.Max(startPosition.y - 0.25f * (startDistanceBetweenPlayers / distanceBetweenPlayers), -2f),
+                startPosition.z);
 
-        cam.fieldOfView = startFOV - (startDistanceBetweenPlayers / distanceBetweenPlayers);
+            this.transform.SetPositionAndRotation(newPos, startRotation);
+
+            currentFOV = Mathf.Max(startFOV - (startDistanceBetweenPlayers / distanceBetweenPlayers), 4);
+            cam.orthographicSize = currentFOV;
+        }
     }
 
     /// <summary>
@@ -57,6 +65,6 @@ public class CameraController : MonoBehaviour
     public void ResetCamera()
     {
         this.transform.SetPositionAndRotation(startPosition, startRotation);
-        cam.fieldOfView = startFOV;
+        cam.orthographicSize = startFOV;
     }
 }

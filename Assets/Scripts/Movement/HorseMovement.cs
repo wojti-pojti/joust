@@ -10,7 +10,7 @@ public class HorseMovement : MonoBehaviour
 
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
-    [SerializeField] float speed;
+    public float speed;
     [SerializeField] bool hasJumped;
     [SerializeField] bool isBraking;
     [SerializeField] bool isFleeing;
@@ -79,11 +79,14 @@ public class HorseMovement : MonoBehaviour
         }
 
         speed = rb.linearVelocity.magnitude;
+        player.UpdateLanceDamage(speed);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "EndZone")
+        if (!side) Debug.Log("Player 1's horse collided with " + collision.gameObject.name);
+        if ((!side && collision.gameObject.tag == "RightEndZone") ||
+            (side && collision.gameObject.tag == "LeftEndZone"))
         {
             Brake();
         }
@@ -175,14 +178,17 @@ public class HorseMovement : MonoBehaviour
     IEnumerator Flee()
     {
         isFleeing = true;
-        Collider cd = this.GetComponent<Collider>();
-        cd.enabled = false;
+        Collider cd;
+        if(this.TryGetComponent<Collider>(out cd))
+        {
+            cd.enabled = false;
+        }
         float temp = rb.gravityScale;
         rb.gravityScale = 0;
 
         yield return new WaitForSeconds(8f);
         rb.gravityScale = temp;
-        cd.enabled = true;
+        if(cd) cd.enabled = true;
         isFleeing = false;
     }
 }
