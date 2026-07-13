@@ -38,7 +38,7 @@ public class HorseMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!hasPassedTheOpponent && player.state == PlayerState.COMBAT)
+        if (!hasPassedTheOpponent && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
         {
             if (Input.GetKeyDown(accelerateKeyCode))
             {
@@ -59,7 +59,7 @@ public class HorseMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if((tapConstraint || hasPassedTheOpponent) && player.state == PlayerState.COMBAT || isFleeing)
+        if(((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD)) || isFleeing)
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
             rb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
@@ -68,6 +68,7 @@ public class HorseMovement : MonoBehaviour
         if(isBraking)
         {
             // apply counter-force
+            rb.AddForce(-movementDirection * 0.5f * jogForce, ForceMode2D.Force);
 
             if(speed <= 0)
             {
@@ -80,6 +81,16 @@ public class HorseMovement : MonoBehaviour
 
         speed = rb.linearVelocity.magnitude;
         player.UpdateLanceDamage(speed);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Ground" && player.state == PlayerState.JUMP)
+        {
+            player.state = PlayerState.COMBAT;
+
+            // land animation
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -129,10 +140,12 @@ public class HorseMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
+        GameManager.Instance.totalTimesJumped++;
         // relate it to speed somehow
-
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        rb.AddForce(Vector2.up * (jumpForce + speed * 0.1f), ForceMode2D.Impulse);
         hasJumped = true;
+
+        player.state = PlayerState.JUMP;
 
         // animation
     }
@@ -144,6 +157,7 @@ public class HorseMovement : MonoBehaviour
     {
         Debug.Log("Player " + playerIndex.ToString() + " begins braking.");
         isBraking = true;
+        tapConstraint = false;
 
         // animation
     }
@@ -151,13 +165,22 @@ public class HorseMovement : MonoBehaviour
     /// <summary>
     /// This function is to be called at the end of each run to adjust the horse for the next turn.
     /// </summary>
-    public void TurnAround()
+    /// <param name="includeAnimation">Whether the turnaround should be instantenuous or include animation.</param>
+    public void TurnAround(bool includeAnimation = true)
     {
         side = !side;
         if (side) { movementDirection = Vector2.left; }
         else { movementDirection = Vector2.right; }
 
-        // the GameManager adjusts the scale to turn the sprite around
+        if(includeAnimation)
+        {
+            // some animation
+        }
+
+        //player.gameObject.transform.Rotate(new Vector3(0, 1, 0), 180);
+        if (side) { player.gameObject.transform.localScale = new Vector3(-1, 1, 1); }
+        else { player.gameObject.transform.localScale = new Vector3(1, 1, 1); }
+        player.ChangeLanceDirection();
 
         hasJumped = false;
         hasPassedTheOpponent = false;

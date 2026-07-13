@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public bool isInCombat;
     bool isAfterMatch = false;
     [SerializeField] int turnsPlayed;
+    [HideInInspector] public int totalTimesJumped;
 
     [Header("Players")]
     public GameObject player1;
@@ -73,9 +74,16 @@ public class GameManager : MonoBehaviour
             if (isAfterMatch) 
             { 
                 isAfterMatch = false;
+                isFightActive = false;
+                isInCombat = false;
                 PrepareMatch();
+                CameraController.Instance.ResetCamera();
 
                 // display menu screen
+                menuUI.SetActive(true);
+                controlsPanel.SetActive(false);
+                gameUI.SetActive(false);
+                messagePanel.SetActive(false);
             }
             else if(!isFightActive && !isInCombat) 
             {
@@ -103,6 +111,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        // ensure that the surviving player gets to their endzone after striking the opponent dead
+        if(pScript1.state == PlayerState.DEAD && !hasPlayer2ArrivedToEndZone && !horse2.hasPassedTheOpponent)
+        {
+            horse2.hasPassedTheOpponent = true;
+        }
+        if(pScript2.state == PlayerState.DEAD && !hasPlayer1ArrivedToEndZone && !horse1.hasPassedTheOpponent)
+        {
+            horse1.hasPassedTheOpponent = true;
+        }
+    }
+
     #region Match initialization
 
     /// <summary>
@@ -119,6 +140,7 @@ public class GameManager : MonoBehaviour
         player1.GetComponent<Rigidbody2D>().MovePosition(LeftStartPos.position);
         horse1.Setup(false);
 
+        horse2.TurnAround(false);
         // starts on the right
         player2.GetComponent<Rigidbody2D>().MovePosition(RightStartPos.position);
         horse2.Setup(true);
@@ -137,7 +159,6 @@ public class GameManager : MonoBehaviour
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
         isFightActive = true;
-        CameraController.Instance.dynamic = true;
 
         pScript1.ResetPlayerState();
         pScript2.ResetPlayerState();
@@ -169,7 +190,6 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         isFightActive = false;
-        CameraController.Instance.dynamic = false;
     }
 
     /// <summary>
@@ -181,7 +201,6 @@ public class GameManager : MonoBehaviour
     {
         turnsPlayed++;
         isFightActive = false;
-        CameraController.Instance.dynamic = false;
 
         if (winnerIndex == 0)
         {
@@ -203,12 +222,14 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         // display result / some fancy animation
+        int reactionIndex = DetermineReaction(winnerIndex);
+        CameraController.Instance.DisplayViewersReaction(reactionIndex, 3f);
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(6f);
 
         // display input prompt
-        gameUI.SetActive(false);
-        menuUI.SetActive(true);
+        //gameUI.SetActive(false);
+        //menuUI.SetActive(true);
         isAfterMatch = true;
     }
 
@@ -226,15 +247,12 @@ public class GameManager : MonoBehaviour
         turnCounter.text = turnsPlayed.ToString();
         Debug.Log("Turn " + turnsPlayed.ToString() + " completed.");
 
-        horse1.TurnAround();
+        yield return new WaitForEndOfFrame();
+        horse1.TurnAround(); // turns the whole player around
         horse2.TurnAround();
 
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
-
-        // visually turn both players around via scale
-        player1.transform.localScale.Set(-1f * player1.transform.localScale.x, player1.transform.localScale.y, player1.transform.localScale.z);
-        player2.transform.localScale.Set(-1f * player2.transform.localScale.x, player2.transform.localScale.y, player2.transform.localScale.z);
 
         yield return new WaitForSeconds(3f);
 
@@ -286,11 +304,48 @@ public class GameManager : MonoBehaviour
         Debug.Log("Player " + playerIndex + " has arrived at the end zone");
     }
 
+    /// <summary>
+    /// Display a message panel in the center of the screen, conveying a message.
+    /// </summary>
+    /// <param name="content">The string to be written on the panel.</param>
+    /// <param name="duration">How long the message should be visible.</param>
+    /// <returns></returns>
     IEnumerator ShowMessage(string content, float duration = 1.5f)
     {
         messagePanel.SetActive(true);
         message.text = content;
         yield return new WaitForSeconds(duration);
         messagePanel.SetActive(false);
+    }
+
+    /// <summary>
+    /// Calculates a score based on turns played, state of the players afterwards, the result of the match and some random factor.
+    /// <br>Based on the score, the function picks the index of the correct reaction image, to give feedback on the matches result.</br>
+    /// <br>The precise calculations are convoluted and secret.</br>
+    /// </summary>
+    /// <param name="winnerIndex">The index indicating result of the match.</param>
+    /// <returns>Index of the picked reaction image.</returns>
+    int DetermineReaction(int winnerIndex)
+    {
+        int score = 0;
+        if(winnerIndex > 0) { score += turnsPlayed; }
+
+        score += (int)(5 * turnsPlayed * (Mathf.Pow(0.6f, 0.5f*turnsPlayed - 3)) - 18);
+
+        if (totalTimesJumped > 0 && totalTimesJumped < 3) { score += 10; }
+
+        if (pScript1.shieldHealthPoints < 0) { score = (int)(score * 1.2f); }
+        if (pScript2.shieldHealthPoints < 0) { score = (int)(score * 1.2f); }
+
+        score += Random.Range(0, 8); // random bonus
+
+        Debug.Log("Result of the match: " + score + " score");
+
+        //if(score > )
+        //{
+
+        //}
+
+        return 0;
     }
 }

@@ -7,17 +7,20 @@ public class LanceController : MonoBehaviour
     [SerializeField] bool releasedButton;
     //[SerializeField] float charge;
     [SerializeField] float chargeAccumulationMultiplier;
+    [SerializeField] float directionMultiplier;
 
     [Header("")]
     [SerializeField] KeyCode lowerLanceKeyCode;
     Rigidbody2D rb;
     HingeJoint2D joint;
+    Vector3 verticalPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         joint = GetComponent<HingeJoint2D>();
+        verticalPosition = this.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -43,11 +46,11 @@ public class LanceController : MonoBehaviour
         if (holdButton && joint.motor.motorSpeed == 0) 
         {
             JointMotor2D newMotor = joint.motor;
-            newMotor.motorSpeed = chargeAccumulationMultiplier;
+            newMotor.motorSpeed = chargeAccumulationMultiplier * directionMultiplier;
             joint.motor = newMotor;
         }
 
-        if (!holdButton && joint.motor.motorSpeed > 0)
+        if (!holdButton && joint.motor.motorSpeed != 0)
         {
             JointMotor2D newMotor = joint.motor;
             newMotor.motorSpeed = 0;
@@ -64,7 +67,8 @@ public class LanceController : MonoBehaviour
         newMotor.motorSpeed = 0;
         joint.motor = newMotor;
 
-        rb.SetRotation(0);
+        this.transform.rotation = new Quaternion(0, 0, 0, 0);
+        this.transform.localPosition = verticalPosition;
 
         releasedButton = false;
     }
@@ -82,23 +86,29 @@ public class LanceController : MonoBehaviour
         else
         {
             lowerLanceKeyCode = KeyCode.RightArrow;
-
-            StartCoroutine(ReverseHingeDirection());   
         }
     }
 
     /// <summary>
-    /// Delayed for avoiding setup issues.
+    /// Reverses the direction of the lance hinge joint.
     /// </summary>
     /// <returns></returns>
-    IEnumerator ReverseHingeDirection()
+    public void ReverseHingeDirection()
     {
-        yield return new WaitForEndOfFrame();
-        JointAngleLimits2D newLimits = new JointAngleLimits2D();
-        newLimits.min = -90;
-        newLimits.max = 0;
-        joint.limits = newLimits;
+        directionMultiplier = -1f * directionMultiplier;
 
-        chargeAccumulationMultiplier *= -1f;
+        JointAngleLimits2D newLimits = new JointAngleLimits2D();
+        if (directionMultiplier > 0)
+        {
+            newLimits.min = 0;
+            newLimits.max = 90;
+        }
+        else if (directionMultiplier < 0)
+        {
+            newLimits.min = -90;
+            newLimits.max = 0;
+        }
+        joint.limits = newLimits;
+      // Debug.Log(directionMultiplier + " - New limits assigned: min:" + newLimits.min.ToString() + ", max: " + newLimits.max.ToString());
     }
 }

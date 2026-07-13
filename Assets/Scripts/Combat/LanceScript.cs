@@ -8,33 +8,23 @@ public class LanceScript : MonoBehaviour
     public float damage;
     [Header("")]
     [SerializeField] int maxLanceSegments;
+    float segmentLength;
+    Vector3 startScale;
     [SerializeField] float damageMultiplier;
 
     BoxCollider2D collider;
+    SpriteRenderer spriteRenderer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         collider = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        startScale = transform.localScale;
+        segmentLength = startScale.y / (float)maxLanceSegments;
 
         ResetLance();
     }
-
-    ///// <summary>
-    ///// Recalculates damage based on speed repeatedly.
-    ///// </summary>
-    //public void BeginCharge()
-    //{
-    //    InvokeRepeating("RecalculateDamage", 0f, 0.05f);
-    //}
-
-    ///// <summary>
-    ///// Cancels repeating recalculations of the damage.
-    ///// </summary>
-    //public void EndCharge()
-    //{
-    //    CancelInvoke();
-    //}
 
     /// <summary>
     /// Updates the damage dealt by the lance to the shield, based on the speed of movement.
@@ -42,7 +32,7 @@ public class LanceScript : MonoBehaviour
     /// <param name="speed"></param>
     public void UpdateDamage(float speed)
     {
-        damage = damageMultiplier * speed * speed;
+        damage = damageMultiplier * speed;
     }
 
     /// <summary>
@@ -53,8 +43,16 @@ public class LanceScript : MonoBehaviour
     {
         if(segmentsLeft <= 0) { return; }
         segmentsLeft--;
-        // Instantiate();
-        // add some force
+
+        // get sprites before working on this
+
+        // GameObject flyingSegment = Instantiate();
+        float force = Random.Range(0, 0.5f * damage);
+        float randX = Random.Range(0, 1);
+        float randY = Random.Range(0, 1);
+        Vector2 knockback = new Vector2(randX, randY) * force;
+        // Rigidbody2D rb = flyingSegment.GetComponent<Rigidbody2D>();
+        // rb.AddForce(knockback, ForceMode2D.Impulse);
     }
 
     /// <summary>

@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,16 +17,18 @@ public class PlayerScript : MonoBehaviour
     public int index;
     public PlayerState state; 
 
-    [SerializeField] float shieldHealthPoints;
+    public float shieldHealthPoints;
 
     [Header("Setup")]
     [SerializeField] KeyCode shieldKeyCode;
     [SerializeField] float maxShieldHealthPoints;
     [SerializeField] GameObject knight;
+    [SerializeField] GameObject shieldParent;
     [SerializeField] GameObject shield;
     [SerializeField] Slider shieldHealthBar;
     [SerializeField] GameObject lance;
     LanceScript lScript;
+    LanceController lanceController;
     [SerializeField] GameObject horse;
     HorseMovement hScript;
 
@@ -49,7 +53,7 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(shieldKeyCode) && state == PlayerState.COMBAT)
+        if (Input.GetKeyDown(shieldKeyCode) && state == PlayerState.COMBAT && shieldHealthPoints > 0)
         {
             state = PlayerState.SHIELD;
             lScript.enabled = false;
@@ -75,7 +79,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     Debug.Log("Player " + index + " was struck in the shield.");
                     DamageShield(opponentLance.damage);
-                    lScript.BreakSegmentOff();
+                    opponentLance.BreakSegmentOff();
                 }
                 else
                 {
@@ -96,7 +100,10 @@ public class PlayerScript : MonoBehaviour
         shieldHealthPoints = maxShieldHealthPoints;
         lScript.ResetLance();
 
-        if(shieldHealthBar != null)
+        shield.transform.position = shieldParent.transform.position;
+
+        if (!shieldHealthBar.gameObject.activeSelf) shieldHealthBar.gameObject.SetActive(true);
+        if (shieldHealthBar != null)
         {
             shieldHealthBar.maxValue = maxShieldHealthPoints;
             shieldHealthBar.value = shieldHealthPoints;
@@ -117,7 +124,8 @@ public class PlayerScript : MonoBehaviour
         else 
         { 
             state = PlayerState.IDLE;
-            lance.GetComponent<LanceController>().RaiseBackToPosition();
+            if (!lanceController) lanceController = lance.GetComponent<LanceController>();
+            lanceController.RaiseBackToPosition();
         }
     }
 
@@ -135,11 +143,21 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     void Die()
     {
+        UpdateShieldUI();
         Destroy(lScript);
         // play animation
         // throw knight off of the horse
         this.transform.DetachChildren();
-        hScript.RunAway();
+       // hScript.RunAway();
+    }
+
+    /// <summary>
+    /// Passes on the function call to the lance controller. Reverses the direction where the lance is pointed.
+    /// </summary>
+    public void ChangeLanceDirection()
+    {
+        if (!lanceController) lanceController = lance.GetComponent<LanceController>();
+        lanceController.ReverseHingeDirection();
     }
 
     #region Shield
@@ -149,22 +167,35 @@ public class PlayerScript : MonoBehaviour
     /// <param name="damage">Damage dealt to the shield.</param>
     public void DamageShield(float damage)
     {
-        shieldHealthPoints -= damage;
+        shieldHealthPoints -= damage * hScript.speed;
 
         UpdateShieldUI();
 
         if (shieldHealthPoints <= 0)
         {
-            ThrowShieldAway();
+            StartCoroutine(ThrowShieldAway());
         }
     }
 
     /// <summary>
     /// Possible animation and some physical remainder after the shield is destroyed.
     /// </summary>
-    void ThrowShieldAway()
+    IEnumerator ThrowShieldAway()
     {
         Debug.Log("Player " + index + " has lost their shield!");
+        Rigidbody2D shieldRb = shield.AddComponent<Rigidbody2D>();
+
+        // detach and throw away
+        shieldParent.transform.DetachChildren();
+        float knockback = Mathf.Abs(shieldHealthPoints) / 10f;
+        Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
+        shieldRb.AddForce(direction * knockback, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(6f);
+
+        // stop falling
+        Destroy(shieldRb);
+        shield.transform.SetParent(shieldParent.transform, true);
     }
 
     /// <summary>
@@ -176,7 +207,7 @@ public class PlayerScript : MonoBehaviour
         shieldHealthBar.value = shieldHealthPoints;
 
         // make inactive if shield is gone
-        if(shieldHealthPoints <= 0 && shieldHealthBar.gameObject.activeSelf)
+        if((shieldHealthPoints <= 0 || state == PlayerState.DEAD) && shieldHealthBar.gameObject.activeSelf)
         {
             shieldHealthBar.gameObject.SetActive(false);
         }
