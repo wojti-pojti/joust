@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [Header("Game state")]
+    bool firstPlaythrough = true;
     public bool isFightActive;
     public bool isInCombat;
     bool isAfterMatch = false;
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] GameObject menuUI;
+    [SerializeField] GameObject aftermatchUI;
     [SerializeField] GameObject gameUI;
     [SerializeField] TMP_Text turnCounter;
     [SerializeField] GameObject messagePanel;
@@ -61,6 +63,7 @@ public class GameManager : MonoBehaviour
         InvokeRepeating("CheckForEndTurnConditions", 0f, gameConditionsCheckInterval);
 
         menuUI.SetActive(true);
+        aftermatchUI.SetActive(false);
         controlsPanel.SetActive(false);
         gameUI.SetActive(false);
         messagePanel.SetActive(false);
@@ -91,7 +94,7 @@ public class GameManager : MonoBehaviour
             }     
         }
 
-        if (Input.GetKeyDown(KeyCode.G) && !isFightActive) // or whatever
+        if (Input.GetKeyDown(KeyCode.H) && !isFightActive) // or whatever
         {
             // show or hide controls panel
             controlsPanel.SetActive(!controlsPanel.activeSelf);
@@ -113,6 +116,13 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isInCombat && (turnsPlayed % 2 == 0 && player1.transform.position.x > player2.transform.position.x) ||
+            (turnsPlayed % 2 == 1 && player1.transform.position.x < player2.transform.position.x))
+        {
+            horse1.hasPassedTheOpponent = true;
+            horse2.hasPassedTheOpponent = true;
+        }
+
         // ensure that the surviving player gets to their endzone after striking the opponent dead
         if(pScript1.state == PlayerState.DEAD && !hasPlayer2ArrivedToEndZone && !horse2.hasPassedTheOpponent)
         {
@@ -131,20 +141,26 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void PrepareMatch()
     {
+        aftermatchUI.SetActive(false);
         pScript1.state = PlayerState.IDLE;
         pScript2.state = PlayerState.IDLE;
         if (horse1 == null) horse1 = player1.GetComponentInChildren<HorseMovement>();
         if (horse2 == null) horse2 = player2.GetComponentInChildren<HorseMovement>();
 
+        if(player1.transform.localScale.x < 0) { horse1.TurnAround(false); }
         // starts on the left
-        player1.GetComponent<Rigidbody2D>().MovePosition(LeftStartPos.position);
+        player1.transform.position = LeftStartPos.position;
         horse1.Setup(false);
+        if (firstPlaythrough) { pScript1.RecordLocalStartTransforms(); }
 
         horse2.TurnAround(false);
         // starts on the right
-        player2.GetComponent<Rigidbody2D>().MovePosition(RightStartPos.position);
+        player2.transform.position = RightStartPos.position;
         horse2.Setup(true);
+        if (firstPlaythrough) { pScript2.RecordLocalStartTransforms(); firstPlaythrough = false; }
 
+        pScript1.ResetPlayerState();
+        pScript2.ResetPlayerState();
         Debug.Log("New match prepared.");
     }
 
@@ -159,9 +175,6 @@ public class GameManager : MonoBehaviour
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
         isFightActive = true;
-
-        pScript1.ResetPlayerState();
-        pScript2.ResetPlayerState();
 
         yield return new WaitForSeconds(1.5f);
 
@@ -231,6 +244,7 @@ public class GameManager : MonoBehaviour
         //gameUI.SetActive(false);
         //menuUI.SetActive(true);
         isAfterMatch = true;
+        aftermatchUI.SetActive(true);
     }
 
     /// <summary>
@@ -269,10 +283,9 @@ public class GameManager : MonoBehaviour
     {
         if (!isFightActive || !isInCombat) { return; }
 
-        // both players survived the turn
-        if (hasPlayer1ArrivedToEndZone && hasPlayer2ArrivedToEndZone)
+        if(pScript1.state == PlayerState.DEAD && pScript2.state == PlayerState.DEAD)
         {
-            StartCoroutine(StartNewTurn());
+            StartCoroutine(EndMatch(0));
             return;
         }
         if (hasPlayer1ArrivedToEndZone && pScript2.state == PlayerState.DEAD)
@@ -283,6 +296,13 @@ public class GameManager : MonoBehaviour
         if (hasPlayer2ArrivedToEndZone && pScript1.state == PlayerState.DEAD)
         {
             StartCoroutine(EndMatch(2));
+            return;
+        }
+
+        // both players survived the turn
+        if (hasPlayer1ArrivedToEndZone && hasPlayer2ArrivedToEndZone)
+        {
+            StartCoroutine(StartNewTurn());
         }
     }
     #endregion

@@ -23,14 +23,24 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] KeyCode shieldKeyCode;
     [SerializeField] float maxShieldHealthPoints;
     [SerializeField] GameObject knight;
+
     [SerializeField] GameObject shieldParent;
     [SerializeField] GameObject shield;
     [SerializeField] Slider shieldHealthBar;
+
     [SerializeField] GameObject lance;
     LanceScript lScript;
     LanceController lanceController;
+    BoxCollider2D lanceCd;
+
     [SerializeField] GameObject horse;
     HorseMovement hScript;
+
+    [SerializeField] GameObject PlayerUI;
+
+    // start positions and rotations
+    Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
+    Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,15 +48,17 @@ public class PlayerScript : MonoBehaviour
         lScript = lance.GetComponent<LanceScript>();
         lScript.index = index;
         hScript = horse.GetComponent<HorseMovement>();
-        if(index == 1)
+        lanceController = lance.GetComponent<LanceController>();
+        lanceCd = lance.GetComponent <BoxCollider2D>();
+        if (index == 1)
         {
             shieldKeyCode = KeyCode.S;
-            lance.GetComponent<LanceController>().AssignInputKey(false);
+            lanceController.AssignInputKey(false);
         }
         else if (index == 2)
         {
             shieldKeyCode = KeyCode.DownArrow;
-            lance.GetComponent<LanceController>().AssignInputKey(true);
+            lanceController.AssignInputKey(true);
         }
     }
 
@@ -96,9 +108,16 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     public void ResetPlayerState()
     {
+        RepairPlayer();
         state = PlayerState.IDLE;
         shieldHealthPoints = maxShieldHealthPoints;
+        if (lScript == null) 
+        {
+            lScript = lance.GetComponent<LanceScript>();
+            lScript.index = index;
+        }
         lScript.ResetLance();
+        lanceController.RaiseBackToPosition();
 
         shield.transform.position = shieldParent.transform.position;
 
@@ -112,6 +131,8 @@ public class PlayerScript : MonoBehaviour
         // set correct sprite
 
         // set colors
+
+        UpdateShieldUI();
     }
 
     /// <summary>
@@ -120,7 +141,11 @@ public class PlayerScript : MonoBehaviour
     /// <param name="activate">The new state.</param>
     public void Charge(bool activate)
     {
-        if (activate) { state = PlayerState.COMBAT; }
+        if (activate) 
+        { 
+            state = PlayerState.COMBAT; 
+            lanceCd.enabled = true; 
+        }
         else 
         { 
             state = PlayerState.IDLE;
@@ -135,6 +160,7 @@ public class PlayerScript : MonoBehaviour
     /// <param name="speed">The horse's speed.</param>
     public void UpdateLanceDamage(float speed)
     {
+        if (lScript == null) lScript = lance.GetComponent<LanceScript>();
         lScript.UpdateDamage(speed);
     }
 
@@ -144,11 +170,60 @@ public class PlayerScript : MonoBehaviour
     void Die()
     {
         UpdateShieldUI();
-        Destroy(lScript);
+        StartCoroutine(DisableLanceCollider());
         // play animation
         // throw knight off of the horse
         this.transform.DetachChildren();
-       // hScript.RunAway();
+        hScript.RunAway();
+    }
+
+    /// <summary>
+    /// Disables the collider of the lance, after a short delay to allow for draws.
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator DisableLanceCollider()
+    {
+        yield return new WaitForSeconds(0.3f);
+        lanceCd.enabled = false;
+    }
+
+    /// <summary>
+    /// Records the starting position and rotation for each child gameobject of player.
+    /// </summary>
+    public void RecordLocalStartTransforms()
+    {
+        knightPos = knight.transform.localPosition;
+        knightRot = knight.transform.localRotation;
+
+        lancePos = lance.transform.localPosition;
+        lanceRot = lance.transform.localRotation;
+
+        shieldPos = shieldParent.transform.localPosition;
+        shieldRot = shieldParent.transform.localRotation; 
+
+        horsePos = horse.transform.localPosition;
+        horseRot = horse.transform.localRotation;
+
+        UIPos = PlayerUI.transform.localPosition;
+        UIRot = PlayerUI.transform.localRotation;
+    }
+
+    /// <summary>
+    /// Re-attaches all children back to the player and resets their relative positions.
+    /// </summary>
+    void RepairPlayer()
+    {
+        knight.transform.SetParent(this.transform);
+        lance.transform.SetParent(this.transform);
+        horse.transform.SetParent(this.transform);
+        shieldParent.transform.SetParent(this.transform);
+        PlayerUI.transform.SetParent(this.transform);
+
+        knight.transform.SetLocalPositionAndRotation(knightPos, knightRot);
+        lance.transform.SetLocalPositionAndRotation(lancePos, lanceRot);
+        horse.transform.SetLocalPositionAndRotation(horsePos, horseRot);
+        shieldParent.transform.SetLocalPositionAndRotation(shieldPos, shieldRot);
+        PlayerUI.transform.SetLocalPositionAndRotation(UIPos, UIRot);
     }
 
     /// <summary>
@@ -167,7 +242,7 @@ public class PlayerScript : MonoBehaviour
     /// <param name="damage">Damage dealt to the shield.</param>
     public void DamageShield(float damage)
     {
-        shieldHealthPoints -= damage * hScript.speed;
+        shieldHealthPoints -= damage * Mathf.Max(1f, hScript.speed);
 
         UpdateShieldUI();
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HorseMovement : MonoBehaviour
@@ -22,9 +23,10 @@ public class HorseMovement : MonoBehaviour
     [SerializeField] float maxSpeed;
 
     [Header("")]
-    [SerializeField] Rigidbody2D rb;
+    [SerializeField] Rigidbody2D rb; // Rigidbody2D of the player
     [SerializeField] PlayerScript player;
 
+    Rigidbody2D horseRb;
     Vector2 movementDirection;
     bool tapConstraint; 
     [HideInInspector] public bool hasPassedTheOpponent;
@@ -32,7 +34,7 @@ public class HorseMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -59,10 +61,14 @@ public class HorseMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD)) || isFleeing)
+        if(((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD)))
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
             rb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
+        }
+        if(isFleeing)
+        {
+            horseRb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
         }
 
         if(isBraking)
@@ -88,6 +94,7 @@ public class HorseMovement : MonoBehaviour
         if(collision.gameObject.tag == "Ground" && player.state == PlayerState.JUMP)
         {
             player.state = PlayerState.COMBAT;
+            GameManager.Instance.totalTimesJumped++;
 
             // land animation
         }
@@ -109,6 +116,10 @@ public class HorseMovement : MonoBehaviour
     /// <param name="side">The side of the scene, where that horse begins. False indicates left, True indicates right.</param>
     public void Setup(bool side)
     {
+        if (this.side != side) { TurnAround(); }
+
+        rb.gravityScale = 1f;
+        rb.bodyType = RigidbodyType2D.Dynamic;
         playerIndex = (side ? 2 : 1);
 
         // set initial side
@@ -140,7 +151,6 @@ public class HorseMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
-        GameManager.Instance.totalTimesJumped++;
         // relate it to speed somehow
         rb.AddForce(Vector2.up * (jumpForce + speed * 0.1f), ForceMode2D.Impulse);
         hasJumped = true;
@@ -182,6 +192,8 @@ public class HorseMovement : MonoBehaviour
         else { player.gameObject.transform.localScale = new Vector3(1, 1, 1); }
         player.ChangeLanceDirection();
 
+        tapConstraint = false;
+        isFleeing = false;
         hasJumped = false;
         hasPassedTheOpponent = false;
     }
@@ -200,18 +212,19 @@ public class HorseMovement : MonoBehaviour
     /// <returns></returns>
     IEnumerator Flee()
     {
+        horseRb = this.AddComponent<Rigidbody2D>();
         isFleeing = true;
-        Collider cd;
-        if(this.TryGetComponent<Collider>(out cd))
-        {
-            cd.enabled = false;
-        }
-        float temp = rb.gravityScale;
+        //Collider cd;
+        //if(this.TryGetComponent<Collider>(out cd))
+        //{
+        //    cd.enabled = false;
+        //}
+        rb.bodyType = RigidbodyType2D.Static;
         rb.gravityScale = 0;
 
-        yield return new WaitForSeconds(8f);
-        rb.gravityScale = temp;
-        if(cd) cd.enabled = true;
+        yield return new WaitForSeconds(5f);
+        //if(cd) cd.enabled = true;
         isFleeing = false;
+        Destroy(horseRb);
     }
 }

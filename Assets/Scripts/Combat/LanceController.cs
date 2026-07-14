@@ -70,6 +70,7 @@ public class LanceController : MonoBehaviour
         this.transform.rotation = new Quaternion(0, 0, 0, 0);
         this.transform.localPosition = verticalPosition;
 
+        holdButton = false;
         releasedButton = false;
     }
 
@@ -101,11 +102,11 @@ public class LanceController : MonoBehaviour
         if (directionMultiplier > 0)
         {
             newLimits.min = 0;
-            newLimits.max = 90;
+            newLimits.max = 110;
         }
         else if (directionMultiplier < 0)
         {
-            newLimits.min = -90;
+            newLimits.min = -110;
             newLimits.max = 0;
         }
         joint.limits = newLimits;

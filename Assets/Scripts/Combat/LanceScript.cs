@@ -32,7 +32,7 @@ public class LanceScript : MonoBehaviour
     /// <param name="speed"></param>
     public void UpdateDamage(float speed)
     {
-        damage = damageMultiplier * speed;
+        damage = damageMultiplier * Mathf.Max(1f, speed);
     }
 
     /// <summary>
