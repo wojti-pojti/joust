@@ -2,13 +2,25 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
+public enum GameState
+{
+    MENU,
+    MATCH,
+    ACTIVE_COMBAT,
+    AFTERMATCH
+}
 public class GameManager : MonoBehaviour
 {
     [Header("Game state")]
     bool firstPlaythrough = true;
+    public GameState gameState;
+
+    // replace these by gameState
     public bool isFightActive;
     public bool isInCombat;
     bool isAfterMatch = false;
+    // ============================
+
     [SerializeField] int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
 

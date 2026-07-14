@@ -12,6 +12,9 @@ public class LanceScript : MonoBehaviour
     Vector3 startScale;
     [SerializeField] float damageMultiplier;
 
+    [Header("Fragments")]
+    [SerializeField] GameObject[] fragments = new GameObject[4];
+
     BoxCollider2D collider;
     SpriteRenderer spriteRenderer;
 
@@ -21,7 +24,7 @@ public class LanceScript : MonoBehaviour
         collider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         startScale = transform.localScale;
-        segmentLength = startScale.y / (float)maxLanceSegments;
+        segmentLength = startScale.y / maxLanceSegments;
 
         ResetLance();
     }
