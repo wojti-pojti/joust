@@ -19,7 +19,13 @@ public class CameraController : MonoBehaviour
     [SerializeField] Quaternion startRotation;
 
     [Header("After match results")]
-    [SerializeField] float targetYRotation;
+    [SerializeField] bool facingBack;
+
+    public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    public float perspectiveFOV = 40f;
+    public float perspectiveDistanceBoost = 2f;
+
+    //[SerializeField] float targetYRotation;
     [SerializeField] float rotationSpeed;
     [SerializeField] GameObject reactionPanel;
 
@@ -49,7 +55,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(GameManager.Instance.isFightActive)
+        if(GameManager.Instance.gameState == GameState.MATCH || GameManager.Instance.gameState == GameState.ACTIVE_COMBAT)
         {
             distanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
             midpointX = Mathf.Min(player1.transform.position.x, player2.transform.position.x) + 0.5f * distanceBetweenPlayers;
@@ -64,13 +70,14 @@ public class CameraController : MonoBehaviour
             cam.orthographicSize = currentFOV;
         }
 
+        /*
         if ((transform.rotation.y % 360) != targetYRotation) 
         {
             float nextY = Mathf.Lerp(transform.rotation.y, targetYRotation, 1.5f);
             //float nextY = transform.rotation.y + rotationSpeed * Time.fixedDeltaTime;
             transform.rotation = new Quaternion(0f, nextY, 0f, 0f);
             
-        }
+        }*/
 
         reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, reactionPanel.transform.position.z);
     }
@@ -87,30 +94,47 @@ public class CameraController : MonoBehaviour
     /// <summary>
     /// Plays the animation of the camera turning around to show a reaction graphic.
     /// </summary>
-    /// <param name="index">The index of the reaction image.</param>
     /// <param name="duration">The duration of how long the image should be shown.</param>
-    public void DisplayViewersReaction(int index, float duration)
+    public void DisplayViewersReaction(float duration)
     {
-        // setup the reaction panel based on index
-
-        StartCoroutine(RotateCameraAround(duration));
+        StopAllCoroutines();
+        StartCoroutine(RotateCameraAround(duration, 3f, 180f));
+        facingBack = true;
     }
 
     /// <summary>
     /// Actually turns around the camera around y-axis for a chosen amount of time.
     /// </summary>
-    /// <param name="duration">Duration for which the camera should stay rotated.</param>
+    /// <param name="duration">Duration for which the camera should rotate.</param>
+    /// <param name="stayDuration">Duration for which the camera should stay rotated.</param>
+    /// <param name="targetRotation">The goal angle of the rotation.</param>
     /// <returns></returns>
-    IEnumerator RotateCameraAround(float duration)
+    IEnumerator RotateCameraAround(float duration, float stayDuration, float targetRotation)
     {
-        targetYRotation = 180f;
         cam.orthographic = false;
-        yield return new WaitForSeconds(1.5f);
+        cam.fieldOfView = perspectiveFOV;
+
+        float startY = transform.eulerAngles.y;
+        float delta = Mathf.DeltaAngle(startY, targetRotation);
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration) 
+        {
+            elapsedTime += Time.deltaTime;
+            float turn = easeCurve.Evaluate(elapsedTime / duration);
+            float newRotation = startY + turn * delta;
+            transform.rotation = Quaternion.Euler(0f, newRotation, 0f);
+            yield return null;
+        }
+
+        transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
         cam.orthographic = true;
-        yield return new WaitForSeconds(duration);
-        cam.orthographic = false;
-        yield return new WaitForSeconds(1.5f);
-        targetYRotation = 0f;
-        cam.orthographic = true;
+
+        if(stayDuration > 0f)
+        {
+            yield return new WaitForSeconds(stayDuration);
+            facingBack = false;
+            StartCoroutine(RotateCameraAround(duration, 0f, 0f));
+        }
     }
 }

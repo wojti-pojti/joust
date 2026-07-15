@@ -26,7 +26,7 @@ public class LanceController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(GameManager.Instance.isInCombat)
+        if(GameManager.Instance.gameState == GameState.ACTIVE_COMBAT)
         {
             if (Input.GetKeyDown(lowerLanceKeyCode) && !releasedButton)
             {

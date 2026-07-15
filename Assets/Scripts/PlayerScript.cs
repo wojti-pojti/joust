@@ -42,6 +42,9 @@ public class PlayerScript : MonoBehaviour
     Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
     Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
 
+    BoxCollider2D opponentLanceCollider;
+    bool madeContact;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -79,27 +82,36 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Debug.Log("Player "+ index + " hit by "+ collision.gameObject.name+", tag: "+ collision.gameObject.tag);
         LanceScript opponentLance;
-        if(collision.gameObject.tag == "Weapon" && collision.gameObject.TryGetComponent<LanceScript>(out opponentLance))
+        if(!madeContact && collision.gameObject.tag == "Weapon" && collision.gameObject.TryGetComponent<LanceScript>(out opponentLance))
         {
-            //Debug.Log("Script found. Lance index: "+ opponentLance.index);
-
             if(opponentLance.enabled && opponentLance.index != index)
             {
+                madeContact = true;
                 if (state == PlayerState.SHIELD)
                 {
                     Debug.Log("Player " + index + " was struck in the shield.");
                     DamageShield(opponentLance.damage);
                     opponentLance.BreakSegmentOff();
+                    opponentLanceCollider = opponentLance.gameObject.GetComponent<BoxCollider2D>();
+                    opponentLanceCollider.enabled = false;
                 }
                 else
                 {
+                    opponentLanceCollider = null;
                     Debug.Log("Player " + index + " was struck dead.");
                     state = PlayerState.DEAD;
                     Die();
                 }
             }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (opponentLanceCollider != null && opponentLanceCollider.enabled == false)
+        {
+            opponentLanceCollider.enabled = true;
         }
     }
 
@@ -149,6 +161,7 @@ public class PlayerScript : MonoBehaviour
         else 
         { 
             state = PlayerState.IDLE;
+            madeContact = false;
             if (!lanceController) lanceController = lance.GetComponent<LanceController>();
             lanceController.RaiseBackToPosition();
         }
@@ -183,7 +196,7 @@ public class PlayerScript : MonoBehaviour
     /// <returns></returns>
     IEnumerator DisableLanceCollider()
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.1f);
         lanceCd.enabled = false;
     }
 

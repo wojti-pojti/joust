@@ -1,25 +1,20 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public enum GameState
 {
     MENU,
-    MATCH,
+    MATCH,  // in-game but not in combat
     ACTIVE_COMBAT,
-    AFTERMATCH
+    AFTERMATCH  // after the game has concluded
 }
 public class GameManager : MonoBehaviour
 {
     [Header("Game state")]
     bool firstPlaythrough = true;
     public GameState gameState;
-
-    // replace these by gameState
-    public bool isFightActive;
-    public bool isInCombat;
-    bool isAfterMatch = false;
-    // ============================
 
     [SerializeField] int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
@@ -37,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Settings")]
     public float gameConditionsCheckInterval;
+    [SerializeField] ResultCalculator calc; // short for calculator btw
 
     [Header("Arena")]
     [SerializeField] Transform LeftStartPos;
@@ -86,11 +82,9 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space)) 
         {
-            if (isAfterMatch) 
-            { 
-                isAfterMatch = false;
-                isFightActive = false;
-                isInCombat = false;
+            if (gameState == GameState.AFTERMATCH) 
+            {
+                gameState = GameState.MENU;
                 PrepareMatch();
                 CameraController.Instance.ResetCamera();
 
@@ -100,13 +94,13 @@ public class GameManager : MonoBehaviour
                 gameUI.SetActive(false);
                 messagePanel.SetActive(false);
             }
-            else if(!isFightActive && !isInCombat) 
+            else if(gameState == GameState.MENU) 
             {
                 StartCoroutine(StartMatch());
             }     
         }
 
-        if (Input.GetKeyDown(KeyCode.H) && !isFightActive) // or whatever
+        if (Input.GetKeyDown(KeyCode.H) && gameState == GameState.MENU) // or whatever
         {
             // show or hide controls panel
             controlsPanel.SetActive(!controlsPanel.activeSelf);
@@ -115,7 +109,7 @@ public class GameManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isFightActive)
+            if (gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT)
             {
                 StartCoroutine(ForfeitMatch());
             }
@@ -128,7 +122,8 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isInCombat && (turnsPlayed % 2 == 0 && player1.transform.position.x > player2.transform.position.x) ||
+        if (gameState == GameState.ACTIVE_COMBAT && 
+            (turnsPlayed % 2 == 0 && player1.transform.position.x > player2.transform.position.x) ||
             (turnsPlayed % 2 == 1 && player1.transform.position.x < player2.transform.position.x))
         {
             horse1.hasPassedTheOpponent = true;
@@ -186,13 +181,13 @@ public class GameManager : MonoBehaviour
         turnsPlayed = 0;
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
-        isFightActive = true;
+        gameState = GameState.MATCH;
 
         yield return new WaitForSeconds(1.5f);
 
         gameUI.SetActive(true);
         menuUI.SetActive(false);
-        isInCombat = true;
+        gameState = GameState.ACTIVE_COMBAT;
         pScript1.state = PlayerState.COMBAT;
         pScript2.state = PlayerState.COMBAT;
         Debug.Log("JOUST!");
@@ -210,11 +205,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("The match has been forfeited. Returning to menu.");
         StartCoroutine(ShowMessage("Match forfeited"));
 
-        isInCombat = false;
+        gameState = GameState.MATCH;
         yield return new WaitForSeconds(1.5f);
         gameUI.SetActive(false);
         menuUI.SetActive(true);
-        isFightActive = false;
+        gameState = GameState.MENU;
     }
 
     /// <summary>
@@ -225,7 +220,7 @@ public class GameManager : MonoBehaviour
     IEnumerator EndMatch(int winnerIndex)
     {
         turnsPlayed++;
-        isFightActive = false;
+        gameState = GameState.MATCH;
 
         if (winnerIndex == 0)
         {
@@ -247,15 +242,15 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         // display result / some fancy animation
-        int reactionIndex = DetermineReaction(winnerIndex);
-        CameraController.Instance.DisplayViewersReaction(reactionIndex, 3f);
+        int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
+        Debug.Log("Chosen reaction: " + reactionIndex);
+        // calc.SetupReactionScreen(reactionIndex);
+        CameraController.Instance.DisplayViewersReaction(3f);
 
         yield return new WaitForSeconds(6f);
 
         // display input prompt
-        //gameUI.SetActive(false);
-        //menuUI.SetActive(true);
-        isAfterMatch = true;
+        gameState = GameState.AFTERMATCH;
         aftermatchUI.SetActive(true);
     }
 
@@ -265,7 +260,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator StartNewTurn()
     {
-        isInCombat = false;
+        gameState = GameState.MATCH;
         pScript1.Charge(false);
         pScript2.Charge(false);
 
@@ -283,7 +278,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         Debug.Log("Beginning turn " + (turnsPlayed + 1).ToString());
-        isInCombat = true;
+        gameState = GameState.ACTIVE_COMBAT;
         pScript1.Charge(true);
         pScript2.Charge(true);
     }
@@ -293,7 +288,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void CheckForEndTurnConditions()
     {
-        if (!isFightActive || !isInCombat) { return; }
+        if (gameState != GameState.ACTIVE_COMBAT) { return; }
 
         if(pScript1.state == PlayerState.DEAD && pScript2.state == PlayerState.DEAD)
         {
@@ -348,36 +343,5 @@ public class GameManager : MonoBehaviour
         message.text = content;
         yield return new WaitForSeconds(duration);
         messagePanel.SetActive(false);
-    }
-
-    /// <summary>
-    /// Calculates a score based on turns played, state of the players afterwards, the result of the match and some random factor.
-    /// <br>Based on the score, the function picks the index of the correct reaction image, to give feedback on the matches result.</br>
-    /// <br>The precise calculations are convoluted and secret.</br>
-    /// </summary>
-    /// <param name="winnerIndex">The index indicating result of the match.</param>
-    /// <returns>Index of the picked reaction image.</returns>
-    int DetermineReaction(int winnerIndex)
-    {
-        int score = 0;
-        if(winnerIndex > 0) { score += turnsPlayed; }
-
-        score += (int)(5 * turnsPlayed * (Mathf.Pow(0.6f, 0.5f*turnsPlayed - 3)) - 18);
-
-        if (totalTimesJumped > 0 && totalTimesJumped < 3) { score += 10; }
-
-        if (pScript1.shieldHealthPoints < 0) { score = (int)(score * 1.2f); }
-        if (pScript2.shieldHealthPoints < 0) { score = (int)(score * 1.2f); }
-
-        score += Random.Range(0, 8); // random bonus
-
-        Debug.Log("Result of the match: " + score + " score");
-
-        //if(score > )
-        //{
-
-        //}
-
-        return 0;
     }
 }
