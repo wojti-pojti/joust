@@ -70,15 +70,6 @@ public class CameraController : MonoBehaviour
             cam.orthographicSize = currentFOV;
         }
 
-        /*
-        if ((transform.rotation.y % 360) != targetYRotation) 
-        {
-            float nextY = Mathf.Lerp(transform.rotation.y, targetYRotation, 1.5f);
-            //float nextY = transform.rotation.y + rotationSpeed * Time.fixedDeltaTime;
-            transform.rotation = new Quaternion(0f, nextY, 0f, 0f);
-            
-        }*/
-
         reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, reactionPanel.transform.position.z);
     }
 
