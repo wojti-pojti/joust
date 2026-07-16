@@ -155,6 +155,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (activate) 
         { 
+            hScript.hasPassedTheOpponent = false;
             state = PlayerState.COMBAT; 
             lanceCd.enabled = true; 
         }
@@ -167,6 +168,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    #region Lance Management
     /// <summary>
     /// Passes the speed from the HorseMovement to the LanceScript.
     /// </summary>
@@ -178,16 +180,12 @@ public class PlayerScript : MonoBehaviour
     }
 
     /// <summary>
-    /// Visually displays the player's death.
+    /// Passes on the function call to the lance controller. Reverses the direction where the lance is pointed.
     /// </summary>
-    void Die()
+    public void ChangeLanceDirection()
     {
-        UpdateShieldUI();
-        StartCoroutine(DisableLanceCollider());
-        // play animation
-        // throw knight off of the horse
-        this.transform.DetachChildren();
-        hScript.RunAway();
+        if (!lanceController) lanceController = lance.GetComponent<LanceController>();
+        lanceController.ReverseHingeDirection();
     }
 
     /// <summary>
@@ -198,6 +196,21 @@ public class PlayerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f);
         lanceCd.enabled = false;
+    }
+    #endregion
+
+    #region Death & Rebirth
+    /// <summary>
+    /// Visually displays the player's death.
+    /// </summary>
+    void Die()
+    {
+        UpdateShieldUI();
+        StartCoroutine(DisableLanceCollider());
+        // play animation
+        // throw knight off of the horse
+        this.transform.DetachChildren();
+        hScript.RunAway();
     }
 
     /// <summary>
@@ -238,15 +251,7 @@ public class PlayerScript : MonoBehaviour
         shieldParent.transform.SetLocalPositionAndRotation(shieldPos, shieldRot);
         PlayerUI.transform.SetLocalPositionAndRotation(UIPos, UIRot);
     }
-
-    /// <summary>
-    /// Passes on the function call to the lance controller. Reverses the direction where the lance is pointed.
-    /// </summary>
-    public void ChangeLanceDirection()
-    {
-        if (!lanceController) lanceController = lance.GetComponent<LanceController>();
-        lanceController.ReverseHingeDirection();
-    }
+    #endregion
 
     #region Shield
     /// <summary>

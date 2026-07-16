@@ -61,7 +61,7 @@ public class HorseMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD)))
+        if((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
             rb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
@@ -128,6 +128,8 @@ public class HorseMovement : MonoBehaviour
         else { movementDirection = Vector2.right; }
         isBraking = false;
         isFleeing = false;
+        hasPassedTheOpponent = false;
+        tapConstraint = false;
 
         // set correct inputs
         accelerateKeyCode = (side ? KeyCode.LeftArrow : KeyCode.D);

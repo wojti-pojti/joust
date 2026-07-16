@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         pScript1 = player1.GetComponent<PlayerScript>();
         pScript2 = player2.GetComponent<PlayerScript>();
         PrepareMatch();
@@ -122,22 +123,24 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (gameState == GameState.ACTIVE_COMBAT && 
-            (turnsPlayed % 2 == 0 && player1.transform.position.x > player2.transform.position.x) ||
-            (turnsPlayed % 2 == 1 && player1.transform.position.x < player2.transform.position.x))
+        if (gameState == GameState.ACTIVE_COMBAT)
         {
-            horse1.hasPassedTheOpponent = true;
-            horse2.hasPassedTheOpponent = true;
-        }
+            if ((horse1.side == false && player1.transform.position.x > player2.transform.position.x) ||
+            (horse1.side == true && player1.transform.position.x < player2.transform.position.x))
+            {
+                horse1.hasPassedTheOpponent = true;
+                horse2.hasPassedTheOpponent = true;
+            }
 
-        // ensure that the surviving player gets to their endzone after striking the opponent dead
-        if(pScript1.state == PlayerState.DEAD && !hasPlayer2ArrivedToEndZone && !horse2.hasPassedTheOpponent)
-        {
-            horse2.hasPassedTheOpponent = true;
-        }
-        if(pScript2.state == PlayerState.DEAD && !hasPlayer1ArrivedToEndZone && !horse1.hasPassedTheOpponent)
-        {
-            horse1.hasPassedTheOpponent = true;
+            // ensure that the surviving player gets to their endzone after striking the opponent dead
+            if (pScript1.state == PlayerState.DEAD && !hasPlayer2ArrivedToEndZone && !horse2.hasPassedTheOpponent)
+            {
+                horse2.hasPassedTheOpponent = true;
+            }
+            if (pScript2.state == PlayerState.DEAD && !hasPlayer1ArrivedToEndZone && !horse1.hasPassedTheOpponent)
+            {
+                horse1.hasPassedTheOpponent = true;
+            }
         }
     }
 
@@ -149,8 +152,6 @@ public class GameManager : MonoBehaviour
     public void PrepareMatch()
     {
         aftermatchUI.SetActive(false);
-        pScript1.state = PlayerState.IDLE;
-        pScript2.state = PlayerState.IDLE;
         if (horse1 == null) horse1 = player1.GetComponentInChildren<HorseMovement>();
         if (horse2 == null) horse2 = player2.GetComponentInChildren<HorseMovement>();
 
@@ -179,6 +180,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Beginning new match...");
         turnsPlayed = 0;
+        turnCounter.text = turnsPlayed.ToString();
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
         gameState = GameState.MATCH;
@@ -192,6 +194,8 @@ public class GameManager : MonoBehaviour
         pScript2.state = PlayerState.COMBAT;
         Debug.Log("JOUST!");
         StartCoroutine(ShowMessage("JOUST!"));
+        pScript1.Charge(true);
+        pScript2.Charge(true);
     }
     #endregion
 
