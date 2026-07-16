@@ -1,0 +1,232 @@
+using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class HorseMovement : MonoBehaviour
+{
+    [Header("Player-specific")]
+    [SerializeField] int playerIndex;
+    [SerializeField] KeyCode accelerateKeyCode;
+    [SerializeField] KeyCode jumpKeyCode;
+
+    [Header("Turn-specific")]
+    public bool side; // F - left, T - right
+    public float speed;
+    [SerializeField] bool hasJumped;
+    [SerializeField] bool isBraking;
+    [SerializeField] bool isFleeing;
+
+    [Header("Attributes")]
+    [SerializeField] float forceAddedPerInput;
+    [SerializeField] float jogForce;
+    [SerializeField] float jumpForce;
+    [SerializeField] float maxSpeed;
+
+    [Header("")]
+    [SerializeField] Rigidbody2D rb; // Rigidbody2D of the player
+    [SerializeField] PlayerScript player;
+
+    Rigidbody2D horseRb;
+    Vector2 movementDirection;
+    bool tapConstraint; 
+    [HideInInspector] public bool hasPassedTheOpponent;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (!hasPassedTheOpponent && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
+        {
+            if (Input.GetKeyDown(accelerateKeyCode))
+            {
+                Accelerate();
+                tapConstraint = true;
+            }
+            if (Input.GetKeyUp(accelerateKeyCode))
+            {
+                tapConstraint = false;
+            }
+
+            if (Input.GetKeyDown(jumpKeyCode) && !hasJumped)
+            {
+                Jump();
+            }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
+        {
+            // while the user holds down accelerate button, small but constant force is applied continuously
+            rb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
+        }
+        if(isFleeing)
+        {
+            horseRb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
+        }
+
+        if(isBraking)
+        {
+            // apply counter-force
+            rb.AddForce(-movementDirection * 0.5f * jogForce, ForceMode2D.Force);
+
+            if(speed <= 0)
+            {
+                isBraking = false;
+
+                // indicate the run has ended
+                GameManager.Instance.InformOfReachingEndZone(playerIndex);
+            }
+        }
+
+        speed = rb.linearVelocity.magnitude;
+        player.UpdateLanceDamage(speed);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Ground" && player.state == PlayerState.JUMP)
+        {
+            player.state = PlayerState.COMBAT;
+            GameManager.Instance.totalTimesJumped++;
+
+            // land animation
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!side) Debug.Log("Player 1's horse collided with " + collision.gameObject.name);
+        if ((!side && collision.gameObject.tag == "RightEndZone") ||
+            (side && collision.gameObject.tag == "LeftEndZone"))
+        {
+            Brake();
+        }
+    }
+
+    /// <summary>
+    /// The function called at the beginning of each match to pass the important information.
+    /// </summary>
+    /// <param name="side">The side of the scene, where that horse begins. False indicates left, True indicates right.</param>
+    public void Setup(bool side)
+    {
+        if (this.side != side) { TurnAround(); }
+
+        rb.gravityScale = 1f;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        playerIndex = (side ? 2 : 1);
+
+        // set initial side
+        this.side = side;
+        if (side) { movementDirection = Vector2.left; }
+        else { movementDirection = Vector2.right; }
+        isBraking = false;
+        isFleeing = false;
+        hasPassedTheOpponent = false;
+        tapConstraint = false;
+
+        // set correct inputs
+        accelerateKeyCode = (side ? KeyCode.LeftArrow : KeyCode.D);
+        jumpKeyCode = (side ? KeyCode.UpArrow : KeyCode.E);
+
+        // setup color scheme too
+    }
+
+    /// <summary>
+    /// Function called everytime the player taps the accelerate button. Adds a significant amount of force to the horse charge.
+    /// </summary>
+    void Accelerate()
+    {
+        if(speed >= maxSpeed) { return; }
+
+        rb.AddForce(movementDirection * forceAddedPerInput, ForceMode2D.Impulse);
+    }
+
+    /// <summary>
+    /// Responsible for the horse jumping upon correct input.
+    /// </summary>
+    void Jump()
+    {
+        // relate it to speed somehow
+        rb.AddForce(Vector2.up * (jumpForce + speed * 0.1f), ForceMode2D.Impulse);
+        hasJumped = true;
+
+        player.state = PlayerState.JUMP;
+
+        // animation
+    }
+
+    /// <summary>
+    /// This function begins the process of losing speed once the player reaches an end area of the arena.
+    /// </summary>
+    void Brake()
+    {
+        Debug.Log("Player " + playerIndex.ToString() + " begins braking.");
+        isBraking = true;
+        tapConstraint = false;
+
+        // animation
+    }
+
+    /// <summary>
+    /// This function is to be called at the end of each run to adjust the horse for the next turn.
+    /// </summary>
+    /// <param name="includeAnimation">Whether the turnaround should be instantenuous or include animation.</param>
+    public void TurnAround(bool includeAnimation = true)
+    {
+        side = !side;
+        if (side) { movementDirection = Vector2.left; }
+        else { movementDirection = Vector2.right; }
+
+        if(includeAnimation)
+        {
+            // some animation
+        }
+
+        //player.gameObject.transform.Rotate(new Vector3(0, 1, 0), 180);
+        if (side) { player.gameObject.transform.localScale = new Vector3(-1, 1, 1); }
+        else { player.gameObject.transform.localScale = new Vector3(1, 1, 1); }
+        player.ChangeLanceDirection();
+
+        tapConstraint = false;
+        isFleeing = false;
+        hasJumped = false;
+        hasPassedTheOpponent = false;
+    }
+
+    /// <summary>
+    /// The public function calling the "Flee" coroutine.
+    /// </summary>
+    public void RunAway()
+    {
+        StartCoroutine(Flee());
+    }
+
+    /// <summary>
+    /// Function that makes the horse run away and leave the camera view. Called upon player's death.
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator Flee()
+    {
+        horseRb = this.AddComponent<Rigidbody2D>();
+        isFleeing = true;
+        //Collider cd;
+        //if(this.TryGetComponent<Collider>(out cd))
+        //{
+        //    cd.enabled = false;
+        //}
+        rb.bodyType = RigidbodyType2D.Static;
+        rb.gravityScale = 0;
+
+        yield return new WaitForSeconds(5f);
+        //if(cd) cd.enabled = true;
+        isFleeing = false;
+        Destroy(horseRb);
+    }
+}
