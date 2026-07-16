@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,8 +6,10 @@ public class CustomizationManager : MonoBehaviour
 {
     [SerializeField] GameObject customizationPanel;
     [Header("")]
+    [SerializeField] Color[] colors = new Color[6];
     [SerializeField] Button[] colorFields = new Button[6];
     [SerializeField] Image[] colorDisplays = new Image[6];
+    [SerializeField] GameObject colorPickerUI;
 
     #region Singleton
     public static CustomizationManager Instance;
@@ -26,6 +29,7 @@ public class CustomizationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        colorPickerUI.SetActive(false);
         customizationPanel.SetActive(false);
     }
 
@@ -36,27 +40,37 @@ public class CustomizationManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.K)) 
             { 
-                customizationPanel.SetActive(!customizationPanel.activeSelf);
-                if (customizationPanel.activeSelf) 
+                if (!customizationPanel.activeSelf) 
                 { 
                     Cursor.lockState = CursorLockMode.Confined;
                     UpdateCustomizationPanel();
                 }
-                else { Cursor.lockState = CursorLockMode.Locked; }
+                else 
+                { 
+                    Cursor.lockState = CursorLockMode.Locked; 
+                    colorPickerUI.SetActive(false);
+                }
+                customizationPanel.SetActive(!customizationPanel.activeSelf);
             }
         }
     }
 
-    void UpdateColorField()
+    public void ChooseNewColor(int index)
     {
-
+        colorPickerUI.SetActive(true);
     }
 
     void UpdateCustomizationPanel()
     {
-
+        for (int i = 0; i < colorDisplays.Length; i++) 
+        {
+            colorDisplays[i].color = colors[i];
+        }
     }
 
+    /// <summary>
+    /// Applies all saved colors to the colorSwap shaders.
+    /// </summary>
     void ApplyCustomizationSettings()
     {
 
