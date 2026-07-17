@@ -85,11 +85,12 @@ public class CameraController : MonoBehaviour
     /// <summary>
     /// Plays the animation of the camera turning around to show a reaction graphic.
     /// </summary>
-    /// <param name="duration">The duration of how long the image should be shown.</param>
-    public void DisplayViewersReaction(float duration)
+    /// <param name="rotationDuration">The duration of how long the camera should be rotated.</param>
+    /// <param name="stayDuration">The duration of how long the image should be shown.</param>
+    public void DisplayViewersReaction(float rotationDuration, float stayDuration)
     {
         StopAllCoroutines();
-        StartCoroutine(RotateCameraAround(duration, 3f, 180f));
+        StartCoroutine(RotateCameraAround(rotationDuration, stayDuration, 180f));
         facingBack = true;
     }
 
@@ -119,13 +120,16 @@ public class CameraController : MonoBehaviour
         }
 
         transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
-        cam.orthographic = true;
 
         if(stayDuration > 0f)
         {
             yield return new WaitForSeconds(stayDuration);
             facingBack = false;
             StartCoroutine(RotateCameraAround(duration, 0f, 0f));
+        }
+        else
+        {
+            cam.orthographic = true;
         }
     }
 }

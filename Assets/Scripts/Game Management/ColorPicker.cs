@@ -2,34 +2,57 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using Unity.VisualScripting;
 
-public class ColorPicker : MonoBehaviour, IPointerClickHandler
+public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public Color output;
+    bool holding;
+    int r, g, b;
+    PointerEventData mostRecentEventData;
+
     [Header("")]
     [SerializeField] Image colorPaletteImage;
     [SerializeField] TMP_Text rgbText;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
-        
+        if (holding)
+        {
+            output = PickColor(Camera.main.WorldToScreenPoint(mostRecentEventData.position), colorPaletteImage);
+
+            CustomizationManager.Instance.SetNewColor(output);
+            UpdateDisplay();
+        }
+    }
+
+    private void OnEnable()
+    {
+        UpdateDisplay();
     }
 
     /// <summary>
-    /// This function is called on mouse click to update the picked color based on where the cursor lands on the given image.
+    /// This function is called on mouse button pressed.
     /// </summary>
-    /// <param name="eventData">Information about the click.</param>
-    public void OnPointerClick(PointerEventData eventData)
+    /// <param name="eventData">Information about the press.</param>
+    public void OnPointerDown(PointerEventData eventData)
     {
-        output = PickColor(Camera.main.WorldToScreenPoint(eventData.position), colorPaletteImage);
-        rgbText.text = "R: " + output.r.ToString() + "\tG: " + output.g.ToString() + "\tB: " + output.b.ToString();
+        holding = true;
+        mostRecentEventData = eventData;
+    }
+
+    /// <summary>
+    /// This function is called on mouse button lifted.
+    /// </summary>
+    /// <param name="eventData">Information about the press.</param>
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        holding = false;
+        mostRecentEventData = eventData;
+
+        UpdateDisplay();
+        CustomizationManager.Instance.SetNewColor(output);
     }
 
     /// <summary>
@@ -44,10 +67,21 @@ public class ColorPicker : MonoBehaviour, IPointerClickHandler
         RectTransformUtility.ScreenPointToLocalPointInRectangle(imageToPick.rectTransform, screenPoint, Camera.main, out point);
         point += imageToPick.rectTransform.sizeDelta / 2;
 
-        Texture2D texture = GetComponent<Image>().sprite.texture;
+        Texture2D texture = imageToPick.sprite.texture;
         Vector2Int middlePoint = new Vector2Int((int)((texture.width * point.x) / imageToPick.rectTransform.sizeDelta.x),
            (int)((texture.height * point.y) / imageToPick.rectTransform.sizeDelta.y));
 
         return texture.GetPixel(middlePoint.x, middlePoint.y);
+    }
+
+    /// <summary>
+    /// This function updates the RGB text in the color picker panel to reflect the selected color;
+    /// </summary>
+    void UpdateDisplay()
+    {
+        r = (int)(output.r * 255);
+        g = (int)(output.g * 255);
+        b = (int)(output.b * 255);
+        rgbText.text = "R: " + r.ToString() + "\tG: " + g.ToString() + "\tB: " + b.ToString();
     }
 }
