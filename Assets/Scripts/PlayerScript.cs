@@ -1,7 +1,9 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public enum PlayerState
 {
@@ -45,6 +47,8 @@ public class PlayerScript : MonoBehaviour
     BoxCollider2D opponentLanceCollider;
     bool madeContact;
 
+    float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -63,6 +67,8 @@ public class PlayerScript : MonoBehaviour
             shieldKeyCode = KeyCode.DownArrow;
             lanceController.AssignInputKey(true);
         }
+
+        shieldUIToObjectDifference = shieldParent.transform.localPosition.y - shieldHealthBar.transform.localPosition.y;
     }
 
     // Update is called once per frame
@@ -71,12 +77,24 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyDown(shieldKeyCode) && state == PlayerState.COMBAT && shieldHealthPoints > 0)
         {
             state = PlayerState.SHIELD;
+            UseShield(true);
             lScript.enabled = false;
         }
         if (Input.GetKeyUp(shieldKeyCode) && state == PlayerState.SHIELD)
         {
             state = PlayerState.COMBAT;
+            UseShield(false);
             lScript.enabled = true;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        // raise/lower shield animations
+        if(shieldTargetY != shield.transform.localPosition.y)
+        {
+            shield.transform.localPosition = new Vector3(shield.transform.localPosition.x, newShieldPositionY, shield.transform.localPosition.z);
+            shieldHealthBar.transform.localPosition = new Vector3(shieldHealthBar.transform.localPosition.x, newShieldPositionY - shieldUIToObjectDifference, shieldHealthBar.transform.localPosition.z);
         }
     }
 
@@ -254,6 +272,25 @@ public class PlayerScript : MonoBehaviour
     #endregion
 
     #region Shield
+    /// <summary>
+    /// This function is responsible for displaying indicators of using the shield.
+    /// </summary>
+    /// <param name="raise">True if the player holds the shield active, false if they change their mind.</param>
+    void UseShield(bool raise)
+    {
+        if (raise)
+        {
+            shieldTargetY = shield.transform.localPosition.y + 0.25f;
+        }
+        else
+        {
+            shieldTargetY = 0f;
+        }
+        newShieldPositionY = Mathf.Lerp(shield.transform.localPosition.y, shieldTargetY, 0.5f);
+
+        // apply shader
+    }
+
     /// <summary>
     /// Called when the other player's hitbox interacts with this hurtbox, provided this player is raising their shield.
     /// </summary>
