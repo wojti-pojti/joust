@@ -82,6 +82,7 @@ public class CameraController : MonoBehaviour
         cam.orthographicSize = startFOV;
     }
 
+    #region Endgame shenanigans
     /// <summary>
     /// Plays the animation of the camera turning around to show a reaction graphic.
     /// </summary>
@@ -132,4 +133,5 @@ public class CameraController : MonoBehaviour
             cam.orthographic = true;
         }
     }
+    #endregion
 }

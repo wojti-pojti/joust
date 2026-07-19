@@ -11,6 +11,7 @@ public enum PlayerState
     COMBAT,
     JUMP, // maybe unnecessary
     SHIELD,
+    OFFHORSE,
     DEAD
 }
 public class PlayerScript : MonoBehaviour
@@ -117,9 +118,20 @@ public class PlayerScript : MonoBehaviour
                 else
                 {
                     opponentLanceCollider = null;
-                    Debug.Log("Player " + index + " was struck dead.");
-                    state = PlayerState.DEAD;
-                    Die();
+                    float deathRandomNumber = Random.Range(0, 100);
+                    float deathChance = GameManager.Instance.baseDeathChance + opponentLance.damage;
+                    if (deathRandomNumber < deathChance || !GameManager.Instance.offHorseCombat)
+                    {
+                        Debug.Log("Player " + index + " was struck dead.");
+                        state = PlayerState.DEAD;
+                        Die();
+                    }
+                    else
+                    {
+                        Debug.Log("Player " + index + " fell off their horse.");
+                        state = PlayerState.OFFHORSE;
+
+                    }
                 }
             }
         }
