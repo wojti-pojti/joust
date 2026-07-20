@@ -5,13 +5,18 @@ public class CustomizationManager : MonoBehaviour
 {
     [SerializeField] GameObject customizationPanel;
     [SerializeField] int currentlyConsideredColorField;
+    [SerializeField] Color selectedFieldColor;
     [Header("")]
     [SerializeField] Color[] colors = new Color[6];
-    [SerializeField] Button[] colorFields = new Button[6]; // redundant likely
+    [SerializeField] Button[] colorFields = new Button[6];
+    Image[] colorFieldDisplays = new Image[6];
     [SerializeField] Image[] colorDisplays = new Image[6];
     [SerializeField] GameObject colorPickerUI;
     [SerializeField] Material player1ColorSwapMaterial;
     [SerializeField] Material player2ColorSwapMaterial;
+
+    Color baseButtonColor;
+    ColorPicker picker;
 
     #region Singleton
     public static CustomizationManager Instance;
@@ -31,6 +36,11 @@ public class CustomizationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        for (int i = 0; i < colorFieldDisplays.Length; i++) 
+        {
+            colorFieldDisplays[i] = colorFields[i].GetComponent<Image>();
+        }
+        baseButtonColor = colorFieldDisplays[0].color;
         colorPickerUI.SetActive(false);
         customizationPanel.SetActive(false);
     }
@@ -66,7 +76,16 @@ public class CustomizationManager : MonoBehaviour
     public void ChooseNewColor(int index)
     {
         currentlyConsideredColorField = index;
+        foreach (var display in colorFieldDisplays) 
+        {
+            display.color = baseButtonColor;
+        } 
+        colorFieldDisplays[index].color = selectedFieldColor;
         colorPickerUI.SetActive(true);
+        if (picker == null) picker = colorPickerUI.GetComponent<ColorPicker>();
+        picker.output = colors[index];
+        picker.enabled = false;
+        picker.enabled = true;
     }
 
     /// <summary>

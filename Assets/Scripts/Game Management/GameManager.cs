@@ -286,16 +286,7 @@ public class GameManager : MonoBehaviour
         if(randomUpgradesBetweenTurns)
         {
             int upgradeIndex = Random.Range(0, 6);
-            // choose and apply upgrade/modifier
-            /* ideas
-                0 - nothing
-                1 - restore shield
-                2 - repair lance
-                3 - invert controls
-                4 - horses charge on their own
-                5 - very wide jousting field
-             */
-            // some animation
+            ModifierScript.Instance.ApplyModifier(upgradeIndex);
         }
 
         yield return new WaitForSeconds(3f);

@@ -132,6 +132,8 @@ public class PlayerScript : MonoBehaviour
                         state = PlayerState.OFFHORSE;
 
                     }
+
+                    ThrowOffTheHorse(opponentLance.damage);
                 }
             }
         }
@@ -169,6 +171,10 @@ public class PlayerScript : MonoBehaviour
             shieldHealthBar.maxValue = maxShieldHealthPoints;
             shieldHealthBar.value = shieldHealthPoints;
         }
+
+
+        knight.GetComponent<BoxCollider2D>().enabled = false;
+        knight.GetComponent<Rigidbody2D>().simulated = false;
 
         // set correct sprite
 
@@ -230,6 +236,23 @@ public class PlayerScript : MonoBehaviour
     #endregion
 
     #region Death & Rebirth
+    /// <summary>
+    /// This function is responsible for simulating the knight falling off of the horse.
+    /// </summary>
+    void ThrowOffTheHorse(float forceMultiplier)
+    {
+        BoxCollider2D cd = knight.GetComponent<BoxCollider2D>();
+        Rigidbody2D rb = knight.GetComponent<Rigidbody2D>();
+
+        rb.simulated = true;
+        cd.enabled = true;
+        Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
+        direction *= forceMultiplier;
+        rb.AddForce(direction, ForceMode2D.Impulse);
+
+        // animation
+    }
+
     /// <summary>
     /// Visually displays the player's death.
     /// </summary>

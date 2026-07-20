@@ -25,6 +25,17 @@ public class ModifierScript : MonoBehaviour
 
     public void ApplyModifier(int index)
     {
+        // choose and apply upgrade/modifier
+        /* ideas
+            0 - nothing
+            1 - restore shield
+            2 - repair lance
+            3 - invert controls for 1 round
+            4 - horses charge on their own for 1 round
+            5 - very wide jousting field for 1 round
+            6 - reinforced lance for 1 round
+         */
+        // some animation
         switch (index)
         {
             default:
