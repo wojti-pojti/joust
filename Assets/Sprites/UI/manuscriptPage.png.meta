@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4030ba1e80bbf714daa7eb28603a77ae
+guid: 31ba8b149cb218b43b2a9123d767c599
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 49473050725659201
-    second: Zrzut ekranu 2026-07-17 164841_0
+      213: 1753791735088788739
+    second: joust_manuscriptPage_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -48,11 +48,11 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 5, y: 0, z: 3, w: 0}
+  spriteBorder: {x: 43, y: 44, z: 45, w: 45}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Zrzut ekranu 2026-07-17 164841_0
+      name: joust_manuscriptPage_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 415
-        height: 412
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 142357e3a73cfa000800000000000000
-      internalID: 49473050725659201
+      spriteID: 305bbf38a48b65810800000000000000
+      internalID: 1753791735088788739
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Zrzut ekranu 2026-07-17 164841_0: 49473050725659201
+      joust_manuscriptPage_0: 1753791735088788739
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SocialPlatforms.Impl;
 
 public enum GameState
@@ -44,12 +45,17 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] GameObject menuUI;
+    [SerializeField] Image soundIndicatorImage;
     [SerializeField] GameObject aftermatchUI;
     [SerializeField] GameObject gameUI;
     [SerializeField] TMP_Text turnCounter;
     [SerializeField] GameObject messagePanel;
     [SerializeField] TMP_Text message;
     [SerializeField] GameObject controlsPanel;
+
+    [Header("")]
+    [SerializeField] Sprite soundIcon;
+    [SerializeField] Sprite noSoundIcon;
 
     #region Singleton
     public static GameManager Instance;
@@ -105,11 +111,28 @@ public class GameManager : MonoBehaviour
             }     
         }
 
-        if (Input.GetKeyDown(KeyCode.H) && gameState == GameState.MENU) // or whatever
+        if(gameState == GameState.MENU)
         {
-            // show or hide controls panel
-            controlsPanel.SetActive(!controlsPanel.activeSelf);
-            menuUI.SetActive(!menuUI.activeSelf);
+            if (Input.GetKeyDown(KeyCode.H)) // or whatever
+            {
+                // show or hide controls panel
+                controlsPanel.SetActive(!controlsPanel.activeSelf);
+                menuUI.SetActive(!menuUI.activeSelf);
+            }
+
+            if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
+            {
+                if(SoundManager.Instance.globalVolume > 0)
+                {
+                    SoundManager.Instance.globalVolume = 0;
+                    soundIndicatorImage.sprite = noSoundIcon;
+                }
+                else
+                {
+                    SoundManager.Instance.globalVolume = 1;
+                    soundIndicatorImage.sprite = soundIcon;
+                }
+            }
         }
 
         if(Input.GetKeyDown(KeyCode.Escape))

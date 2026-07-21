@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 4030ba1e80bbf714daa7eb28603a77ae
+guid: 7405a73350e6400489cbf24925186fe7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 49473050725659201
-    second: Zrzut ekranu 2026-07-17 164841_0
+      213: -1655999036069358545
+    second: joust_soundIcon_0
+  - first:
+      213: 6747947587380265571
+    second: joust_soundIcon_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +27,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -46,13 +49,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 5, y: 0, z: 3, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Zrzut ekranu 2026-07-17 164841_0
+      name: soundIcon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 415
-        height: 412
+        x: 31
+        y: 35
+        width: 197
+        height: 168
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 142357e3a73cfa000800000000000000
-      internalID: 49473050725659201
+      spriteID: f2452ba86a5b409e0800000000000000
+      internalID: -1655999036069358545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: soundIcon_1
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 37
+        width: 197
+        height: 168
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36241cc149685ad50800000000000000
+      internalID: 6747947587380265571
       vertices: []
       indices: 
       edges: []
@@ -125,17 +150,20 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: 138180840fef1ee4b9e73c79f660dafa
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Zrzut ekranu 2026-07-17 164841_0: 49473050725659201
+      soundIcon_0: -1655999036069358545
+      soundIcon_1: 6747947587380265571
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
