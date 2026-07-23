@@ -22,8 +22,8 @@ public class ResultCalculator : MonoBehaviour
     /// <param name="reactionIndex">Index based on the gained score.</param>
     public void SetupReactionScreen(int reactionIndex)
     {
-        reactionPanel.sprite = reactionImage[reactionIndex];
-        scoreText.text = score.ToString();
+        if(reactionImage[reactionIndex] != null) reactionPanel.sprite = reactionImage[reactionIndex];
+        scoreText.text = "Score: " + score.ToString();
 
         for (int i = 0; i < 4; i++)
         {

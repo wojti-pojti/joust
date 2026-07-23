@@ -11,6 +11,7 @@ public class CustomizationManager : MonoBehaviour
     [SerializeField] Button[] colorFields = new Button[6];
     Image[] colorFieldDisplays = new Image[6];
     [SerializeField] Image[] colorDisplays = new Image[6];
+
     [SerializeField] GameObject colorPickerUI;
     [SerializeField] Material player1ColorSwapMaterial;
     [SerializeField] Material player2ColorSwapMaterial;
@@ -36,6 +37,8 @@ public class CustomizationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        LoadCustomizationSettigns();
+
         for (int i = 0; i < colorFieldDisplays.Length; i++) 
         {
             colorFieldDisplays[i] = colorFields[i].GetComponent<Image>();
@@ -171,6 +174,44 @@ public class CustomizationManager : MonoBehaviour
             player2ColorSwapMaterial.SetColor("_Color1", colors[1]);
             player2ColorSwapMaterial.SetColor("_Color2", colors[3]);
             player2ColorSwapMaterial.SetColor("_MetallicColor", colors[5]);
+        }
+
+        SaveCustomizationSettigns();
+    }
+
+    /// <summary>
+    /// Saves all player colors using PlayerPrefs. The format is: (key: "color_index", value: "r g b a").
+    /// </summary>
+    void SaveCustomizationSettigns()
+    {
+        string colorString = "";
+        string key = "";
+        for (int i = 0; i < colors.Length; i++) 
+        {
+            colorString = colors[i].r + " " + colors[i].g + " " + colors[i].b + " " + colors[i].a;
+            key = "color_" + i.ToString();
+            PlayerPrefs.SetString(key, colorString);
+        }
+    }
+
+    /// <summary>
+    /// This function loads all player colors using PlayerPrefs, decoding the string encapsulation used when saving. 
+    /// This is to keep consistent colors between game sessions.
+    /// </summary>
+    void LoadCustomizationSettigns()
+    {
+        string colorString = "";
+        string key = "";
+        string[] RGBs;
+        for (int i = 0; i < colors.Length; i++)
+        {
+            key = "color_" + i.ToString();
+            colorString = PlayerPrefs.GetString(key, colorString);
+            RGBs = colorString.Split(' ');
+            if (!float.TryParse(RGBs[0], out colors[i].r) ||
+                !float.TryParse(RGBs[1], out colors[i].g) ||
+                !float.TryParse(RGBs[2], out colors[i].b) ||
+                !float.TryParse(RGBs[3], out colors[i].a)) { Debug.Log("loading color " + i + " failed"); }
         }
     }
 }

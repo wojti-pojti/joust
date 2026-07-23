@@ -189,9 +189,8 @@ public class HorseMovement : MonoBehaviour
             // some animation
         }
 
-        //player.gameObject.transform.Rotate(new Vector3(0, 1, 0), 180);
-        if (side) { player.gameObject.transform.localScale = new Vector3(-1, 1, 1); }
-        else { player.gameObject.transform.localScale = new Vector3(1, 1, 1); }
+        if (side) { player.ScalePlayerAndEquipment(-1f); }
+        else { player.ScalePlayerAndEquipment(1f); }
         player.ChangeLanceDirection();
 
         tapConstraint = false;

@@ -110,6 +110,5 @@ public class LanceController : MonoBehaviour
             newLimits.max = 0;
         }
         joint.limits = newLimits;
-      // Debug.Log(directionMultiplier + " - New limits assigned: min:" + newLimits.min.ToString() + ", max: " + newLimits.max.ToString());
     }
 }

@@ -147,6 +147,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    #region Player state
     /// <summary>
     /// Resets the player's stats and appearance (the knight in particular).
     /// </summary>
@@ -184,6 +185,20 @@ public class PlayerScript : MonoBehaviour
     }
 
     /// <summary>
+    /// This function scales the player and all associated gameobjects by a given factor.
+    /// </summary>
+    /// <param name="scale">The new value of the x-component of player's local scale.</param>
+    public void ScalePlayerAndEquipment(float scale)
+    {
+        Vector3 lScale = lance.transform.localScale;
+        Vector3 sScale = shieldParent.transform.localScale;
+        gameObject.transform.localScale = new Vector3(scale, 1, 1);
+
+        lance.transform.localScale = new Vector3(-1f * lScale.x, lScale.y, lScale.z);
+        shieldParent.transform.localScale = new Vector3(-1f * sScale.x, sScale.y, sScale.z);
+    }
+
+    /// <summary>
     /// Activates or deactivates the damage calculation of the lance and switches state.
     /// </summary>
     /// <param name="activate">The new state.</param>
@@ -203,6 +218,7 @@ public class PlayerScript : MonoBehaviour
             lanceController.RaiseBackToPosition();
         }
     }
+    #endregion
 
     #region Lance Management
     /// <summary>

@@ -82,7 +82,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         r = (int)(output.r * 255);
         g = (int)(output.g * 255);
         b = (int)(output.b * 255);
-        rgbText.text = "R: " + r.ToString() + "\tG: " + g.ToString() + "\tB: " + b.ToString();
+        rgbText.text = "R: " + r.ToString() + "  G: " + g.ToString() + "  B: " + b.ToString();
 
         // maybe display the position of the color on the image
     }

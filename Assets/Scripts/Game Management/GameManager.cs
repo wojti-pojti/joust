@@ -275,7 +275,7 @@ public class GameManager : MonoBehaviour
         // display result / some fancy animation
         int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
         Debug.Log("Chosen reaction: " + reactionIndex);
-        // calc.SetupReactionScreen(reactionIndex);
+        calc.SetupReactionScreen(reactionIndex);
         CameraController.Instance.DisplayViewersReaction(2f, 3f);
 
         yield return new WaitForSeconds(8f);
