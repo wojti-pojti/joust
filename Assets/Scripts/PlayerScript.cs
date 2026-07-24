@@ -173,7 +173,6 @@ public class PlayerScript : MonoBehaviour
             shieldHealthBar.value = shieldHealthPoints;
         }
 
-
         knight.GetComponent<BoxCollider2D>().enabled = false;
         knight.GetComponent<Rigidbody2D>().simulated = false;
 
@@ -241,6 +240,26 @@ public class PlayerScript : MonoBehaviour
     }
 
     /// <summary>
+    /// Possible animation and some physical remainder after the shield is destroyed.
+    /// </summary>
+    IEnumerator ThrowLanceAway()
+    {
+        Rigidbody2D lanceRb = lance.GetComponent<Rigidbody2D>();
+
+        // detach and throw away
+        float knockback = 3;
+        Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
+        lanceRb.AddForce(direction * knockback, ForceMode2D.Impulse);
+        lanceRb.gravityScale = 1f;
+
+        yield return new WaitForSeconds(4f);
+
+        // stop falling
+        lanceRb.bodyType = RigidbodyType2D.Static;
+        lanceRb.gravityScale = 0f;
+    }
+
+    /// <summary>
     /// Disables the collider of the lance, after a short delay to allow for draws.
     /// </summary>
     /// <returns></returns>
@@ -257,6 +276,9 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     void ThrowOffTheHorse(float forceMultiplier)
     {
+        StartCoroutine(ThrowShieldAway());
+        StartCoroutine(ThrowLanceAway());
+
         BoxCollider2D cd = knight.GetComponent<BoxCollider2D>();
         Rigidbody2D rb = knight.GetComponent<Rigidbody2D>();
 
@@ -370,6 +392,7 @@ public class PlayerScript : MonoBehaviour
         shieldParent.transform.DetachChildren();
         float knockback = Mathf.Abs(shieldHealthPoints) / 10f;
         Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
+        shieldRb.gravityScale = 1f;
         shieldRb.AddForce(direction * knockback, ForceMode2D.Impulse);
 
         yield return new WaitForSeconds(6f);

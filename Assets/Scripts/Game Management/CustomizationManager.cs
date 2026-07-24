@@ -13,8 +13,8 @@ public class CustomizationManager : MonoBehaviour
     [SerializeField] Image[] colorDisplays = new Image[6];
 
     [SerializeField] GameObject colorPickerUI;
-    [SerializeField] Material player1ColorSwapMaterial;
-    [SerializeField] Material player2ColorSwapMaterial;
+    public Material player1ColorSwapMaterial;
+    public Material player2ColorSwapMaterial;
 
     Color baseButtonColor;
     ColorPicker picker;

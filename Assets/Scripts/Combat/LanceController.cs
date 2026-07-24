@@ -13,7 +13,7 @@ public class LanceController : MonoBehaviour
     [SerializeField] KeyCode lowerLanceKeyCode;
     Rigidbody2D rb;
     HingeJoint2D joint;
-    Vector3 verticalPosition;
+    Vector3 verticalPosition, startVerticalPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,6 +21,7 @@ public class LanceController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         joint = GetComponent<HingeJoint2D>();
         verticalPosition = this.transform.localPosition;
+        startVerticalPosition = verticalPosition;
     }
 
     // Update is called once per frame
@@ -33,7 +34,7 @@ public class LanceController : MonoBehaviour
                 holdButton = true;
             }
 
-            if (Input.GetKeyUp(lowerLanceKeyCode))
+            if (Input.GetKeyUp(lowerLanceKeyCode) && holdButton)
             {
                 holdButton = false;
                 releasedButton = true;
@@ -59,16 +60,27 @@ public class LanceController : MonoBehaviour
     }
 
     /// <summary>
+    /// Setter function for the vertical position vector. Adjustments may be needed when lance segments are broken off.
+    /// </summary>
+    /// <param name="newVerticalPosition"></param>
+    public void SetNewVerticalPosition(Vector3 newVerticalPosition)
+    {
+        this.verticalPosition = newVerticalPosition;
+    }
+
+    /// <summary>
     /// Returns the lance to its initial, vertical position.
     /// </summary>
-    public void RaiseBackToPosition()
+    /// <param name="reset">True if the lance is in its undamaged form, otherwise false.</param>
+    public void RaiseBackToPosition(bool reset = true)
     {
         JointMotor2D newMotor = joint.motor;
         newMotor.motorSpeed = 0;
         joint.motor = newMotor;
 
         this.transform.rotation = new Quaternion(0, 0, 0, 0);
-        this.transform.localPosition = verticalPosition;
+        if (reset) { this.transform.localPosition = startVerticalPosition; }
+        else { this.transform.localPosition = verticalPosition; }
 
         holdButton = false;
         releasedButton = false;

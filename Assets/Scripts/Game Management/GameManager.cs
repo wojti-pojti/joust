@@ -137,7 +137,8 @@ public class GameManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if (gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT)
+            if ((gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT) 
+                && pScript1.state != PlayerState.DEAD && pScript2.state != PlayerState.DEAD)
             {
                 StartCoroutine(ForfeitMatch());
             }
