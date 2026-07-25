@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// This function sets up initial values and positions for both players to prepare for a new match.
     /// </summary>
-    public void PrepareMatch()
+    void PrepareMatch()
     {
         aftermatchUI.SetActive(false);
         if (horse1 == null) horse1 = player1.GetComponentInChildren<HorseMovement>();
@@ -239,6 +239,7 @@ public class GameManager : MonoBehaviour
 
         gameState = GameState.MATCH;
         yield return new WaitForSeconds(1.5f);
+        PrepareMatch();
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         gameState = GameState.MENU;

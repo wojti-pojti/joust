@@ -40,11 +40,13 @@ public class PlayerScript : MonoBehaviour
     HorseMovement hScript;
 
     [SerializeField] GameObject PlayerUI;
+    [SerializeField] Material playerMaterial;
 
     // start positions and rotations
     Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
     Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
 
+    Animator animator;
     BoxCollider2D opponentLanceCollider;
     bool madeContact;
 
@@ -53,6 +55,7 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (!TryGetComponent<Animator>(out animator)) { animator = new Animator(); }
         lScript = lance.GetComponent<LanceScript>();
         lScript.index = index;
         hScript = horse.GetComponent<HorseMovement>();
@@ -178,8 +181,6 @@ public class PlayerScript : MonoBehaviour
 
         // set correct sprite
 
-        // set colors
-
         UpdateShieldUI();
     }
 
@@ -191,10 +192,12 @@ public class PlayerScript : MonoBehaviour
     {
         Vector3 lScale = lance.transform.localScale;
         Vector3 sScale = shieldParent.transform.localScale;
+        Vector3 hScale = horse.transform.localScale;
         gameObject.transform.localScale = new Vector3(scale, 1, 1);
 
         lance.transform.localScale = new Vector3(-1f * lScale.x, lScale.y, lScale.z);
         shieldParent.transform.localScale = new Vector3(-1f * sScale.x, sScale.y, sScale.z);
+        horse.transform.localScale = new Vector3(-1 * hScale.x, hScale.y, hScale.z);
     }
 
     /// <summary>
@@ -299,6 +302,7 @@ public class PlayerScript : MonoBehaviour
         UpdateShieldUI();
         StartCoroutine(DisableLanceCollider());
         // play animation
+        animator.SetTrigger("Die");
         // throw knight off of the horse
         this.transform.DetachChildren();
         hScript.RunAway();
@@ -354,14 +358,15 @@ public class PlayerScript : MonoBehaviour
         if (raise)
         {
             shieldTargetY = shield.transform.localPosition.y + 0.25f;
+
+            // apply shader
+            StartCoroutine(HighlightPlayer(0.25f));
         }
         else
         {
             shieldTargetY = 0f;
         }
         newShieldPositionY = Mathf.Lerp(shield.transform.localPosition.y, shieldTargetY, 0.5f);
-
-        // apply shader
     }
 
     /// <summary>
@@ -417,4 +422,16 @@ public class PlayerScript : MonoBehaviour
         }
     }
     #endregion
+
+    /// <summary>
+    /// Activates the shader to display a highlight effect on the player shader.
+    /// </summary>
+    /// <param name="duration">Duration for which the sprite will appear white / illuminated.</param>
+    /// <returns></returns>
+    IEnumerator HighlightPlayer(float duration)
+    {
+        playerMaterial.SetInt("_Highlight", 1);
+        yield return new WaitForSeconds(duration);
+        playerMaterial.SetInt("_Highlight", 0);
+    }
 }

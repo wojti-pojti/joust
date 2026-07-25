@@ -21,6 +21,7 @@ public class HorseMovement : MonoBehaviour
     [SerializeField] float jogForce;
     [SerializeField] float jumpForce;
     [SerializeField] float maxSpeed;
+    [SerializeField] float idleTimeToStartAnimation;
 
     [Header("")]
     [SerializeField] Rigidbody2D rb; // Rigidbody2D of the player
@@ -28,13 +29,17 @@ public class HorseMovement : MonoBehaviour
 
     Rigidbody2D horseRb;
     Vector2 movementDirection;
+    Animator animator;
+    SpriteRenderer spriteRenderer;
     bool tapConstraint; 
     [HideInInspector] public bool hasPassedTheOpponent;
+    float idleAnimationTimer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -45,6 +50,7 @@ public class HorseMovement : MonoBehaviour
             if (Input.GetKeyDown(accelerateKeyCode))
             {
                 Accelerate();
+                idleAnimationTimer = 0f;
                 tapConstraint = true;
             }
             if (Input.GetKeyUp(accelerateKeyCode))
@@ -55,6 +61,7 @@ public class HorseMovement : MonoBehaviour
             if (Input.GetKeyDown(jumpKeyCode) && !hasJumped)
             {
                 Jump();
+                idleAnimationTimer = 0f;
             }
         }
     }
@@ -65,13 +72,15 @@ public class HorseMovement : MonoBehaviour
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
             rb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
+            idleAnimationTimer = 0f;
         }
         if(isFleeing)
         {
             horseRb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
+            idleAnimationTimer = 0f;
         }
 
-        if(isBraking)
+        if (isBraking)
         {
             // apply counter-force
             rb.AddForce(-movementDirection * 0.5f * jogForce, ForceMode2D.Force);
@@ -85,7 +94,15 @@ public class HorseMovement : MonoBehaviour
             }
         }
 
+        if (idleAnimationTimer >= idleTimeToStartAnimation) 
+        {
+            animator.SetTrigger("IdleStomp");
+            idleAnimationTimer = 0;
+        }
+
+        idleAnimationTimer += Time.fixedDeltaTime;
         speed = rb.linearVelocity.magnitude;
+        animator.SetFloat("Speed", speed);
         player.UpdateLanceDamage(speed);
     }
 
@@ -97,6 +114,7 @@ public class HorseMovement : MonoBehaviour
             GameManager.Instance.totalTimesJumped++;
 
             // land animation
+            animator.SetTrigger("Land");
         }
     }
 
@@ -121,6 +139,7 @@ public class HorseMovement : MonoBehaviour
         rb.gravityScale = 1f;
         rb.bodyType = RigidbodyType2D.Dynamic;
         playerIndex = (side ? 2 : 1);
+        if (side) { idleAnimationTimer = 0.5f * idleTimeToStartAnimation; }
 
         // set initial side
         this.side = side;
@@ -134,8 +153,6 @@ public class HorseMovement : MonoBehaviour
         // set correct inputs
         accelerateKeyCode = (side ? KeyCode.LeftArrow : KeyCode.D);
         jumpKeyCode = (side ? KeyCode.UpArrow : KeyCode.E);
-
-        // setup color scheme too
     }
 
     /// <summary>
@@ -160,6 +177,7 @@ public class HorseMovement : MonoBehaviour
         player.state = PlayerState.JUMP;
 
         // animation
+        animator.SetTrigger("Jump");
     }
 
     /// <summary>
@@ -187,10 +205,12 @@ public class HorseMovement : MonoBehaviour
         if(includeAnimation)
         {
             // some animation
+            animator.SetTrigger("TurnAround");
         }
 
         if (side) { player.ScalePlayerAndEquipment(-1f); }
         else { player.ScalePlayerAndEquipment(1f); }
+        spriteRenderer.flipX = !spriteRenderer.flipX;
         player.ChangeLanceDirection();
 
         tapConstraint = false;
