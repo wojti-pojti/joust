@@ -210,7 +210,7 @@ public class HorseMovement : MonoBehaviour
 
         if (side) { player.ScalePlayerAndEquipment(-1f); }
         else { player.ScalePlayerAndEquipment(1f); }
-        spriteRenderer.flipX = !spriteRenderer.flipX;
+        //spriteRenderer.flipX = !spriteRenderer.flipX;
         player.ChangeLanceDirection();
 
         tapConstraint = false;

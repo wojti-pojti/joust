@@ -197,7 +197,7 @@ public class PlayerScript : MonoBehaviour
 
         lance.transform.localScale = new Vector3(-1f * lScale.x, lScale.y, lScale.z);
         shieldParent.transform.localScale = new Vector3(-1f * sScale.x, sScale.y, sScale.z);
-        horse.transform.localScale = new Vector3(-1 * hScale.x, hScale.y, hScale.z);
+        //horse.transform.localScale = new Vector3(-1 * hScale.x, hScale.y, hScale.z);
     }
 
     /// <summary>
