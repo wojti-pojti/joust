@@ -26,6 +26,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] KeyCode shieldKeyCode;
     [SerializeField] float maxShieldHealthPoints;
     [SerializeField] GameObject knight;
+    SpriteRenderer knightSpriteRenderer;
 
     [SerializeField] GameObject shieldParent;
     [SerializeField] GameObject shield;
@@ -55,7 +56,8 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (!TryGetComponent<Animator>(out animator)) { animator = new Animator(); }
+        if (!knight.TryGetComponent<Animator>(out animator)) { animator = new Animator(); }
+        knightSpriteRenderer = knight.GetComponent<SpriteRenderer>();
         lScript = lance.GetComponent<LanceScript>();
         lScript.index = index;
         hScript = horse.GetComponent<HorseMovement>();
@@ -166,6 +168,7 @@ public class PlayerScript : MonoBehaviour
         }
         lScript.ResetLance();
         lanceController.RaiseBackToPosition();
+        lance.GetComponent<HingeJoint2D>().enabled = true;
 
         shield.transform.position = shieldParent.transform.position;
 
@@ -180,6 +183,7 @@ public class PlayerScript : MonoBehaviour
         knight.GetComponent<Rigidbody2D>().simulated = false;
 
         // set correct sprite
+        animator.SetTrigger("Reset");
 
         UpdateShieldUI();
     }
@@ -247,7 +251,9 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     IEnumerator ThrowLanceAway()
     {
+        yield return new WaitForFixedUpdate();
         Rigidbody2D lanceRb = lance.GetComponent<Rigidbody2D>();
+        lance.GetComponent<HingeJoint2D>().enabled = false;
 
         // detach and throw away
         float knockback = 3;
@@ -279,19 +285,20 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     void ThrowOffTheHorse(float forceMultiplier)
     {
-        StartCoroutine(ThrowShieldAway());
-        StartCoroutine(ThrowLanceAway());
-
         BoxCollider2D cd = knight.GetComponent<BoxCollider2D>();
         Rigidbody2D rb = knight.GetComponent<Rigidbody2D>();
 
         rb.simulated = true;
         cd.enabled = true;
         Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
-        direction *= forceMultiplier;
+        direction *= Mathf.Max(2.5f, forceMultiplier);
         rb.AddForce(direction, ForceMode2D.Impulse);
 
+        if (shieldHealthPoints > 0) StartCoroutine(ThrowShieldAway(direction));
+        StartCoroutine(ThrowLanceAway());
+
         // animation
+        animator.SetTrigger("Die");
     }
 
     /// <summary>
@@ -388,17 +395,24 @@ public class PlayerScript : MonoBehaviour
     /// <summary>
     /// Possible animation and some physical remainder after the shield is destroyed.
     /// </summary>
-    IEnumerator ThrowShieldAway()
+    IEnumerator ThrowShieldAway(Vector2 predeterminedVector = new Vector2())
     {
         Debug.Log("Player " + index + " has lost their shield!");
         Rigidbody2D shieldRb = shield.AddComponent<Rigidbody2D>();
+        shieldRb.gravityScale = 1f;
 
         // detach and throw away
         shieldParent.transform.DetachChildren();
-        float knockback = Mathf.Abs(shieldHealthPoints) / 10f;
-        Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
-        shieldRb.gravityScale = 1f;
-        shieldRb.AddForce(direction * knockback, ForceMode2D.Impulse);
+        if(predeterminedVector == new Vector2(0, 0))
+        {
+            float knockback = Mathf.Abs(shieldHealthPoints) / 10f;
+            Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
+            shieldRb.AddForce(direction * knockback, ForceMode2D.Impulse);
+        }
+        else
+        {
+            shieldRb.AddForce(predeterminedVector, ForceMode2D.Impulse);
+        }
 
         yield return new WaitForSeconds(6f);
 

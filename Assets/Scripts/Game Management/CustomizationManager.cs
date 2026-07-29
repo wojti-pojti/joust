@@ -13,8 +13,11 @@ public class CustomizationManager : MonoBehaviour
     [SerializeField] Image[] colorDisplays = new Image[6];
 
     [SerializeField] GameObject colorPickerUI;
+    [Header("Affected materials")]
     public Material player1ColorSwapMaterial;
     public Material player2ColorSwapMaterial;
+    public Material player1StaticMaterial;
+    public Material player2StaticMaterial;
 
     Color baseButtonColor;
     ColorPicker picker;
@@ -169,11 +172,23 @@ public class CustomizationManager : MonoBehaviour
             player1ColorSwapMaterial.SetColor("_Color2", colors[2]);
             player1ColorSwapMaterial.SetColor("_MetallicColor", colors[4]);
         }
+        if (player1StaticMaterial != null)
+        {
+            player1StaticMaterial.SetColor("_Color1", colors[0]);
+            player1StaticMaterial.SetColor("_Color2", colors[2]);
+            player1StaticMaterial.SetColor("_MetallicColor", colors[4]);
+        }
         if (player2ColorSwapMaterial != null)
         {
             player2ColorSwapMaterial.SetColor("_Color1", colors[1]);
             player2ColorSwapMaterial.SetColor("_Color2", colors[3]);
             player2ColorSwapMaterial.SetColor("_MetallicColor", colors[5]);
+        }
+        if (player2StaticMaterial != null)
+        {
+            player2StaticMaterial.SetColor("_Color1", colors[1]);
+            player2StaticMaterial.SetColor("_Color2", colors[3]);
+            player2StaticMaterial.SetColor("_MetallicColor", colors[5]);
         }
 
         SaveCustomizationSettigns();
@@ -208,10 +223,13 @@ public class CustomizationManager : MonoBehaviour
             key = "color_" + i.ToString();
             colorString = PlayerPrefs.GetString(key, colorString);
             RGBs = colorString.Split(' ');
+            // parse each number into the color
             if (!float.TryParse(RGBs[0], out colors[i].r) ||
                 !float.TryParse(RGBs[1], out colors[i].g) ||
                 !float.TryParse(RGBs[2], out colors[i].b) ||
                 !float.TryParse(RGBs[3], out colors[i].a)) { Debug.Log("loading color " + i + " failed"); }
         }
+
+        ApplyCustomizationSettings();
     }
 }
