@@ -194,6 +194,7 @@ public class CustomizationManager : MonoBehaviour
         SaveCustomizationSettigns();
     }
 
+    #region Loading and saving
     /// <summary>
     /// Saves all player colors using PlayerPrefs. The format is: (key: "color_index", value: "r g b a").
     /// </summary>
@@ -232,4 +233,5 @@ public class CustomizationManager : MonoBehaviour
 
         ApplyCustomizationSettings();
     }
+    #endregion
 }
