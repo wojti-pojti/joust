@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
                 Mathf.Max(startPosition.y - 0.25f * (startDistanceBetweenPlayers / distanceBetweenPlayers), -2f),
                 startPosition.z);
 
-            this.transform.SetPositionAndRotation(newPos, startRotation);
+            this.transform.SetPositionAndRotation(newPos, this.transform.rotation);
 
             cam.orthographicSize = currentFOV;
         }
@@ -124,6 +124,8 @@ public class CameraController : MonoBehaviour
 
         if(stayDuration > 0f)
         {
+            cam.orthographic = true;
+            cam.orthographicSize = 15f;
             yield return new WaitForSeconds(stayDuration);
             facingBack = false;
             StartCoroutine(RotateCameraAround(duration, 0f, 0f));
@@ -131,6 +133,7 @@ public class CameraController : MonoBehaviour
         else
         {
             cam.orthographic = true;
+            cam.orthographicSize = startFOV;
         }
     }
     #endregion

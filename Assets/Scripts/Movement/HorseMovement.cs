@@ -94,6 +94,12 @@ public class HorseMovement : MonoBehaviour
             }
         }
 
+        if (player.state == PlayerState.JUMP && player.transform.position.y < -0.5f && rb.linearVelocity.y < 0)
+        {
+            // land animation
+            animator.SetTrigger("Land");
+        }
+
         if (idleAnimationTimer >= idleTimeToStartAnimation) 
         {
             animator.SetTrigger("IdleStomp");
@@ -112,9 +118,6 @@ public class HorseMovement : MonoBehaviour
         {
             player.state = PlayerState.COMBAT;
             GameManager.Instance.totalTimesJumped++;
-
-            // land animation
-            animator.SetTrigger("Land");
         }
     }
 
