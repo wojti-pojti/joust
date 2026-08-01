@@ -183,7 +183,7 @@ public class PlayerScript : MonoBehaviour
         knight.GetComponent<Rigidbody2D>().simulated = false;
 
         // set correct sprite
-        animator.SetTrigger("Reset");
+        //animator.SetTrigger("Reset");
 
         UpdateShieldUI();
     }
