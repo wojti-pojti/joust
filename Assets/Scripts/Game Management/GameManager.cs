@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public enum GameState
 {
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     [Header("Game state")]
     bool firstPlaythrough = true;
     public GameState gameState;
+    [HideInInspector] public static event Action<int> OnEndMatchEvent;
 
     [SerializeField] int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
@@ -255,6 +257,10 @@ public class GameManager : MonoBehaviour
         turnsPlayed++;
         gameState = GameState.MATCH;
 
+        int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
+        Debug.Log("Chosen reaction: " + reactionIndex);
+        OnEndMatchEvent?.Invoke(reactionIndex);
+
         if (winnerIndex == 0)
         {
             // draw
@@ -276,12 +282,10 @@ public class GameManager : MonoBehaviour
 
         gameUI.SetActive(false);
         // display result / some fancy animation
-        int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
-        Debug.Log("Chosen reaction: " + reactionIndex);
         calc.SetupReactionScreen(reactionIndex);
-        CameraController.Instance.DisplayViewersReaction(2f, 3f);
+        CameraController.Instance.DisplayViewersReaction(6.5f, 5f);
 
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(19f);
 
         // display input prompt
         gameState = GameState.AFTERMATCH;
@@ -311,7 +315,7 @@ public class GameManager : MonoBehaviour
 
         if(randomUpgradesBetweenTurns)
         {
-            int upgradeIndex = Random.Range(0, 6);
+            int upgradeIndex = UnityEngine.Random.Range(0, 6);
             ModifierScript.Instance.ApplyModifier(upgradeIndex);
         }
 

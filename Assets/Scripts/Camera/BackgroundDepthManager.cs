@@ -6,9 +6,12 @@ using UnityEngine;
 public class BackgroundDepthManager : MonoBehaviour
 {
     [SerializeField] GameObject camera;
-    [Header("")]
+    [Header("Depth & Layers")]
     [SerializeField] GameObject[] layers = new GameObject[3];
     [SerializeField] float[] layerCoefficients = new float[3];
+    [Header("Clouds")]
+    [SerializeField] float cloudMovementSpeed;
+    [SerializeField] GameObject[] cloudGroups = new GameObject[2];
 
     float lastPosX;
 
@@ -20,6 +23,7 @@ public class BackgroundDepthManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // depth
         float difference = camera.transform.position.x - lastPosX;
         if (difference != 0) 
         {
@@ -30,6 +34,17 @@ public class BackgroundDepthManager : MonoBehaviour
         }
 
         lastPosX = camera.transform.position.x;
+
+        // clouds
+        foreach (GameObject cloudGroup in cloudGroups)
+        {
+            cloudGroup.transform.position = new Vector2(cloudGroup.transform.position.x + cloudMovementSpeed * Time.fixedDeltaTime, 0f);
+
+            if(cloudGroup.transform.localPosition.x > 1.1f)
+            {
+                cloudGroup.transform.localPosition = new Vector2(-1.05f, 0f);
+            }
+        }
     }
 
     /// <summary>
