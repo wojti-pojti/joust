@@ -102,7 +102,7 @@ public class ColorSetup : MonoBehaviour
 
         if(ratio > threshhold)
         {
-            Debug.Log("Repeating color randomization.\t" + this.gameObject.name + " " + ratio);
+            //Debug.Log("Repeating color randomization.\t" + this.gameObject.name + " " + ratio);
             return true;
         }
 

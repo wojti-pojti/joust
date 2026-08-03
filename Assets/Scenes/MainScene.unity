@@ -782,6 +782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 44141146}
+  - component: {fileID: 44141148}
   - component: {fileID: 44141147}
   m_Layer: 0
   m_Name: sun
@@ -865,6 +866,46 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &44141148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44141145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db70db0816a707439910b60f0194d94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpectatingAudienceController
+  capableOfApplause: 0
+  leaveVector: {x: -3, y: -3}
+  easeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &50676246
 GameObject:
   m_ObjectHideFlags: 0
@@ -3652,7 +3693,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 19
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 9b11a64f2dc3b0c47bf4db8580e695d0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -4639,7 +4680,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -266.91483, y: -156.26065}
+  m_AnchoredPosition: {x: -266.91483, y: -169}
   m_SizeDelta: {x: 169.4992, y: 160.627}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &645469815
@@ -4692,8 +4733,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db70db0816a707439910b60f0194d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpectatingAudienceController
-  startPosition: {x: 0, y: 0}
-  leaveVector: {x: 0, y: 0}
+  capableOfApplause: 1
+  leaveVector: {x: -1.5, y: -3}
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -4718,8 +4759,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fadeInDuration: 0
-  fadeOutDuration: 0
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &655566610
 GameObject:
   m_ObjectHideFlags: 0
@@ -6232,7 +6273,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -204, y: -175}
+  m_AnchoredPosition: {x: -204, y: -187.73935}
   m_SizeDelta: {x: 100, y: 108.8722}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &935464283
@@ -6285,8 +6326,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db70db0816a707439910b60f0194d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpectatingAudienceController
-  startPosition: {x: 0, y: 0}
-  leaveVector: {x: 0, y: 0}
+  capableOfApplause: 1
+  leaveVector: {x: 0, y: -3}
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -6311,8 +6352,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fadeInDuration: 0
-  fadeOutDuration: 0
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &937810161
 GameObject:
   m_ObjectHideFlags: 0
@@ -8824,17 +8865,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1322202401}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalScale: {x: 1, y: 0.052922755, z: 0.029153036}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2014828584}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1992257786}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -20.9, y: -1.3934}
+  m_AnchoredPosition: {x: -0.11427498, y: 0.42084372}
   m_SizeDelta: {x: 17.4993, y: 8.1329}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1323882909
@@ -13031,17 +13072,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1787173796}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalScale: {x: 1, y: 0.052922755, z: 0.029153036}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1741729835}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1992257786}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 27.4, y: -1.3934}
+  m_AnchoredPosition: {x: 1.2054806, y: 0.42084372}
   m_SizeDelta: {x: 17.4993, y: 8.1329}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1790970866
@@ -14572,6 +14613,7 @@ MonoBehaviour:
   horse: {fileID: 2143809562}
   PlayerUI: {fileID: 353819238}
   playerMaterial: {fileID: 2100000, guid: d075e7aad2fee4d4b9748845b0eb72fd, type: 2}
+  animator: {fileID: 1213181796}
 --- !u!1 &1992257784
 GameObject:
   m_ObjectHideFlags: 0
@@ -14664,6 +14706,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1746479643}
+  - {fileID: 1787173800}
+  - {fileID: 1322202405}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -15112,6 +15156,7 @@ MonoBehaviour:
   horse: {fileID: 1109312585}
   PlayerUI: {fileID: 265153626}
   playerMaterial: {fileID: 2100000, guid: 83e4ded4e441a34419750439b9aa536d, type: 2}
+  animator: {fileID: 1820132992}
 --- !u!4 &2035941640
 Transform:
   m_ObjectHideFlags: 0
@@ -15792,8 +15837,6 @@ SceneRoots:
   - {fileID: 292010158}
   - {fileID: 619394802}
   - {fileID: 1992257786}
-  - {fileID: 1787173800}
-  - {fileID: 1322202405}
   - {fileID: 1821845747}
   - {fileID: 1965503014}
   - {fileID: 2035941640}

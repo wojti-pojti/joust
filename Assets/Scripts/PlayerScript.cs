@@ -42,21 +42,21 @@ public class PlayerScript : MonoBehaviour
 
     [SerializeField] GameObject PlayerUI;
     [SerializeField] Material playerMaterial;
+    [SerializeField] Animator animator;
 
     // start positions and rotations
     Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
     Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
 
-    Animator animator;
     BoxCollider2D opponentLanceCollider;
     bool madeContact;
+    SpriteRenderer[] renderers;
 
     float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (!knight.TryGetComponent<Animator>(out animator)) { animator = new Animator(); }
         knightSpriteRenderer = knight.GetComponent<SpriteRenderer>();
         lScript = lance.GetComponent<LanceScript>();
         lScript.index = index;
@@ -183,7 +183,7 @@ public class PlayerScript : MonoBehaviour
         knight.GetComponent<Rigidbody2D>().simulated = false;
 
         // set correct sprite
-        //animator.SetTrigger("Reset");
+        animator.SetTrigger("Reset");
 
         UpdateShieldUI();
     }
@@ -223,6 +223,37 @@ public class PlayerScript : MonoBehaviour
             if (!lanceController) lanceController = lance.GetComponent<LanceController>();
             lanceController.RaiseBackToPosition();
         }
+    }
+
+    /// <summary>
+    /// Ensures that the player appears on the right side of the fence.
+    /// </summary>
+    /// <param name="toTheFront">If true, the player will appear over the fence.</param>
+    public void AdjustSpriteRendererLayers(bool toTheFront)
+    {
+        if (renderers == null) { renderers = GetComponentsInChildren<SpriteRenderer>(); }
+        int shift = (toTheFront ? 10 : -10);
+        foreach (SpriteRenderer renderer in renderers) 
+        {
+            renderer.sortingOrder += shift;
+        }
+        PlayerUI.GetComponent<Canvas>().sortingOrder += shift;
+    }
+
+    public void TurnPlayerAround()
+    {
+        StartCoroutine(HidePlayerTemporarily(0.4f, 0.4f));
+    }
+    IEnumerator HidePlayerTemporarily(float duration, float offset)
+    {
+        yield return new WaitForSeconds(offset);
+        knight.SetActive(false);
+        lance.SetActive(false);
+        shieldParent.SetActive(false);
+        yield return new WaitForSeconds(duration);
+        knight.SetActive(true);
+        lance.SetActive(true);
+        shieldParent.SetActive(true);
     }
     #endregion
 

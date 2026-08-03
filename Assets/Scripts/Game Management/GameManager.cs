@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     bool firstPlaythrough = true;
     public GameState gameState;
     [HideInInspector] public static event Action<int> OnEndMatchEvent;
+    [HideInInspector] public static event Action<bool> OnEnableGameUIEvent;
 
     [SerializeField] int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
@@ -189,12 +190,14 @@ public class GameManager : MonoBehaviour
         // starts on the left
         player1.transform.position = LeftStartPos.position;
         horse1.Setup(false);
+        pScript1.AdjustSpriteRendererLayers(true);
         if (firstPlaythrough) { pScript1.RecordLocalStartTransforms(); }
 
         horse2.TurnAround(false);
         // starts on the right
         player2.transform.position = RightStartPos.position;
         horse2.Setup(true);
+        pScript2.AdjustSpriteRendererLayers(true);
         if (firstPlaythrough) { pScript2.RecordLocalStartTransforms(); firstPlaythrough = false; }
 
         pScript1.ResetPlayerState();
@@ -217,6 +220,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
+        OnEnableGameUIEvent?.Invoke(true);
         gameUI.SetActive(true);
         menuUI.SetActive(false);
         gameState = GameState.ACTIVE_COMBAT;
@@ -242,6 +246,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.MATCH;
         yield return new WaitForSeconds(1.5f);
         PrepareMatch();
+        OnEnableGameUIEvent?.Invoke(false);
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         gameState = GameState.MENU;
@@ -281,6 +286,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         gameUI.SetActive(false);
+        OnEnableGameUIEvent?.Invoke(false);
         // display result / some fancy animation
         calc.SetupReactionScreen(reactionIndex);
         CameraController.Instance.DisplayViewersReaction(6.5f, 5f);

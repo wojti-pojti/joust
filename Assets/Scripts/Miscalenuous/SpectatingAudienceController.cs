@@ -7,7 +7,8 @@ using UnityEngine;
 /// </summary>
 public class SpectatingAudienceController : MonoBehaviour
 {
-    [SerializeField] Vector2 startPosition;
+    [SerializeField] bool capableOfApplause;
+    Vector2 startPosition;
     [Header("")]
     [SerializeField] Vector2 leaveVector;
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -24,11 +25,13 @@ public class SpectatingAudienceController : MonoBehaviour
     void OnEnable() // subscribe to the event
     {
         GameManager.OnEndMatchEvent += Applause;
+        GameManager.OnEnableGameUIEvent += Fade;
     }
 
     void OnDisable() // unsubscribe to the event
     {
         GameManager.OnEndMatchEvent -= Applause;
+        GameManager.OnEnableGameUIEvent -= Fade;
     }
     #endregion
 
@@ -38,29 +41,33 @@ public class SpectatingAudienceController : MonoBehaviour
     /// <param name="reactionIndex">The index identifying the amount of excitement to portray.</param>
     void Applause(int reactionIndex)
     {
+        if(!capableOfApplause) { return; }
+
         // determine specifics based on the reaction index
+        // reaction index [0; 4]
+        float duration = 2.5f, period = 0.7f, amplitude = 0.3f;
 
+        duration += (reactionIndex + 1) * 0.5f;
+        if (reactionIndex > 2) { period -= 0.1f; amplitude += 0.1f; }
+        if (reactionIndex == 4) { period -= 0.1f; amplitude += 0.1f; }
 
-        StartCoroutine(ActExcited(5f, 0.5f, 0.5f));
-    }
-
-
-    // make the following activated via events
-
-    /// <summary>
-    /// Called to smoothly move the audience member on-screen.
-    /// </summary>
-    public void FadeIn()
-    {
-        StartCoroutine(ShiftPosition(fadeInDuration, startPosition));
+        StartCoroutine(ActExcited(duration, period, amplitude));
     }
 
     /// <summary>
-    /// Called to smoothly move the audience member off-screen.
+    /// Called to smoothly move the audience member on-screen or off-screen.
     /// </summary>
-    public void FadeOut()
+    /// <param name="showThisGameobject">True if the object is to fade onto the screen, false otherwise.</param>
+    void Fade(bool showThisGameobject)
     {
-        StartCoroutine(ShiftPosition(fadeOutDuration, startPosition + leaveVector));
+        if(showThisGameobject)
+        {
+            StartCoroutine(ShiftPosition(fadeInDuration, startPosition));
+        }
+        else
+        {
+            StartCoroutine(ShiftPosition(fadeOutDuration, startPosition + leaveVector));
+        }
     }
 
     /// <summary>

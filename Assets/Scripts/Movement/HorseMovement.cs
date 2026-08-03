@@ -209,12 +209,13 @@ public class HorseMovement : MonoBehaviour
         {
             // some animation
             animator.SetTrigger("TurnAround");
+            player.TurnPlayerAround();
         }
 
         if (side) { player.ScalePlayerAndEquipment(-1f); }
         else { player.ScalePlayerAndEquipment(1f); }
-        //spriteRenderer.flipX = !spriteRenderer.flipX;
         player.ChangeLanceDirection();
+        player.AdjustSpriteRendererLayers(!side);
 
         tapConstraint = false;
         isFleeing = false;
