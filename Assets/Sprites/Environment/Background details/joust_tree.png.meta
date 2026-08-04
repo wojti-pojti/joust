@@ -1,25 +1,25 @@
 fileFormatVersion: 2
-guid: 41559b4700399fe4daca1922031b5351
+guid: 7fb13649806c9ad498eef44b1acae354
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7707014338395425198
-    second: joust_flags_0
+      213: -2927888574910928024
+    second: joust_tree_0
   - first:
-      213: 6426958001530023039
-    second: joust_flags_1
+      213: 8895387699512939524
+    second: joust_tree_1
   - first:
-      213: 1990904123730450520
-    second: joust_flags_2
+      213: 2383159438570997624
+    second: joust_tree_2
   - first:
-      213: 2948400084581588717
-    second: joust_flags_3
+      213: -6916867157144615723
+    second: joust_tree_3
   - first:
-      213: -501664745990546701
-    second: joust_flags_4
+      213: -7551245042909894385
+    second: joust_tree_4
   - first:
-      213: 5785427503473983606
-    second: joust_flags_5
+      213: 1072034563393623186
+    second: joust_tree_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -128,133 +128,133 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: joust_flags_0
+      name: joust_tree_0
       rect:
         serializedVersion: 2
-        x: 17
-        y: 265
-        width: 128
-        height: 221
+        x: 12
+        y: 179
+        width: 98
+        height: 165
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ea9c6ee05b0d4fa60800000000000000
-      internalID: 7707014338395425198
+      spriteID: 86b628e8adc0e57d0800000000000000
+      internalID: -2927888574910928024
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: joust_flagsPlayer
+      name: joust_tree_1
       rect:
         serializedVersion: 2
-        x: 152
-        y: 262
-        width: 128
-        height: 221
+        x: 144
+        y: 179
+        width: 98
+        height: 165
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f7c2d8b3044213950800000000000000
-      internalID: 6426958001530023039
+      spriteID: 40419d0abf3c27b70800000000000000
+      internalID: 8895387699512939524
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: joust_flags_1
+      name: joust_tree_2
       rect:
         serializedVersion: 2
-        x: 282
-        y: 261
-        width: 128
-        height: 221
+        x: 268
+        y: 176
+        width: 98
+        height: 165
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 85850d490cc11ab10800000000000000
-      internalID: 1990904123730450520
+      spriteID: 877c42302eea21120800000000000000
+      internalID: 2383159438570997624
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: joust_flags_2
+      name: joust_tree_3
       rect:
         serializedVersion: 2
-        x: 18
-        y: 36
-        width: 128
-        height: 221
+        x: 27
+        y: 17
+        width: 90
+        height: 130
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dee97317142dae820800000000000000
-      internalID: 2948400084581588717
+      spriteID: 5d444dbb7f95200a0800000000000000
+      internalID: -6916867157144615723
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: joust_flags_3
+      name: joust_tree_4
       rect:
         serializedVersion: 2
-        x: 153
-        y: 33
-        width: 128
-        height: 221
+        x: 137
+        y: 17
+        width: 114
+        height: 150
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3fa95ea429ab909f0800000000000000
-      internalID: -501664745990546701
+      spriteID: f092d6544a6943790800000000000000
+      internalID: -7551245042909894385
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: joust_flags_4
+      name: joust_tree_5
       rect:
         serializedVersion: 2
-        x: 283
-        y: 32
-        width: 128
-        height: 221
+        x: 273
+        y: 19
+        width: 104
+        height: 146
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 670875279a7f94050800000000000000
-      internalID: 5785427503473983606
+      spriteID: 294940a61c1a0ee00800000000000000
+      internalID: 1072034563393623186
       vertices: []
       indices: 
       edges: []
@@ -263,7 +263,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: bc56c8f292e53184bb8536ae8bb4f039
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -273,12 +273,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      joust_flagsPlayer: 6426958001530023039
-      joust_flags_0: 7707014338395425198
-      joust_flags_1: 1990904123730450520
-      joust_flags_2: 2948400084581588717
-      joust_flags_3: -501664745990546701
-      joust_flags_4: 5785427503473983606
+      joust_tree_0: -2927888574910928024
+      joust_tree_1: 8895387699512939524
+      joust_tree_2: 2383159438570997624
+      joust_tree_3: -6916867157144615723
+      joust_tree_4: -7551245042909894385
+      joust_tree_5: 1072034563393623186
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

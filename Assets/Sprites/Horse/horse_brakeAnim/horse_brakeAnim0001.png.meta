@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b9d9223f9dd06414fbe532372ed8fda9
+guid: 16d1c2addd69ac0419f219334e06c6bd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1790789782066403187
-    second: horse_idleAnim00000_0
+      213: 2588865402525738375
+    second: horse_brakeAnim0001_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,17 +96,30 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: horse_idleAnim00000_0
+      name: horse_brakeAnim0001_0
       rect:
         serializedVersion: 2
         x: 516
-        y: 547
-        width: 1651
-        height: 1732
+        y: 561
+        width: 1652
+        height: 1682
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 377977b91d92ad810800000000000000
-      internalID: 1790789782066403187
+      spriteID: 78568d00e5f7de320800000000000000
+      internalID: 2588865402525738375
       vertices: []
       indices: 
       edges: []
@@ -135,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      horse_idleAnim00000_0: 1790789782066403187
+      horse_brakeAnim0001_0: 2588865402525738375
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

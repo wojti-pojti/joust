@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HorseJump
+  m_Name: HorseStartBraking
   serializedVersion: 8
   m_Legacy: 0
   m_Compressed: 0
@@ -22,14 +22,10 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: 0a0cd46520b856049ba52d7fc9e8185d, type: 3}
-    - time: 0.2
-      value: {fileID: 21300000, guid: bd09b140d7135754f94d7a6c7838864c, type: 3}
-    - time: 0.4
-      value: {fileID: 21300000, guid: 73ad15cfdff2f404f9acf8f47501049f, type: 3}
-    - time: 0.5833333
-      value: {fileID: 21300000, guid: ed6a9503508bf3f4ca047b59438ad54b, type: 3}
-    - time: 0.8333333
-      value: {fileID: 21300000, guid: b668d9c5caa09b34eb71bfe9594115d4, type: 3}
+    - time: 0.25
+      value: {fileID: 21300000, guid: 16d1c2addd69ac0419f219334e06c6bd, type: 3}
+    - time: 0.43333334
+      value: {fileID: 21300000, guid: 16d1c2addd69ac0419f219334e06c6bd, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -54,16 +50,14 @@ AnimationClip:
       metaData: 0
     pptrCurveMapping:
     - {fileID: 21300000, guid: 0a0cd46520b856049ba52d7fc9e8185d, type: 3}
-    - {fileID: 21300000, guid: bd09b140d7135754f94d7a6c7838864c, type: 3}
-    - {fileID: 21300000, guid: 73ad15cfdff2f404f9acf8f47501049f, type: 3}
-    - {fileID: 21300000, guid: ed6a9503508bf3f4ca047b59438ad54b, type: 3}
-    - {fileID: 21300000, guid: b668d9c5caa09b34eb71bfe9594115d4, type: 3}
+    - {fileID: 21300000, guid: 16d1c2addd69ac0419f219334e06c6bd, type: 3}
+    - {fileID: 21300000, guid: 16d1c2addd69ac0419f219334e06c6bd, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.84999996
+    m_StopTime: 0.45000002
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

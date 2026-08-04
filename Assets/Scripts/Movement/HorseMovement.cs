@@ -26,10 +26,10 @@ public class HorseMovement : MonoBehaviour
     [Header("")]
     [SerializeField] Rigidbody2D rb; // Rigidbody2D of the player
     [SerializeField] PlayerScript player;
+    [SerializeField] Animator animator;
 
     Rigidbody2D horseRb;
     Vector2 movementDirection;
-    Animator animator;
     SpriteRenderer spriteRenderer;
     bool tapConstraint; 
     [HideInInspector] public bool hasPassedTheOpponent;
@@ -38,7 +38,6 @@ public class HorseMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -88,6 +87,7 @@ public class HorseMovement : MonoBehaviour
             if(speed <= 0)
             {
                 isBraking = false;
+                animator.SetBool("IsBraking", false);
 
                 // indicate the run has ended
                 GameManager.Instance.InformOfReachingEndZone(playerIndex);
@@ -149,6 +149,7 @@ public class HorseMovement : MonoBehaviour
         if (side) { movementDirection = Vector2.left; }
         else { movementDirection = Vector2.right; }
         isBraking = false;
+        animator.SetBool("IsBraking", false);
         isFleeing = false;
         hasPassedTheOpponent = false;
         tapConstraint = false;
@@ -193,6 +194,7 @@ public class HorseMovement : MonoBehaviour
         tapConstraint = false;
 
         // animation
+        animator.SetBool("IsBraking", true);
     }
 
     /// <summary>
