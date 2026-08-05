@@ -25,21 +25,26 @@ public class PlayerScript : MonoBehaviour
     [Header("Setup")]
     [SerializeField] KeyCode shieldKeyCode;
     [SerializeField] float maxShieldHealthPoints;
+    [Header("Knight")]
     [SerializeField] GameObject knight;
     SpriteRenderer knightSpriteRenderer;
 
+    [Header("Shield")]
     [SerializeField] GameObject shieldParent;
     [SerializeField] GameObject shield;
     [SerializeField] Slider shieldHealthBar;
 
+    [Header("Lance")]
     [SerializeField] GameObject lance;
-    LanceScript lScript;
-    LanceController lanceController;
-    BoxCollider2D lanceCd;
+    [SerializeField] LanceScript lScript;
+    [SerializeField] LanceController lanceController;
+    [SerializeField] BoxCollider2D lanceCd;
 
+    [Header("Horse")]
     [SerializeField] GameObject horse;
-    HorseMovement hScript;
+    [SerializeField] HorseMovement hScript;
 
+    [Header("Other")]
     [SerializeField] GameObject PlayerUI;
     [SerializeField] Material playerMaterial;
     [SerializeField] Animator animator;
@@ -48,6 +53,7 @@ public class PlayerScript : MonoBehaviour
     Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
     Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
 
+    [SerializeField] BoxCollider2D collider;
     BoxCollider2D opponentLanceCollider;
     bool madeContact;
     SpriteRenderer[] renderers;
@@ -57,12 +63,6 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        knightSpriteRenderer = knight.GetComponent<SpriteRenderer>();
-        lScript = lance.GetComponent<LanceScript>();
-        lScript.index = index;
-        hScript = horse.GetComponent<HorseMovement>();
-        lanceController = lance.GetComponent<LanceController>();
-        lanceCd = lance.GetComponent <BoxCollider2D>();
         if (index == 1)
         {
             shieldKeyCode = KeyCode.S;
@@ -342,7 +342,8 @@ public class PlayerScript : MonoBehaviour
         // play animation
         animator.SetTrigger("Die");
         // throw knight off of the horse
-        this.transform.DetachChildren();
+        //this.transform.DetachChildren();
+        collider.enabled = false;
         hScript.RunAway();
     }
 
@@ -372,17 +373,18 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     void RepairPlayer()
     {
-        knight.transform.SetParent(this.transform);
-        lance.transform.SetParent(this.transform);
-        horse.transform.SetParent(this.transform);
-        shieldParent.transform.SetParent(this.transform);
-        PlayerUI.transform.SetParent(this.transform);
+        //knight.transform.SetParent(this.transform);
+        //lance.transform.SetParent(this.transform);
+        //horse.transform.SetParent(this.transform);
+        //shieldParent.transform.SetParent(this.transform);
+        //PlayerUI.transform.SetParent(this.transform);
 
         knight.transform.SetLocalPositionAndRotation(knightPos, knightRot);
         lance.transform.SetLocalPositionAndRotation(lancePos, lanceRot);
         horse.transform.SetLocalPositionAndRotation(horsePos, horseRot);
         shieldParent.transform.SetLocalPositionAndRotation(shieldPos, shieldRot);
         PlayerUI.transform.SetLocalPositionAndRotation(UIPos, UIRot);
+        collider.enabled = true;
     }
     #endregion
 
@@ -434,6 +436,7 @@ public class PlayerScript : MonoBehaviour
 
         // detach and throw away
         shieldParent.transform.DetachChildren();
+        shield.transform.position = shieldParent.transform.position;
         if(predeterminedVector == new Vector2(0, 0))
         {
             float knockback = Mathf.Abs(shieldHealthPoints) / 10f;

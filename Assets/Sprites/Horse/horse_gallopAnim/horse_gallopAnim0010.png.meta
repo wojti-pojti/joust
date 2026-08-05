@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8e96800041e49674cb4bd8590522740b
+guid: fd43b2f7dc29a404a9cb3c343523ae90
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7042694477388270560
-    second: joust_groundTexture_0
+      213: -6144417678472202139
+    second: horse_gallopAnim0010_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,9 +46,9 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -75,9 +75,9 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 3
-    compressionQuality: 70
-    crunchedCompression: 1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -113,67 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: joust_groundTexture_0
+      name: horse_gallopAnim0010_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 126
-        height: 128
+        x: 207
+        y: 517
+        width: 2074
+        height: 1809
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 024baa5cfa2534e90800000000000000
-      internalID: -7042694477388270560
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: joust_groundTexture_1
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 126
-        height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fd896e54c1d44a3438b2b7c3e8965c64
-      internalID: -1973568242
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: joust_groundTexture_2
-      rect:
-        serializedVersion: 2
-        x: 255
-        y: 0
-        width: 126
-        height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b21da38b4e0909244acf7150f649129c
-      internalID: 1494314752
+      spriteID: 568b80b0da4aabaa0800000000000000
+      internalID: -6144417678472202139
       vertices: []
       indices: 
       edges: []
@@ -182,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 4bc1959d2fe3e1a468f1c686c2e6c185
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -192,9 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      joust_groundTexture_0: -7042694477388270560
-      joust_groundTexture_1: -1973568242
-      joust_groundTexture_2: 1494314752
+      horse_gallopAnim0010_0: -6144417678472202139
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

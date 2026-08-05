@@ -8,17 +8,27 @@ using UnityEngine;
 public class SpectatingAudienceController : MonoBehaviour
 {
     [SerializeField] bool capableOfApplause;
-    Vector2 startPosition;
     [Header("")]
-    [SerializeField] Vector2 leaveVector;
+    [SerializeField] Vector2 visiblePosition;
+    [SerializeField] Vector2 hiddenPosition;
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] float fadeInDuration;
     [SerializeField] float fadeOutDuration;
 
+    RectTransform rt = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        startPosition = transform.position;
+        if (TryGetComponent<RectTransform>(out rt))
+        {
+            visiblePosition = rt.anchoredPosition;
+            rt.anchoredPosition = hiddenPosition;
+        }
+        else
+        {
+            visiblePosition = transform.position;
+            transform.position = hiddenPosition;
+        }
     }
 
     #region Adding and removing this instance as listener
@@ -45,7 +55,7 @@ public class SpectatingAudienceController : MonoBehaviour
 
         // determine specifics based on the reaction index
         // reaction index [0; 4]
-        float duration = 2.5f, period = 0.7f, amplitude = 0.3f;
+        float duration = 2.5f, period = 0.5f, amplitude = 0.3f;
 
         duration += (reactionIndex + 1) * 0.5f;
         if (reactionIndex > 2) { period -= 0.1f; amplitude += 0.1f; }
@@ -62,11 +72,13 @@ public class SpectatingAudienceController : MonoBehaviour
     {
         if(showThisGameobject)
         {
-            StartCoroutine(ShiftPosition(fadeInDuration, startPosition));
+            //Debug.Log(gameObject.name + " shifting position from " + this.gameObject.transform.position + " to " + visiblePosition);
+            StartCoroutine(ShiftPosition(fadeInDuration, visiblePosition));
         }
         else
         {
-            StartCoroutine(ShiftPosition(fadeOutDuration, startPosition + leaveVector));
+            //Debug.Log(gameObject.name + " shifting position from " + this.gameObject.transform.position + " to " + hiddenPosition);
+            StartCoroutine(ShiftPosition(fadeOutDuration, hiddenPosition));
         }
     }
 
@@ -78,8 +90,14 @@ public class SpectatingAudienceController : MonoBehaviour
     /// <returns></returns>
     IEnumerator ShiftPosition(float duration, Vector2 endPos)
     {
+        if (rt == null) { TryGetComponent<RectTransform>(out rt); }
+
         Vector2 startPos = transform.position;
-        Vector2 delta = startPos - endPos;
+        if (rt != null)
+        {
+            startPos = rt.anchoredPosition;
+        }
+        Vector2 delta = endPos - startPos;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
@@ -88,11 +106,25 @@ public class SpectatingAudienceController : MonoBehaviour
             float shift = easeCurve.Evaluate(elapsedTime / duration);
 
             Vector2 newPosition = startPos + shift * delta;
-            transform.position = newPosition;
+            if (rt != null)
+            {
+                rt.anchoredPosition = newPosition;
+            }
+            else
+            {
+                transform.position = newPosition;
+            }
             yield return null;
         }
 
-        transform.position = endPos;
+        if (rt != null)
+        {
+            rt.anchoredPosition = endPos;
+        }
+        else
+        {
+            transform.position = endPos;
+        }
     }
 
     /// <summary>
@@ -104,13 +136,19 @@ public class SpectatingAudienceController : MonoBehaviour
     /// <returns></returns>
     IEnumerator ActExcited(float duration, float period, float amplitude)
     {
+        Coroutine currentShiftRoutine = null;
+        //Debug.Log(this.gameObject.name + " - duration: "+ duration + ", period: " + period + ", amplitude: " + amplitude);
+        Vector2 startPos = visiblePosition;
         while (duration > 0f) 
         {
-            StartCoroutine(ShiftPosition(0.5f * period, (Vector2)transform.position + new Vector2(0, amplitude * 0.5f)));
+            if(currentShiftRoutine != null) { StopCoroutine(currentShiftRoutine); }
+            currentShiftRoutine = StartCoroutine(ShiftPosition(0.5f * period, visiblePosition + new Vector2(0, amplitude * 0.5f)));
             yield return new WaitForSeconds(0.5f * period);
-            StartCoroutine(ShiftPosition(0.5f * period, (Vector2)transform.position + new Vector2(0, -(amplitude * 0.5f))));
+            StopCoroutine(currentShiftRoutine);
+            currentShiftRoutine = StartCoroutine(ShiftPosition(0.5f * period, visiblePosition + new Vector2(0, -(amplitude * 0.5f))));
             yield return new WaitForSeconds(0.5f * period);
             duration -= period;
         }
+        ShiftPosition(0.2f, startPos);
     }
 }

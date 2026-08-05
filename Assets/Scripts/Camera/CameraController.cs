@@ -91,8 +91,8 @@ public class CameraController : MonoBehaviour
     public void DisplayViewersReaction(float rotationDuration, float stayDuration)
     {
         StopAllCoroutines();
-        StartCoroutine(RotateCameraAround(rotationDuration, stayDuration, 180f));
         facingBack = true;
+        StartCoroutine(RotateCameraAround(rotationDuration, stayDuration, 180f));
     }
 
     /// <summary>
@@ -122,7 +122,7 @@ public class CameraController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
 
-        if(stayDuration > 0f)
+        if(facingBack)
         {
             cam.orthographic = true;
             cam.orthographicSize = 15f;

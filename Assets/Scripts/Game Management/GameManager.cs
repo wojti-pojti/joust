@@ -220,8 +220,8 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        OnEnableGameUIEvent?.Invoke(true);
         gameUI.SetActive(true);
+        OnEnableGameUIEvent?.Invoke(true);
         menuUI.SetActive(false);
         gameState = GameState.ACTIVE_COMBAT;
         pScript1.state = PlayerState.COMBAT;
@@ -244,9 +244,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ShowMessage("Match forfeited"));
 
         gameState = GameState.MATCH;
-        yield return new WaitForSeconds(1.5f);
-        PrepareMatch();
         OnEnableGameUIEvent?.Invoke(false);
+        yield return new WaitForSeconds(1.75f);
+        PrepareMatch();
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         gameState = GameState.MENU;
@@ -265,6 +265,7 @@ public class GameManager : MonoBehaviour
         int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
         Debug.Log("Chosen reaction: " + reactionIndex);
         OnEndMatchEvent?.Invoke(reactionIndex);
+        yield return new WaitForSeconds(1.5f);
 
         if (winnerIndex == 0)
         {
@@ -283,10 +284,10 @@ public class GameManager : MonoBehaviour
             StartCoroutine(ShowMessage("Player 2 wins!"));
         }
 
-        yield return new WaitForSeconds(1.5f);
+        OnEnableGameUIEvent?.Invoke(false);
+        yield return new WaitForSeconds(4.5f + 0.5f * reactionIndex);
 
         gameUI.SetActive(false);
-        OnEnableGameUIEvent?.Invoke(false);
         // display result / some fancy animation
         calc.SetupReactionScreen(reactionIndex);
         CameraController.Instance.DisplayViewersReaction(6.5f, 5f);

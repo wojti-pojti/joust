@@ -11,6 +11,7 @@ public class HorseMovement : MonoBehaviour
 
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
+    public float totalAppliedForce;
     public float speed;
     [SerializeField] bool hasJumped;
     [SerializeField] bool isBraking;
@@ -75,7 +76,7 @@ public class HorseMovement : MonoBehaviour
         }
         if(isFleeing)
         {
-            horseRb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
+            horseRb.AddForce(movementDirection * jogForce * 1.5f, ForceMode2D.Force);
             idleAnimationTimer = 0f;
         }
 
@@ -110,6 +111,8 @@ public class HorseMovement : MonoBehaviour
         speed = rb.linearVelocity.magnitude;
         animator.SetFloat("Speed", speed);
         player.UpdateLanceDamage(speed);
+        if(!isFleeing) totalAppliedForce = rb.totalForce.magnitude;
+        else { totalAppliedForce = horseRb.totalForce.magnitude; }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -214,15 +217,26 @@ public class HorseMovement : MonoBehaviour
             player.TurnPlayerAround();
         }
 
-        if (side) { player.ScalePlayerAndEquipment(-1f); }
-        else { player.ScalePlayerAndEquipment(1f); }
-        player.ChangeLanceDirection();
-        player.AdjustSpriteRendererLayers(!side);
+        StartCoroutine(TurnEverythingAround(includeAnimation ? 0.75f : 0f));
 
         tapConstraint = false;
         isFleeing = false;
         hasJumped = false;
         hasPassedTheOpponent = false;
+    }
+
+    /// <summary>
+    /// A function holding all different function calls responsible for rotating the player character around. Can be delayed via argument.
+    /// </summary>
+    /// <param name="delay">The delay before the player is rotated</param>
+    /// <returns></returns>
+    IEnumerator TurnEverythingAround(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (side) { player.ScalePlayerAndEquipment(-1f); }
+        else { player.ScalePlayerAndEquipment(1f); }
+        player.ChangeLanceDirection();
+        player.AdjustSpriteRendererLayers(!side);
     }
 
     /// <summary>
@@ -240,17 +254,19 @@ public class HorseMovement : MonoBehaviour
     IEnumerator Flee()
     {
         horseRb = this.AddComponent<Rigidbody2D>();
+        horseRb.gravityScale = 0f;
         isFleeing = true;
-        //Collider cd;
-        //if(this.TryGetComponent<Collider>(out cd))
-        //{
-        //    cd.enabled = false;
-        //}
+        Collider cd;
+        if(this.TryGetComponent<Collider>(out cd))
+        {
+            cd.enabled = false;
+        }
         rb.bodyType = RigidbodyType2D.Static;
+        rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 0;
 
         yield return new WaitForSeconds(5f);
-        //if(cd) cd.enabled = true;
+        if(cd) cd.enabled = true;
         isFleeing = false;
         Destroy(horseRb);
     }
