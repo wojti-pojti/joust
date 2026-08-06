@@ -111,7 +111,11 @@ public class GameManager : MonoBehaviour
             else if(gameState == GameState.MENU) 
             {
                 StartCoroutine(StartMatch());
-            }     
+            }
+            else if(CameraController.Instance.cameraTurningAround == true) // skip animation
+            {
+                CameraController.Instance.InterruptAftermatchDisplay();
+            }
         }
 
         if(gameState == GameState.MENU)
@@ -197,11 +201,12 @@ public class GameManager : MonoBehaviour
         // starts on the right
         player2.transform.position = RightStartPos.position;
         horse2.Setup(true);
-        pScript2.AdjustSpriteRendererLayers(true);
+        pScript2.AdjustSpriteRendererLayers(false);
         if (firstPlaythrough) { pScript2.RecordLocalStartTransforms(); firstPlaythrough = false; }
 
         pScript1.ResetPlayerState();
         pScript2.ResetPlayerState();
+
         Debug.Log("New match prepared.");
     }
 
@@ -226,6 +231,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.ACTIVE_COMBAT;
         pScript1.state = PlayerState.COMBAT;
         pScript2.state = PlayerState.COMBAT;
+        CameraController.Instance.ResetCamera();
         Debug.Log("JOUST!");
         StartCoroutine(ShowMessage("JOUST!"));
         pScript1.Charge(true);
@@ -295,6 +301,17 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(19f);
 
         // display input prompt
+        gameState = GameState.AFTERMATCH;
+        aftermatchUI.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called to bypass the waiting time of the EndMatch function.
+    /// </summary>
+    public void InterruptEndMatchScreen()
+    {
+        StopAllCoroutines();
+        gameUI.SetActive(false);
         gameState = GameState.AFTERMATCH;
         aftermatchUI.SetActive(true);
     }

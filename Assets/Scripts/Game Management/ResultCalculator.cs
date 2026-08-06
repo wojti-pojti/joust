@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ResultCalculator : MonoBehaviour
 {
-    [SerializeField] int score;
+    [SerializeField] int matchScore;
 
     [Header("UI")]
     [SerializeField] SpriteRenderer reactionPanel;
@@ -23,7 +23,7 @@ public class ResultCalculator : MonoBehaviour
     public void SetupReactionScreen(int reactionIndex)
     {
         if(reactionImage[reactionIndex] != null) reactionPanel.sprite = reactionImage[reactionIndex];
-        scoreText.text = "Score: " + score.ToString();
+        scoreText.text = "Score: " + matchScore.ToString();
 
         for (int i = 0; i < 4; i++)
         {
@@ -50,7 +50,7 @@ public class ResultCalculator : MonoBehaviour
     /// <returns>Index of the picked reaction image.</returns>
     public int DetermineReaction(int winnerIndex, int turnsPlayed = 0, int totalTimesJumped = 0, float shp1 = 0, float shp2 = 0)
     {
-        score = 0;
+        int score = 0;
         if (winnerIndex > 0) { score += turnsPlayed; }
 
         score += (int)(5 * turnsPlayed * (Mathf.Pow(0.6f, 0.5f * turnsPlayed - 3)) - 18);
@@ -63,6 +63,7 @@ public class ResultCalculator : MonoBehaviour
         score += Random.Range(0, 8); // random bonus
 
         Debug.Log("Result of the match: " + score + " score");
+        matchScore = score;
 
         for (int i = 0; i <= 4; i++)
         {

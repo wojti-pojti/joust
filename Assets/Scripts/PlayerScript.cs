@@ -27,7 +27,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float maxShieldHealthPoints;
     [Header("Knight")]
     [SerializeField] GameObject knight;
-    SpriteRenderer knightSpriteRenderer;
+    [SerializeField] SpriteRenderer knightSpriteRenderer;
 
     [Header("Shield")]
     [SerializeField] GameObject shieldParent;
@@ -48,6 +48,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] GameObject PlayerUI;
     [SerializeField] Material playerMaterial;
     [SerializeField] Animator animator;
+
+    int deathTrigger = Animator.StringToHash("Die");
+    int resetTrigger = Animator.StringToHash("Reset");
 
     // start positions and rotations
     Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
@@ -97,7 +100,7 @@ public class PlayerScript : MonoBehaviour
     private void FixedUpdate()
     {
         // raise/lower shield animations
-        if(shieldTargetY != shield.transform.localPosition.y)
+        if(shieldTargetY != shield.transform.localPosition.y && shieldHealthPoints > 0 && state != PlayerState.DEAD)
         {
             shield.transform.localPosition = new Vector3(shield.transform.localPosition.x, newShieldPositionY, shield.transform.localPosition.z);
             shieldHealthBar.transform.localPosition = new Vector3(shieldHealthBar.transform.localPosition.x, newShieldPositionY - shieldUIToObjectDifference, shieldHealthBar.transform.localPosition.z);
@@ -159,6 +162,7 @@ public class PlayerScript : MonoBehaviour
     public void ResetPlayerState()
     {
         RepairPlayer();
+        hScript.Setup(index == 1 ? false : true);
         state = PlayerState.IDLE;
         shieldHealthPoints = maxShieldHealthPoints;
         if (lScript == null) 
@@ -183,7 +187,7 @@ public class PlayerScript : MonoBehaviour
         knight.GetComponent<Rigidbody2D>().simulated = false;
 
         // set correct sprite
-        animator.SetTrigger("Reset");
+        animator.SetTrigger(resetTrigger);
 
         UpdateShieldUI();
     }
@@ -232,12 +236,34 @@ public class PlayerScript : MonoBehaviour
     public void AdjustSpriteRendererLayers(bool toTheFront)
     {
         if (renderers == null) { renderers = GetComponentsInChildren<SpriteRenderer>(); }
-        int shift = (toTheFront ? 10 : -10);
         foreach (SpriteRenderer renderer in renderers) 
         {
-            renderer.sortingOrder += shift;
+            if (renderer.sortingOrder < 10)
+            {
+                if(toTheFront)
+                {
+                    renderer.sortingOrder += 20;
+                    PlayerUI.GetComponent<Canvas>().sortingOrder += 20;
+                }
+                else
+                {
+                    renderer.sortingOrder += 10;
+                    PlayerUI.GetComponent<Canvas>().sortingOrder += 10;
+                }
+                continue;
+            }
+
+            if (toTheFront && renderer.sortingOrder > 10 && renderer.sortingOrder < 20)
+            {
+                renderer.sortingOrder += 10;
+                PlayerUI.GetComponent<Canvas>().sortingOrder += 10;
+            }
+            else if (!toTheFront && renderer.sortingOrder > 20)
+            {
+                renderer.sortingOrder -= 10;
+                PlayerUI.GetComponent<Canvas>().sortingOrder -= 10;
+            }
         }
-        PlayerUI.GetComponent<Canvas>().sortingOrder += shift;
     }
 
     public void TurnPlayerAround()
@@ -325,11 +351,11 @@ public class PlayerScript : MonoBehaviour
         direction *= Mathf.Max(2.5f, forceMultiplier);
         rb.AddForce(direction, ForceMode2D.Impulse);
 
-        if (shieldHealthPoints > 0) StartCoroutine(ThrowShieldAway(direction));
+        if (shieldHealthPoints > 0) StartCoroutine(ThrowShieldAway(direction * 1.4f));
         StartCoroutine(ThrowLanceAway());
 
         // animation
-        animator.SetTrigger("Die");
+        animator.SetTrigger(deathTrigger);
     }
 
     /// <summary>
@@ -342,7 +368,6 @@ public class PlayerScript : MonoBehaviour
         // play animation
         animator.SetTrigger("Die");
         // throw knight off of the horse
-        //this.transform.DetachChildren();
         collider.enabled = false;
         hScript.RunAway();
     }
@@ -426,8 +451,9 @@ public class PlayerScript : MonoBehaviour
     }
 
     /// <summary>
-    /// Possible animation and some physical remainder after the shield is destroyed.
+    /// Simulates the shield being discarded and leaves some physical remainder after the shield is thrown away.
     /// </summary>
+    /// <param name="predeterminedVector">The direction of the thrown shield, if it is determined elsewhere.</param>
     IEnumerator ThrowShieldAway(Vector2 predeterminedVector = new Vector2())
     {
         Debug.Log("Player " + index + " has lost their shield!");
@@ -437,15 +463,15 @@ public class PlayerScript : MonoBehaviour
         // detach and throw away
         shieldParent.transform.DetachChildren();
         shield.transform.position = shieldParent.transform.position;
-        if(predeterminedVector == new Vector2(0, 0))
+        if(predeterminedVector != new Vector2(0, 0))
+        {
+            shieldRb.AddForce(predeterminedVector, ForceMode2D.Impulse);
+        }
+        else
         {
             float knockback = Mathf.Abs(shieldHealthPoints) / 10f;
             Vector2 direction = (hScript.side ? new Vector2(1, 1) : new Vector2(-1, 1));
             shieldRb.AddForce(direction * knockback, ForceMode2D.Impulse);
-        }
-        else
-        {
-            shieldRb.AddForce(predeterminedVector, ForceMode2D.Impulse);
         }
 
         yield return new WaitForSeconds(6f);

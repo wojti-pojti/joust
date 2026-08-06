@@ -20,6 +20,7 @@ public class CameraController : MonoBehaviour
 
     [Header("After match results")]
     [SerializeField] bool facingBack;
+    public bool cameraTurningAround;
 
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public float perspectiveFOV = 40f;
@@ -70,7 +71,7 @@ public class CameraController : MonoBehaviour
             cam.orthographicSize = currentFOV;
         }
 
-        reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, reactionPanel.transform.position.z);
+        reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -20f);
     }
 
     /// <summary>
@@ -90,9 +91,24 @@ public class CameraController : MonoBehaviour
     /// <param name="stayDuration">The duration of how long the image should be shown.</param>
     public void DisplayViewersReaction(float rotationDuration, float stayDuration)
     {
+        cameraTurningAround = true;
         StopAllCoroutines();
         facingBack = true;
         StartCoroutine(RotateCameraAround(rotationDuration, stayDuration, 180f));
+    }
+
+    /// <summary>
+    /// Called to stop the process of turning the camera around and reset the camera.
+    /// </summary>
+    public void InterruptAftermatchDisplay()
+    {
+        Debug.Log("Skipping the reaction display animation...");
+        StopAllCoroutines();
+        cameraTurningAround = false;
+        facingBack = false;
+        cam.orthographic = true;
+        ResetCamera();
+        GameManager.Instance.InterruptEndMatchScreen();
     }
 
     /// <summary>
@@ -134,6 +150,7 @@ public class CameraController : MonoBehaviour
         {
             cam.orthographic = true;
             cam.orthographicSize = startFOV;
+            cameraTurningAround = false;
         }
     }
     #endregion

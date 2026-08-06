@@ -29,6 +29,13 @@ public class HorseMovement : MonoBehaviour
     [SerializeField] PlayerScript player;
     [SerializeField] Animator animator;
 
+    int speedFloat = Animator.StringToHash("Speed");
+    int idleStompTrigger = Animator.StringToHash("IdleStomp");
+    int landTrigger = Animator.StringToHash("Land");
+    int jumpTrigger = Animator.StringToHash("Jump");
+    int turnAroundTrigger = Animator.StringToHash("TurnAround");
+    int isBrakingBool = Animator.StringToHash("IsBraking");
+
     Rigidbody2D horseRb;
     Vector2 movementDirection;
     SpriteRenderer spriteRenderer;
@@ -71,16 +78,18 @@ public class HorseMovement : MonoBehaviour
         if((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
-            rb.AddForce(movementDirection * jogForce, ForceMode2D.Force);
-            idleAnimationTimer = 0f;
-        }
-        if(isFleeing)
-        {
-            horseRb.AddForce(movementDirection * jogForce * 1.5f, ForceMode2D.Force);
+            Vector2 movement = movementDirection * jogForce;
+            if (hasPassedTheOpponent) { movement *= 1.5f; }
+            rb.AddForce(movement, ForceMode2D.Force);
             idleAnimationTimer = 0f;
         }
 
-        if (isBraking)
+        if(isFleeing)
+        {
+            if (horseRb) horseRb.AddForce(movementDirection * jogForce * 2.25f, ForceMode2D.Force);
+            idleAnimationTimer = 0f;
+        }
+        else if (isBraking)
         {
             // apply counter-force
             rb.AddForce(-movementDirection * 0.5f * jogForce, ForceMode2D.Force);
@@ -88,7 +97,7 @@ public class HorseMovement : MonoBehaviour
             if(speed <= 0)
             {
                 isBraking = false;
-                animator.SetBool("IsBraking", false);
+                animator.SetBool(isBrakingBool, false);
 
                 // indicate the run has ended
                 GameManager.Instance.InformOfReachingEndZone(playerIndex);
@@ -98,21 +107,22 @@ public class HorseMovement : MonoBehaviour
         if (player.state == PlayerState.JUMP && player.transform.position.y < -0.5f && rb.linearVelocity.y < 0)
         {
             // land animation
-            animator.SetTrigger("Land");
+            animator.SetTrigger(landTrigger);
         }
 
         if (idleAnimationTimer >= idleTimeToStartAnimation) 
         {
-            animator.SetTrigger("IdleStomp");
+            animator.SetTrigger(idleStompTrigger);
             idleAnimationTimer = 0;
         }
 
         idleAnimationTimer += Time.fixedDeltaTime;
         speed = rb.linearVelocity.magnitude;
-        animator.SetFloat("Speed", speed);
+        animator.SetFloat(speedFloat, speed);
         player.UpdateLanceDamage(speed);
-        if(!isFleeing) totalAppliedForce = rb.totalForce.magnitude;
-        else { totalAppliedForce = horseRb.totalForce.magnitude; }
+
+        //if(!isFleeing) totalAppliedForce = rb.totalForce.magnitude;
+        //else { totalAppliedForce = horseRb.totalForce.magnitude; }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -126,7 +136,7 @@ public class HorseMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!side) Debug.Log("Player 1's horse collided with " + collision.gameObject.name);
+        //if (!side) Debug.Log("Player 1's horse collided with " + collision.gameObject.name);
         if ((!side && collision.gameObject.tag == "RightEndZone") ||
             (side && collision.gameObject.tag == "LeftEndZone"))
         {
@@ -140,7 +150,7 @@ public class HorseMovement : MonoBehaviour
     /// <param name="side">The side of the scene, where that horse begins. False indicates left, True indicates right.</param>
     public void Setup(bool side)
     {
-        if (this.side != side) { TurnAround(); }
+        if (this.side != side) { TurnAround(false); }
 
         rb.gravityScale = 1f;
         rb.bodyType = RigidbodyType2D.Dynamic;
@@ -152,7 +162,7 @@ public class HorseMovement : MonoBehaviour
         if (side) { movementDirection = Vector2.left; }
         else { movementDirection = Vector2.right; }
         isBraking = false;
-        animator.SetBool("IsBraking", false);
+        animator.SetBool(isBrakingBool, false);
         isFleeing = false;
         hasPassedTheOpponent = false;
         tapConstraint = false;
@@ -184,7 +194,7 @@ public class HorseMovement : MonoBehaviour
         player.state = PlayerState.JUMP;
 
         // animation
-        animator.SetTrigger("Jump");
+        animator.SetTrigger(jumpTrigger);
     }
 
     /// <summary>
@@ -197,7 +207,7 @@ public class HorseMovement : MonoBehaviour
         tapConstraint = false;
 
         // animation
-        animator.SetBool("IsBraking", true);
+        animator.SetBool(isBrakingBool, true);
     }
 
     /// <summary>
@@ -213,7 +223,7 @@ public class HorseMovement : MonoBehaviour
         if(includeAnimation)
         {
             // some animation
-            animator.SetTrigger("TurnAround");
+            animator.SetTrigger(turnAroundTrigger);
             player.TurnPlayerAround();
         }
 
@@ -255,7 +265,6 @@ public class HorseMovement : MonoBehaviour
     {
         horseRb = this.AddComponent<Rigidbody2D>();
         horseRb.gravityScale = 0f;
-        isFleeing = true;
         Collider cd;
         if(this.TryGetComponent<Collider>(out cd))
         {
@@ -265,9 +274,11 @@ public class HorseMovement : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 0;
 
+        rb.AddForce(movementDirection * forceAddedPerInput, ForceMode2D.Impulse);
+        isFleeing = true;
+
         yield return new WaitForSeconds(5f);
         if(cd) cd.enabled = true;
-        isFleeing = false;
         Destroy(horseRb);
     }
 }

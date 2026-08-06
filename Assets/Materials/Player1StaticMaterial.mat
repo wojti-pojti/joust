@@ -75,7 +75,7 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 0, g: 0.04313689, b: 0.04705843, a: 1}
+    - _Color1: {r: 0, g: 0.04313686, b: 0.0470584, a: 1}
     - _Color2: {r: 0.9843137, g: 0.5098028, b: 0.003921569, a: 1}
     - _MetallicColor: {r: 0.854902, g: 0.7176471, b: 0.01176471, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
