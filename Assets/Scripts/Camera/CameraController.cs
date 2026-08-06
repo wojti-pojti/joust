@@ -20,6 +20,7 @@ public class CameraController : MonoBehaviour
 
     [Header("After match results")]
     [SerializeField] bool facingBack;
+    public bool cameraTurningAround;
 
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public float perspectiveFOV = 40f;
@@ -65,12 +66,12 @@ public class CameraController : MonoBehaviour
                 Mathf.Max(startPosition.y - 0.25f * (startDistanceBetweenPlayers / distanceBetweenPlayers), -2f),
                 startPosition.z);
 
-            this.transform.SetPositionAndRotation(newPos, startRotation);
+            this.transform.SetPositionAndRotation(newPos, this.transform.rotation);
 
             cam.orthographicSize = currentFOV;
         }
 
-        reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, reactionPanel.transform.position.z);
+        reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -20f);
     }
 
     /// <summary>
@@ -82,15 +83,32 @@ public class CameraController : MonoBehaviour
         cam.orthographicSize = startFOV;
     }
 
+    #region Endgame shenanigans
     /// <summary>
     /// Plays the animation of the camera turning around to show a reaction graphic.
     /// </summary>
-    /// <param name="duration">The duration of how long the image should be shown.</param>
-    public void DisplayViewersReaction(float duration)
+    /// <param name="rotationDuration">The duration of how long the camera should be rotated.</param>
+    /// <param name="stayDuration">The duration of how long the image should be shown.</param>
+    public void DisplayViewersReaction(float rotationDuration, float stayDuration)
     {
+        cameraTurningAround = true;
         StopAllCoroutines();
-        StartCoroutine(RotateCameraAround(duration, 3f, 180f));
         facingBack = true;
+        StartCoroutine(RotateCameraAround(rotationDuration, stayDuration, 180f));
+    }
+
+    /// <summary>
+    /// Called to stop the process of turning the camera around and reset the camera.
+    /// </summary>
+    public void InterruptAftermatchDisplay()
+    {
+        Debug.Log("Skipping the reaction display animation...");
+        StopAllCoroutines();
+        cameraTurningAround = false;
+        facingBack = false;
+        cam.orthographic = true;
+        ResetCamera();
+        GameManager.Instance.InterruptEndMatchScreen();
     }
 
     /// <summary>
@@ -119,13 +137,21 @@ public class CameraController : MonoBehaviour
         }
 
         transform.rotation = Quaternion.Euler(0f, targetRotation, 0f);
-        cam.orthographic = true;
 
-        if(stayDuration > 0f)
+        if(facingBack)
         {
+            cam.orthographic = true;
+            cam.orthographicSize = 15f;
             yield return new WaitForSeconds(stayDuration);
             facingBack = false;
             StartCoroutine(RotateCameraAround(duration, 0f, 0f));
         }
+        else
+        {
+            cam.orthographic = true;
+            cam.orthographicSize = startFOV;
+            cameraTurningAround = false;
+        }
     }
+    #endregion
 }

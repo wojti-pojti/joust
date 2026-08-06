@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public enum GameState
 {
@@ -15,6 +17,8 @@ public class GameManager : MonoBehaviour
     [Header("Game state")]
     bool firstPlaythrough = true;
     public GameState gameState;
+    [HideInInspector] public static event Action<int> OnEndMatchEvent;
+    [HideInInspector] public static event Action<bool> OnEnableGameUIEvent;
 
     [SerializeField] int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
@@ -31,6 +35,10 @@ public class GameManager : MonoBehaviour
     bool hasPlayer2ArrivedToEndZone;
 
     [Header("Settings")]
+    public bool randomUpgradesBetweenTurns;
+    public bool offHorseCombat;
+    public float baseDeathChance;
+    [Header("")]
     public float gameConditionsCheckInterval;
     [SerializeField] ResultCalculator calc; // short for calculator btw
 
@@ -40,12 +48,17 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] GameObject menuUI;
+    [SerializeField] Image soundIndicatorImage;
     [SerializeField] GameObject aftermatchUI;
     [SerializeField] GameObject gameUI;
     [SerializeField] TMP_Text turnCounter;
     [SerializeField] GameObject messagePanel;
     [SerializeField] TMP_Text message;
     [SerializeField] GameObject controlsPanel;
+
+    [Header("")]
+    [SerializeField] Sprite soundIcon;
+    [SerializeField] Sprite noSoundIcon;
 
     #region Singleton
     public static GameManager Instance;
@@ -98,19 +111,41 @@ public class GameManager : MonoBehaviour
             else if(gameState == GameState.MENU) 
             {
                 StartCoroutine(StartMatch());
-            }     
+            }
+            else if(CameraController.Instance.cameraTurningAround == true) // skip animation
+            {
+                CameraController.Instance.InterruptAftermatchDisplay();
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.H) && gameState == GameState.MENU) // or whatever
+        if(gameState == GameState.MENU)
         {
-            // show or hide controls panel
-            controlsPanel.SetActive(!controlsPanel.activeSelf);
-            menuUI.SetActive(!menuUI.activeSelf);
+            if (Input.GetKeyDown(KeyCode.H)) // or whatever
+            {
+                // show or hide controls panel
+                controlsPanel.SetActive(!controlsPanel.activeSelf);
+                menuUI.SetActive(!menuUI.activeSelf);
+            }
+
+            if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
+            {
+                if(SoundManager.Instance.globalVolume > 0)
+                {
+                    SoundManager.Instance.globalVolume = 0;
+                    soundIndicatorImage.sprite = noSoundIcon;
+                }
+                else
+                {
+                    SoundManager.Instance.globalVolume = 1;
+                    soundIndicatorImage.sprite = soundIcon;
+                }
+            }
         }
 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if (gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT)
+            if ((gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT) 
+                && pScript1.state != PlayerState.DEAD && pScript2.state != PlayerState.DEAD)
             {
                 StartCoroutine(ForfeitMatch());
             }
@@ -149,7 +184,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// This function sets up initial values and positions for both players to prepare for a new match.
     /// </summary>
-    public void PrepareMatch()
+    void PrepareMatch()
     {
         aftermatchUI.SetActive(false);
         if (horse1 == null) horse1 = player1.GetComponentInChildren<HorseMovement>();
@@ -159,16 +194,19 @@ public class GameManager : MonoBehaviour
         // starts on the left
         player1.transform.position = LeftStartPos.position;
         horse1.Setup(false);
+        pScript1.AdjustSpriteRendererLayers(true);
         if (firstPlaythrough) { pScript1.RecordLocalStartTransforms(); }
 
         horse2.TurnAround(false);
         // starts on the right
         player2.transform.position = RightStartPos.position;
         horse2.Setup(true);
+        pScript2.AdjustSpriteRendererLayers(false);
         if (firstPlaythrough) { pScript2.RecordLocalStartTransforms(); firstPlaythrough = false; }
 
         pScript1.ResetPlayerState();
         pScript2.ResetPlayerState();
+
         Debug.Log("New match prepared.");
     }
 
@@ -188,10 +226,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         gameUI.SetActive(true);
+        OnEnableGameUIEvent?.Invoke(true);
         menuUI.SetActive(false);
         gameState = GameState.ACTIVE_COMBAT;
         pScript1.state = PlayerState.COMBAT;
         pScript2.state = PlayerState.COMBAT;
+        CameraController.Instance.ResetCamera();
         Debug.Log("JOUST!");
         StartCoroutine(ShowMessage("JOUST!"));
         pScript1.Charge(true);
@@ -210,7 +250,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ShowMessage("Match forfeited"));
 
         gameState = GameState.MATCH;
-        yield return new WaitForSeconds(1.5f);
+        OnEnableGameUIEvent?.Invoke(false);
+        yield return new WaitForSeconds(1.75f);
+        PrepareMatch();
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         gameState = GameState.MENU;
@@ -225,6 +267,11 @@ public class GameManager : MonoBehaviour
     {
         turnsPlayed++;
         gameState = GameState.MATCH;
+
+        int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
+        Debug.Log("Chosen reaction: " + reactionIndex);
+        OnEndMatchEvent?.Invoke(reactionIndex);
+        yield return new WaitForSeconds(1.5f);
 
         if (winnerIndex == 0)
         {
@@ -243,17 +290,28 @@ public class GameManager : MonoBehaviour
             StartCoroutine(ShowMessage("Player 2 wins!"));
         }
 
-        yield return new WaitForSeconds(1.5f);
+        OnEnableGameUIEvent?.Invoke(false);
+        yield return new WaitForSeconds(4.5f + 0.5f * reactionIndex);
 
+        gameUI.SetActive(false);
         // display result / some fancy animation
-        int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
-        Debug.Log("Chosen reaction: " + reactionIndex);
-        // calc.SetupReactionScreen(reactionIndex);
-        CameraController.Instance.DisplayViewersReaction(3f);
+        calc.SetupReactionScreen(reactionIndex);
+        CameraController.Instance.DisplayViewersReaction(6.5f, 5f);
 
-        yield return new WaitForSeconds(6f);
+        yield return new WaitForSeconds(19f);
 
         // display input prompt
+        gameState = GameState.AFTERMATCH;
+        aftermatchUI.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called to bypass the waiting time of the EndMatch function.
+    /// </summary>
+    public void InterruptEndMatchScreen()
+    {
+        StopAllCoroutines();
+        gameUI.SetActive(false);
         gameState = GameState.AFTERMATCH;
         aftermatchUI.SetActive(true);
     }
@@ -278,6 +336,12 @@ public class GameManager : MonoBehaviour
 
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
+
+        if(randomUpgradesBetweenTurns)
+        {
+            int upgradeIndex = UnityEngine.Random.Range(0, 6);
+            ModifierScript.Instance.ApplyModifier(upgradeIndex);
+        }
 
         yield return new WaitForSeconds(3f);
 

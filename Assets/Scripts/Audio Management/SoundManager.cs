@@ -34,6 +34,8 @@ public struct SoundList
 [RequireComponent(typeof(AudioSource)), ExecuteInEditMode]
 public class SoundManager : MonoBehaviour
 {
+    public float globalVolume;
+    [Header("")]
     [SerializeField] SoundList[] soundList;
 
     public static SoundManager Instance;
@@ -64,7 +66,7 @@ public class SoundManager : MonoBehaviour
         if (specificIndex < 0) randomClip = clips[UnityEngine.Random.Range(0, clips.Length)];
         else randomClip = clips[specificIndex];
 
-        Instance.audioSource.PlayOneShot(randomClip, volume);
+        Instance.audioSource.PlayOneShot(randomClip, volume * globalVolume);
     }
 
 #if UNITY_EDITOR
