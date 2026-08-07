@@ -5,15 +5,15 @@ using UnityEngine;
 /// </summary>
 public class BackgroundDepthManager : MonoBehaviour
 {
-    [SerializeField] GameObject camera;
+    [SerializeField] private GameObject camera;
     [Header("Depth & Layers")]
-    [SerializeField] GameObject[] layers = new GameObject[3];
-    [SerializeField] float[] layerCoefficients = new float[3];
+    [SerializeField] private GameObject[] layers = new GameObject[3];
+    [SerializeField] private float[] layerCoefficients = new float[3];
     [Header("Clouds")]
-    [SerializeField] float cloudMovementSpeed;
-    [SerializeField] GameObject[] cloudGroups = new GameObject[2];
+    [SerializeField] private float cloudMovementSpeed;
+    [SerializeField] private GameObject[] cloudGroups = new GameObject[2];
 
-    float lastPosX;
+    private float lastPosX;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

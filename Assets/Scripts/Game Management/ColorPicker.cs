@@ -7,13 +7,13 @@ using Unity.VisualScripting;
 public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public Color output;
-    bool holding;
-    int r, g, b;
-    PointerEventData mostRecentEventData;
+    private bool holding;
+    private int r, g, b;
+    private PointerEventData mostRecentEventData;
 
     [Header("")]
-    [SerializeField] Image colorPaletteImage;
-    [SerializeField] TMP_Text rgbText;
+    [SerializeField] private Image colorPaletteImage;
+    [SerializeField] private TMP_Text rgbText;
 
     // Update is called once per frame
     void Update()

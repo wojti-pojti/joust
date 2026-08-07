@@ -16,7 +16,7 @@ public class OnFootMovement : MonoBehaviour
     [SerializeField] KeyCode jumpKey;
     [SerializeField] KeyCode swingKey;
 
-    PlayerScript player;
+    private PlayerScript player;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

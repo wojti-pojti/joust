@@ -3,24 +3,24 @@ using UnityEngine.UI;
 
 public class CustomizationManager : MonoBehaviour
 {
-    [SerializeField] GameObject customizationPanel;
-    [SerializeField] int currentlyConsideredColorField;
-    [SerializeField] Color selectedFieldColor;
+    [SerializeField] private GameObject customizationPanel;
+    [SerializeField] private int currentlyConsideredColorField;
+    [SerializeField] private Color selectedFieldColor;
     [Header("")]
-    [SerializeField] Color[] colors = new Color[6];
-    [SerializeField] Button[] colorFields = new Button[6];
-    Image[] colorFieldDisplays = new Image[6];
-    [SerializeField] Image[] colorDisplays = new Image[6];
+    [SerializeField] private Color[] colors = new Color[6];
+    [SerializeField] private Button[] colorFields = new Button[6];
+    private Image[] colorFieldDisplays = new Image[6];
+    [SerializeField] private Image[] colorDisplays = new Image[6];
 
-    [SerializeField] GameObject colorPickerUI;
+    [SerializeField] private GameObject colorPickerUI;
     [Header("Affected materials")]
     public Material player1ColorSwapMaterial;
     public Material player2ColorSwapMaterial;
     public Material player1StaticMaterial;
     public Material player2StaticMaterial;
 
-    Color baseButtonColor;
-    ColorPicker picker;
+    private Color baseButtonColor;
+    private ColorPicker picker;
 
     #region Singleton
     public static CustomizationManager Instance;
@@ -57,7 +57,8 @@ public class CustomizationManager : MonoBehaviour
         if (GameManager.Instance.gameState == GameState.MENU)
         {
             if (Input.GetKeyDown(KeyCode.K)) 
-            { 
+            {
+                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
                 if (!customizationPanel.activeSelf) 
                 { 
                     Cursor.lockState = CursorLockMode.Confined;

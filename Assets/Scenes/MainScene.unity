@@ -2890,22 +2890,24 @@ MonoBehaviour:
     sounds: []
   - name: HORSE_JUMP
     sounds: []
-  - name: LANCE_HIT
+  - name: HORSE_LAND
     sounds: []
+  - name: LANCE_HIT
+    sounds:
+    - {fileID: 8300000, guid: 4fefdac116b50b74eb37dee26407f856, type: 3}
   - name: SHIELD_RAISE
     sounds: []
   - name: SHIELD_LOWER
     sounds: []
   - name: SHIELD_HIT
-    sounds: []
+    sounds:
+    - {fileID: 8300000, guid: feebc8d559a96f841b86cb121ca10db2, type: 3}
   - name: SHIELD_BREAK
-    sounds: []
-  - name: MATCH_BEGINNING
-    sounds: []
-  - name: MATCH_END
-    sounds: []
-  - name: NEW_TURN
-    sounds: []
+    sounds:
+    - {fileID: 8300000, guid: eeed029e303aea74a8687f78788a08e0, type: 3}
+  - name: APPLAUSE
+    sounds:
+    - {fileID: 8300000, guid: fc14bb9d6278141479acfe70c4fc87de, type: 3}
   - name: CAMERA_180TURN
     sounds: []
   - name: INTERACT_SOUND
@@ -4858,6 +4860,7 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0, z: 0}
   startRotation: {x: 0, y: 0, z: 0, w: 0}
   facingBack: 0
+  cameraTurningAround: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -8993,7 +8996,7 @@ MonoBehaviour:
   forceAddedPerInput: 2.25
   jogForce: 9
   jumpForce: 15
-  maxSpeed: 18
+  maxSpeed: 10
   idleTimeToStartAnimation: 5
   rb: {fileID: 2035941638}
   player: {fileID: 2035941639}
@@ -17781,7 +17784,7 @@ MonoBehaviour:
   forceAddedPerInput: 2.25
   jogForce: 9
   jumpForce: 15
-  maxSpeed: 18
+  maxSpeed: 10
   idleTimeToStartAnimation: 5
   rb: {fileID: 1965503016}
   player: {fileID: 1965503017}

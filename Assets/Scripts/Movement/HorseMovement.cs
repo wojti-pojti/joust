@@ -5,49 +5,42 @@ using UnityEngine;
 public class HorseMovement : MonoBehaviour
 {
     [Header("Player-specific")]
-    [SerializeField] int playerIndex;
-    [SerializeField] KeyCode accelerateKeyCode;
-    [SerializeField] KeyCode jumpKeyCode;
+    [SerializeField] private int playerIndex;
+    [SerializeField] private KeyCode accelerateKeyCode;
+    [SerializeField] private KeyCode jumpKeyCode;
 
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
     public float totalAppliedForce;
     public float speed;
-    [SerializeField] bool hasJumped;
-    [SerializeField] bool isBraking;
-    [SerializeField] bool isFleeing;
+    [SerializeField] private bool hasJumped;
+    [SerializeField] private bool isBraking;
+    [SerializeField] private bool isFleeing;
 
     [Header("Attributes")]
-    [SerializeField] float forceAddedPerInput;
-    [SerializeField] float jogForce;
-    [SerializeField] float jumpForce;
-    [SerializeField] float maxSpeed;
-    [SerializeField] float idleTimeToStartAnimation;
+    [SerializeField] private float forceAddedPerInput;
+    [SerializeField] private float jogForce;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float idleTimeToStartAnimation;
 
     [Header("")]
-    [SerializeField] Rigidbody2D rb; // Rigidbody2D of the player
-    [SerializeField] PlayerScript player;
-    [SerializeField] Animator animator;
+    [SerializeField] private Rigidbody2D rb; // Rigidbody2D of the player
+    [SerializeField] private PlayerScript player;
+    [SerializeField] private Animator animator;
 
-    int speedFloat = Animator.StringToHash("Speed");
-    int idleStompTrigger = Animator.StringToHash("IdleStomp");
-    int landTrigger = Animator.StringToHash("Land");
-    int jumpTrigger = Animator.StringToHash("Jump");
-    int turnAroundTrigger = Animator.StringToHash("TurnAround");
-    int isBrakingBool = Animator.StringToHash("IsBraking");
+    private int speedFloat = Animator.StringToHash("Speed");
+    private int idleStompTrigger = Animator.StringToHash("IdleStomp");
+    private int landTrigger = Animator.StringToHash("Land");
+    private int jumpTrigger = Animator.StringToHash("Jump");
+    private int turnAroundTrigger = Animator.StringToHash("TurnAround");
+    private int isBrakingBool = Animator.StringToHash("IsBraking");
 
-    Rigidbody2D horseRb;
-    Vector2 movementDirection;
-    SpriteRenderer spriteRenderer;
-    bool tapConstraint; 
+    private Rigidbody2D horseRb;
+    private Vector2 movementDirection;
+    private bool tapConstraint; 
     [HideInInspector] public bool hasPassedTheOpponent;
-    float idleAnimationTimer;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+    private float idleAnimationTimer;
 
     // Update is called once per frame
     void Update()

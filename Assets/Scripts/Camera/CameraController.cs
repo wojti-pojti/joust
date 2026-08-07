@@ -3,32 +3,30 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    //public bool dynamic;
-    [SerializeField] float distanceBetweenPlayers;
-    [SerializeField] float midpointX;
-    [SerializeField] float currentFOV;
+    [SerializeField] private float distanceBetweenPlayers;
+    [SerializeField] private float midpointX;
+    [SerializeField] private float currentFOV;
     [Header("")]
     public GameObject player1;
     public GameObject player2;
 
-    Camera cam;
+    private Camera cam;
     [Header("Starting values")]
-    [SerializeField] float startFOV;
-    [SerializeField] float startDistanceBetweenPlayers;
-    [SerializeField] Vector3 startPosition;
-    [SerializeField] Quaternion startRotation;
+    [SerializeField] private float startFOV;
+    [SerializeField] private float startDistanceBetweenPlayers;
+    [SerializeField] private Vector3 startPosition;
+    [SerializeField] private Quaternion startRotation;
 
     [Header("After match results")]
-    [SerializeField] bool facingBack;
+    [SerializeField] private bool facingBack;
     public bool cameraTurningAround;
 
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public float perspectiveFOV = 40f;
     public float perspectiveDistanceBoost = 2f;
 
-    //[SerializeField] float targetYRotation;
-    [SerializeField] float rotationSpeed;
-    [SerializeField] GameObject reactionPanel;
+    [SerializeField] private float rotationSpeed;
+    [SerializeField] private GameObject reactionPanel;
 
     #region Singleton
     public static CameraController Instance;

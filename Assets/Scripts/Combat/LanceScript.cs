@@ -7,26 +7,26 @@ public class LanceScript : MonoBehaviour
     public int segmentsLeft;
     public float damage;
     [Header("")]
-    [SerializeField] int maxLanceSegments = 4;
-    float segmentLength;
-    float baseLength = 2.75f;
-    float startColliderOffset, startColliderSize;
-    Vector3 startLocalPosition, startScale;
-    Sprite startSprite;
-    Material playerMaterial;
-    [SerializeField] float damageMultiplier;
+    [SerializeField] private int maxLanceSegments = 4;
+    private float segmentLength;
+    private float baseLength = 2.75f;
+    private float startColliderOffset, startColliderSize;
+    private Vector3 startLocalPosition, startScale;
+    private Sprite startSprite;
+    private Material playerMaterial;
+    [SerializeField] private float damageMultiplier;
 
     [Header("Sprites and transforms")]
-    [SerializeField] Sprite[] damagedLances = new Sprite[3];
-    [SerializeField] Vector3[] damagedLancePosition = new Vector3[3];
-    [SerializeField] Vector3[] damagedLanceScale = new Vector3[3];
+    [SerializeField] private Sprite[] damagedLances = new Sprite[3];
+    [SerializeField] private Vector3[] damagedLancePosition = new Vector3[3];
+    [SerializeField] private Vector3[] damagedLanceScale = new Vector3[3];
 
     [Header("Fragments")]
-    [SerializeField] GameObject[] fragments = new GameObject[4];
+    [SerializeField] private GameObject[] fragments = new GameObject[4];
 
-    LanceController controller;
-    BoxCollider2D collider;
-    SpriteRenderer spriteRenderer;
+    private LanceController controller;
+    private BoxCollider2D collider;
+    private SpriteRenderer spriteRenderer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

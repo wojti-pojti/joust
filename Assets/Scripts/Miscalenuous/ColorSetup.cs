@@ -9,17 +9,17 @@ using UnityEngine.Rendering;
 /// </summary>
 public class ColorSetup : MonoBehaviour
 {
-    [SerializeField] Material originalMaterial;
-    [SerializeField] bool reassignColors = true;
+    [SerializeField] private Material originalMaterial;
+    [SerializeField] private bool reassignColors = true;
     [Header("")]
-    [SerializeField] bool randomizeColor1;
-    [SerializeField] Color color1;
-    [SerializeField] bool randomizeColor2;
-    [SerializeField] Color color2;
+    [SerializeField] private bool randomizeColor1;
+    [SerializeField] private Color color1;
+    [SerializeField] private bool randomizeColor2;
+    [SerializeField] private Color color2;
     [Header("")]
-    [SerializeField] bool animated;
-    float timer, delay;
-    Animator animator;
+    [SerializeField] private bool animated;
+    private float timer, delay;
+    private Animator animator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
