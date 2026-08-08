@@ -56,21 +56,58 @@ public class SoundManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    #region Public functions
     /// <summary>
-    /// Plays random sound from the pool of sounds associated with that name.
+    /// Plays a one-shot of a random sound from the pool of sounds associated with that name.
     /// </summary>
     /// <param name="sound">The specific sound to be played.</param>
     /// <param name="volume">The volume of the played sound. 1 (max) by default.</param>
     /// <param name="specificIndex">Which exact clip from the group of clips associated with given sound should be chosen.</param>
     public void PlaySound(SoundType sound, float volume = 1, int specificIndex = -1)
     { 
+        AudioClip clip = SelectClip(sound, specificIndex);
+        Instance.audioSource.PlayOneShot(clip, volume * globalVolume);
+    }
+
+    /// <summary>
+    /// Plays a random sound from the pool of sounds associated with that name. Can be interrupted.
+    /// </summary>
+    /// <param name="sound">The specific sound to be played.</param>
+    /// <param name="volume">The volume of the played sound. 1 (max) by default.</param>
+    /// <param name="specificIndex">Which exact clip from the group of clips associated with given sound should be chosen.</param>
+    public void PlayLongSound(SoundType sound, float volume = 1, int specificIndex = -1)
+    {
+        AudioClip chosenClip = SelectClip(sound, specificIndex);
+        Instance.audioSource.clip = chosenClip;
+        Instance.audioSource.volume = volume;
+        Instance.audioSource.Play();
+    }
+
+    /// <summary>
+    /// This method instructs the sound manager to stop playing the currently played sound.
+    /// </summary>
+    public void InterruptPlayingSound()
+    {
+        Instance.audioSource.Stop();
+        Instance.audioSource.clip = null;
+    }
+    #endregion
+
+    /// <summary>
+    /// This function selects the clip of a given sound type, using either the given index, or randomly.
+    /// </summary>
+    /// <param name="sound">Sound type of the clip to be selected.</param>
+    /// <param name="specificIndex">Index of a specific audioclip. -1 if random.</param>
+    /// <returns>The chosen audioclip.</returns>
+    AudioClip SelectClip(SoundType sound, int specificIndex)
+    {
         AudioClip randomClip;
         AudioClip[] clips = Instance.soundList[(int)sound].Sounds;
 
         if (clips.Length == 0)
         {
             Debug.LogWarning("The sound " + sound.ToString() + " cannot be played as it has no audio clips assigned.");
-            return;
+            return null;
         }
 
         if (specificIndex < 0)
@@ -78,17 +115,16 @@ public class SoundManager : MonoBehaviour
             randomClip = clips[UnityEngine.Random.Range(0, clips.Length)];
         }
         else
-        { 
+        {
             randomClip = clips[specificIndex];
         }
 
-        if(randomClip == null)
+        if (randomClip == null)
         {
             Debug.LogWarning("The sound " + sound.ToString() + " cannot be played as it has no audio clips assigned.");
-            return;
+            return null;
         }
-
-        Instance.audioSource.PlayOneShot(randomClip, volume * globalVolume);
+        return randomClip;
     }
 
 #if UNITY_EDITOR

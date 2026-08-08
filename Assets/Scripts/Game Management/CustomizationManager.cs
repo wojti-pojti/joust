@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CustomizationManager : MonoBehaviour
 {
-    [SerializeField] private GameObject customizationPanel;
+    [SerializeField] private TransitionController customizationPanel;
     [SerializeField] private int currentlyConsideredColorField;
     [SerializeField] private Color selectedFieldColor;
     [Header("")]
@@ -48,7 +48,7 @@ public class CustomizationManager : MonoBehaviour
         }
         baseButtonColor = colorFieldDisplays[0].color;
         colorPickerUI.SetActive(false);
-        customizationPanel.SetActive(false);
+        customizationPanel.Appear(false, true);
     }
 
     // Update is called once per frame
@@ -59,7 +59,7 @@ public class CustomizationManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.K)) 
             {
                 SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                if (!customizationPanel.activeSelf) 
+                if (!customizationPanel.visible) 
                 { 
                     Cursor.lockState = CursorLockMode.Confined;
                     UpdateColorsArray();
@@ -71,7 +71,7 @@ public class CustomizationManager : MonoBehaviour
                     Cursor.lockState = CursorLockMode.Locked; 
                     colorPickerUI.SetActive(false);
                 }
-                customizationPanel.SetActive(!customizationPanel.activeSelf);
+                customizationPanel.Appear(!customizationPanel.visible);
             }
         }
     }

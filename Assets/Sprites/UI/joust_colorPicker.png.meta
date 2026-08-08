@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4030ba1e80bbf714daa7eb28603a77ae
+guid: 8060a806b27e71348b5e7e79e81890cb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 49473050725659201
-    second: Zrzut ekranu 2026-07-17 164841_0
+      213: -2282282076417896450
+    second: joust_colorPicker_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 5, y: 0, z: 3, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -96,27 +96,40 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Zrzut ekranu 2026-07-17 164841_0
+      name: joust_colorPicker_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 415
-        height: 412
+        width: 41
+        height: 42
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 142357e3a73cfa000800000000000000
-      internalID: 49473050725659201
+      spriteID: effced52b84b350e0800000000000000
+      internalID: -2282282076417896450
       vertices: []
       indices: 
       edges: []
@@ -126,7 +139,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -135,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Zrzut ekranu 2026-07-17 164841_0: 49473050725659201
+      joust_colorPicker_0: -2282282076417896450
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

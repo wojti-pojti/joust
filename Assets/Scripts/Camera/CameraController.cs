@@ -106,6 +106,7 @@ public class CameraController : MonoBehaviour
         facingBack = false;
         cam.orthographic = true;
         ResetCamera();
+        SoundManager.Instance.InterruptPlayingSound();
         GameManager.Instance.InterruptEndMatchScreen();
     }
 
@@ -124,6 +125,8 @@ public class CameraController : MonoBehaviour
         float startY = transform.eulerAngles.y;
         float delta = Mathf.DeltaAngle(startY, targetRotation);
         float elapsedTime = 0f;
+
+        SoundManager.Instance.PlayLongSound(SoundType.CAMERA_180TURN, 0.85f); // make it a 6.5s clip
 
         while (elapsedTime < duration) 
         {

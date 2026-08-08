@@ -54,13 +54,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text turnCounter;
     [SerializeField] private GameObject messagePanel;
     [SerializeField] private TMP_Text message;
-    [SerializeField] private GameObject controlsPanel;
+    [SerializeField] private TransitionController controlsPanel; // for this and customization, use TransitionController instead !!
+    [SerializeField] private TransitionController titleCard;
+    [SerializeField] private TransitionController blackOutScreen;
 
     [Header("")]
     [SerializeField] private Sprite soundIcon;
     [SerializeField] private Sprite noSoundIcon;
 
-    #region Singleton
+    #region Singleton + black screen
     public static GameManager Instance;
     private void Awake()
     {
@@ -72,6 +74,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(Instance);
         }
+
+        blackOutScreen.Appear(true, true);
     }
     #endregion
 
@@ -86,9 +90,10 @@ public class GameManager : MonoBehaviour
 
         menuUI.SetActive(true);
         aftermatchUI.SetActive(false);
-        controlsPanel.SetActive(false);
+        controlsPanel.Appear(false, true);
         gameUI.SetActive(false);
         messagePanel.SetActive(false);
+        blackOutScreen.Appear(false);
     }
 
     // Update is called once per frame
@@ -105,7 +110,7 @@ public class GameManager : MonoBehaviour
 
                 // display menu screen
                 menuUI.SetActive(true);
-                controlsPanel.SetActive(false);
+                titleCard.Appear(true);
                 gameUI.SetActive(false);
                 messagePanel.SetActive(false);
             }
@@ -126,7 +131,7 @@ public class GameManager : MonoBehaviour
             {
                 SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
                 // show or hide controls panel
-                controlsPanel.SetActive(!controlsPanel.activeSelf);
+                controlsPanel.Appear(!controlsPanel.visible);
                 menuUI.SetActive(!menuUI.activeSelf);
             }
 
@@ -228,6 +233,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.MATCH;
 
         SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
+        titleCard.Appear(false);
 
         yield return new WaitForSeconds(1.5f);
 
@@ -257,10 +263,13 @@ public class GameManager : MonoBehaviour
 
         gameState = GameState.MATCH;
         OnEnableGameUIEvent?.Invoke(false);
+        blackOutScreen.Appear(true);
         yield return new WaitForSeconds(1.75f);
+        blackOutScreen.Appear(false);
         PrepareMatch();
         gameUI.SetActive(false);
         menuUI.SetActive(true);
+        titleCard.Appear(true);
         gameState = GameState.MENU;
     }
 

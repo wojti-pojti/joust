@@ -3,4 +3,75 @@ Joust!
 A fun two-player minigame for settling conflicts over jousting.
 
 The most recent version of the game design document:
-https://docs.google.com/document/d/1DvmwzWdiJKuDVgFbDXoF7biz_dahPQ6e5vFmW3iYVho/edit?usp=sharing
+https://docs.google.com/document/d/1DvmwzWdiJKuDVgFbDXoF7biz\_dahPQ6e5vFmW3iYVho/edit?usp=sharing
+
+
+
+In Joust!,  both players take control of jousting knights and face off in a battle of wits and courage! 
+
+
+
+Each knight is capable of handling their lance, raising their shield, and prompting their horse to accelerate or jump. The secret to winning lies in predicting the opponent's move. The true battle happens before the players come in contact. It only takes one hit to be de-horsed and perish. 
+
+
+
+After the battle, the match is evaluated and rated fairly by an audience!
+
+
+
+The players can customise their character by choosing their own unique colour scheme!
+
+
+
+Controls:
+
+Player 1:
+
+
+
+D - accelerate
+
+E - jump
+
+S - shield
+
+W - lower lance
+
+Player 2:
+
+
+
+left arrow - accelerate
+
+up arrow - jump
+
+down arrow - shield
+
+right arrow - lower lance
+
+Assets:
+
+
+
+All sprites for the game I have made myself (I am not an artist).
+
+
+
+The sound effects were found on freesound.org. Attributions:
+
+
+
+Horse Snort 2.wav by GoodListener -- https://freesound.org/s/322454/ -- License: Attribution 4.0
+
+applause cheer ext medium crowd enthusiastic whistling for outdoor show nice if take out close claps.flac by kyles -- https://freesound.org/s/455659/ -- License: Creative Commons 0
+
+Smash.ogg by egomassive -- https://freesound.org/s/536777/ -- License: Creative Commons 0
+
+shield guard by nekoninja -- https://freesound.org/s/370203/ -- License: Creative Commons 0
+
+small-metal-hit-12.wav by newagesoup -- https://freesound.org/s/337875/ -- License: Creative Commons 0
+
+Interact by EvaMusik -- https://freesound.org/s/832738/ -- License: Creative Commons 0
+
+stone\_sliding.wav by Rooms\_Boxes -- https://freesound.org/s/424169/ -- License: Creative Commons 0
+
