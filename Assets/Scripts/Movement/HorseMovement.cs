@@ -13,6 +13,7 @@ public class HorseMovement : MonoBehaviour
     public bool side; // F - left, T - right
     public float totalAppliedForce;
     public float speed;
+    private int speedLevel;
     [SerializeField] private bool hasJumped;
     [SerializeField] private bool isBraking;
     [SerializeField] private bool isFleeing;
@@ -68,7 +69,7 @@ public class HorseMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
+        if ((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
             Vector2 movement = movementDirection * jogForce;
@@ -91,6 +92,7 @@ public class HorseMovement : MonoBehaviour
             {
                 isBraking = false;
                 animator.SetBool(isBrakingBool, false);
+                speedLevel = 0;
 
                 // indicate the run has ended
                 GameManager.Instance.InformOfReachingEndZone(playerIndex);
@@ -99,6 +101,7 @@ public class HorseMovement : MonoBehaviour
 
         if (player.state == PlayerState.JUMP && player.transform.position.y < -0.5f && rb.linearVelocity.y < 0)
         {
+            SoundManager.Instance.PlaySound(SoundType.HORSE_LAND);
             // land animation
             animator.SetTrigger(landTrigger);
         }
@@ -106,6 +109,7 @@ public class HorseMovement : MonoBehaviour
         if (idleAnimationTimer >= idleTimeToStartAnimation) 
         {
             animator.SetTrigger(idleStompTrigger);
+            if (Random.Range(1f, 5f) < 2f && GameManager.Instance.gameState == GameState.ACTIVE_COMBAT) { SoundManager.Instance.PlaySound(SoundType.HORSE_SNORT, 0.5f); }
             idleAnimationTimer = 0;
         }
 
@@ -113,9 +117,6 @@ public class HorseMovement : MonoBehaviour
         speed = rb.linearVelocity.magnitude;
         animator.SetFloat(speedFloat, speed);
         player.UpdateLanceDamage(speed);
-
-        //if(!isFleeing) totalAppliedForce = rb.totalForce.magnitude;
-        //else { totalAppliedForce = horseRb.totalForce.magnitude; }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -147,6 +148,7 @@ public class HorseMovement : MonoBehaviour
 
         rb.gravityScale = 1f;
         rb.bodyType = RigidbodyType2D.Dynamic;
+        InvokeRepeating("UpdateMovementBasedSFX", 0.5f, 0.1f);
         playerIndex = (side ? 2 : 1);
         if (side) { idleAnimationTimer = 0.5f * idleTimeToStartAnimation; }
 
@@ -188,6 +190,8 @@ public class HorseMovement : MonoBehaviour
 
         // animation
         animator.SetTrigger(jumpTrigger);
+
+        SoundManager.Instance.PlaySound(SoundType.HORSE_JUMP);
     }
 
     /// <summary>
@@ -201,6 +205,33 @@ public class HorseMovement : MonoBehaviour
 
         // animation
         animator.SetBool(isBrakingBool, true);
+    }
+
+    /// <summary>
+    /// This function plays correct sounds based on the horse's speed.
+    /// </summary>
+    void UpdateMovementBasedSFX()
+    {
+        if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT)
+        {
+            return;
+        }
+
+        if (speedLevel != 1 && speed > 0f && speed < 3.5f)
+        {
+            SoundManager.Instance.PlayLongSound(SoundType.HORSE_JOG);
+            speedLevel = 1;
+        }
+        else if (speedLevel != 2 && speed >= 3.5f)
+        {
+            SoundManager.Instance.PlayLongSound(SoundType.HORSE_GALLOP);
+            speedLevel = 2;
+        }
+        else if (speedLevel != 0 && speed <= 0f)
+        {
+            SoundManager.Instance.InterruptPlayingSound();
+            speedLevel = 0;
+        }
     }
 
     /// <summary>

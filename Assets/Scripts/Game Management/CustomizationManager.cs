@@ -66,7 +66,8 @@ public class CustomizationManager : MonoBehaviour
                     UpdateCustomizationPanel();
                 }
                 else 
-                { 
+                {
+                    colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
                     ApplyCustomizationSettings();
                     Cursor.lockState = CursorLockMode.Locked; 
                     colorPickerUI.SetActive(false);
@@ -82,11 +83,8 @@ public class CustomizationManager : MonoBehaviour
     /// <param name="index">The index of the color field to modify.</param>
     public void ChooseNewColor(int index)
     {
+        colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
         currentlyConsideredColorField = index;
-        foreach (var display in colorFieldDisplays) 
-        {
-            display.color = baseButtonColor;
-        } 
         colorFieldDisplays[index].color = selectedFieldColor;
         colorPickerUI.SetActive(true);
         if (picker == null) picker = colorPickerUI.GetComponent<ColorPicker>();

@@ -141,9 +141,11 @@ public class CameraController : MonoBehaviour
 
         if(facingBack)
         {
+            SoundManager.Instance.PlayLongSound(SoundType.TRIUMPH);
             cam.orthographic = true;
             cam.orthographicSize = 15f;
             yield return new WaitForSeconds(stayDuration);
+            SoundManager.Instance.InterruptPlayingSound();
             facingBack = false;
             StartCoroutine(RotateCameraAround(duration, 0f, 0f));
         }

@@ -10,6 +10,7 @@ public enum SoundType
     HORSE_GALLOP,
     HORSE_JUMP,
     HORSE_LAND,
+    HORSE_SNORT,
     LANCE_HIT,
     SHIELD_RAISE,
     SHIELD_LOWER,
@@ -19,7 +20,8 @@ public enum SoundType
     CAMERA_180TURN,
     INTERACT_SOUND,
     MENU_BG_MUSIC,
-    MATCH_BG_MUSIC
+    MATCH_BG_MUSIC,
+    TRIUMPH
 }
 
 [Serializable]
