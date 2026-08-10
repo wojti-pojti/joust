@@ -28,10 +28,6 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             output = PickColor(Camera.main.WorldToScreenPoint(mostRecentEventData.position));
 
-            if (!colorPointer.activeSelf) { colorPointer.SetActive(true); }
-            colorPointer.transform.position = mostRecentEventData.position;
-            colorPaletteImage.color = ContrastColor(output);
-
             CustomizationManager.Instance.SetNewColor(output);
             UpdateDisplay();
         }
@@ -52,6 +48,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         holding = true;
         mostRecentEventData = eventData;
+        InvokeRepeating("UpdatePointerPosition", 0f, 0.075f);
     }
 
     /// <summary>
@@ -60,10 +57,12 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// <param name="eventData">Information about the press.</param>
     public void OnPointerUp(PointerEventData eventData)
     {
-        holding = false;
         mostRecentEventData = eventData;
+        CancelInvoke();
 
         UpdateDisplay();
+        UpdatePointerPosition();
+        holding = false;
         CustomizationManager.Instance.SetNewColor(output);
     }
 
@@ -76,7 +75,12 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         Vector2 point;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(colorPaletteImage.rectTransform, screenPoint, Camera.main, out point);
+
+        point.x = Mathf.Clamp(point.x, colorPaletteImage.rectTransform.rect.xMin, colorPaletteImage.rectTransform.rect.xMax);
+        point.y = Mathf.Clamp(point.y, colorPaletteImage.rectTransform.rect.yMin, colorPaletteImage.rectTransform.rect.yMax);
+
         point += colorPaletteImage.rectTransform.sizeDelta / 2;
+
 
         Vector2Int middlePoint = new Vector2Int((int)((texture.width * point.x) / colorPaletteImage.rectTransform.sizeDelta.x),
            (int)((texture.height * point.y) / colorPaletteImage.rectTransform.sizeDelta.y));
@@ -87,7 +91,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// <summary>
     /// This function updates the RGB text in the color picker panel to reflect the selected color;
     /// </summary>
-    void UpdateDisplay()
+    public void UpdateDisplay()
     {
         r = (int)(output.r * 255);
         g = (int)(output.g * 255);
@@ -97,8 +101,23 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         // display the position of the color on the image
         if (!holding) 
         {
-            if (!colorPointer.activeSelf) { colorPointer.SetActive(true); }
+            UpdatePointerPosition();
+        }
+    }
 
+    void UpdatePointerPosition()
+    {
+        if (!colorPointer.activeSelf) { colorPointer.SetActive(true); }
+
+        if (holding)
+        {
+            Vector2 mousePos = colorPaletteImage.rectTransform.InverseTransformPoint(mostRecentEventData.position);
+            Vector2 clampedMousePosition = new Vector2(Mathf.Clamp(mousePos.x, colorPaletteImage.rectTransform.rect.xMin, colorPaletteImage.rectTransform.rect.xMax),
+                Mathf.Clamp(mousePos.y, colorPaletteImage.rectTransform.rect.yMin, colorPaletteImage.rectTransform.rect.yMax));
+            colorPointer.transform.position = colorPaletteImage.rectTransform.TransformPoint(clampedMousePosition);
+        }
+        else
+        {
             Vector2Int point = FindColorInImage();
             if (point == new Vector2Int(-1, -1)) { return; }
 
@@ -110,8 +129,9 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             Vector2 newPosition = paletteRect.TransformPoint(localPoint);
 
             colorPointer.transform.position = newPosition;
-            colorPaletteImage.color = ContrastColor(output);
         }
+          
+        colorPointerImage.color = ContrastColor(output);
     }
 
     /// <summary>

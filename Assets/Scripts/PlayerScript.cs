@@ -424,14 +424,14 @@ public class PlayerScript : MonoBehaviour
         if (raise)
         {
             shieldTargetY = shield.transform.localPosition.y + 0.25f;
-            SoundManager.Instance.PlaySound(SoundType.SHIELD_RAISE);
+            SoundManager.Instance.PlaySound(SoundType.SHIELD_RAISE, 0.8f);
             // apply shader
             StartCoroutine(HighlightPlayer(0.25f));
         }
         else
         {
             shieldTargetY = 0f;
-            SoundManager.Instance.PlaySound(SoundType.SHIELD_LOWER);
+            SoundManager.Instance.PlaySound(SoundType.SHIELD_LOWER, 0.8f);
         }
         newShieldPositionY = Mathf.Lerp(shield.transform.localPosition.y, shieldTargetY, 0.5f);
     }

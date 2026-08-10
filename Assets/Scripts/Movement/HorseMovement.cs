@@ -99,8 +99,9 @@ public class HorseMovement : MonoBehaviour
             }
         }
 
-        if (player.state == PlayerState.JUMP && player.transform.position.y < -0.5f && rb.linearVelocity.y < 0)
+        if (player.state == PlayerState.JUMP && player.transform.position.y < -2.5f && rb.linearVelocity.y < 0)
         {
+            player.state = PlayerState.COMBAT;
             SoundManager.Instance.PlaySound(SoundType.HORSE_LAND);
             // land animation
             animator.SetTrigger(landTrigger);
@@ -183,7 +184,7 @@ public class HorseMovement : MonoBehaviour
     void Jump()
     {
         // relate it to speed somehow
-        rb.AddForce(Vector2.up * (jumpForce + speed * 0.1f), ForceMode2D.Impulse);
+        rb.AddForce(Vector2.up * (jumpForce + speed * 0.05f), ForceMode2D.Impulse);
         hasJumped = true;
 
         player.state = PlayerState.JUMP;
@@ -203,6 +204,8 @@ public class HorseMovement : MonoBehaviour
         isBraking = true;
         tapConstraint = false;
 
+        SoundManager.Instance.PlaySound(SoundType.HORSE_BRAKE, 0.6f);
+
         // animation
         animator.SetBool(isBrakingBool, true);
     }
@@ -214,22 +217,23 @@ public class HorseMovement : MonoBehaviour
     {
         if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT)
         {
+            SoundManager.Instance.InterruptPlayingSound(playerIndex);
             return;
         }
 
-        if (speedLevel != 1 && speed > 0f && speed < 3.5f)
+        if (speedLevel != 1 && speed > 0.1f && speed < 3.5f)
         {
-            SoundManager.Instance.PlayLongSound(SoundType.HORSE_JOG);
+            SoundManager.Instance.PlayLongSound(SoundType.HORSE_JOG, 0.85f, playerIndex);
             speedLevel = 1;
         }
         else if (speedLevel != 2 && speed >= 3.5f)
         {
-            SoundManager.Instance.PlayLongSound(SoundType.HORSE_GALLOP);
+            SoundManager.Instance.PlayLongSound(SoundType.HORSE_GALLOP, 0.85f, playerIndex);
             speedLevel = 2;
         }
-        else if (speedLevel != 0 && speed <= 0f)
+        else if (speedLevel != 0 && speed <= 0.1f)
         {
-            SoundManager.Instance.InterruptPlayingSound();
+            SoundManager.Instance.InterruptPlayingSound(playerIndex);
             speedLevel = 0;
         }
     }

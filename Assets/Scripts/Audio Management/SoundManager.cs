@@ -21,7 +21,9 @@ public enum SoundType
     INTERACT_SOUND,
     MENU_BG_MUSIC,
     MATCH_BG_MUSIC,
-    TRIUMPH
+    TRIUMPH,
+    GASP,
+    HORSE_BRAKE
 }
 
 [Serializable]
@@ -41,6 +43,9 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance;
     private AudioSource audioSource;
+    private AudioSource player1AS;
+    private AudioSource player2AS;
+
     private void Awake()
     {
         if (Instance == null) // only one instance of this script permitted
@@ -56,6 +61,8 @@ public class SoundManager : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        player1AS = GameManager.Instance.player1.GetComponent<AudioSource>();
+        player2AS = GameManager.Instance.player2.GetComponent<AudioSource>();
     }
 
     #region Public functions
@@ -76,22 +83,34 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     /// <param name="sound">The specific sound to be played.</param>
     /// <param name="volume">The volume of the played sound. 1 (max) by default.</param>
+    /// <param name="sourceIndex">The audio source which should play the sound.</param>
     /// <param name="specificIndex">Which exact clip from the group of clips associated with given sound should be chosen.</param>
-    public void PlayLongSound(SoundType sound, float volume = 1, int specificIndex = -1)
+    public void PlayLongSound(SoundType sound, float volume = 1, int sourceIndex = 0, int specificIndex = -1)
     {
         AudioClip chosenClip = SelectClip(sound, specificIndex);
-        Instance.audioSource.clip = chosenClip;
-        Instance.audioSource.volume = volume;
-        Instance.audioSource.Play();
+        AudioSource source = Instance.audioSource;
+        if (sourceIndex == 1) { source = Instance.player1AS; }
+        if (sourceIndex == 2) { source = Instance.player2AS; }
+
+        source.clip = chosenClip;
+        source.volume = volume * globalVolume;
+        source.Play();
     }
 
     /// <summary>
     /// This method instructs the sound manager to stop playing the currently played sound.
     /// </summary>
-    public void InterruptPlayingSound()
+    /// <param name="sourceIndex">The audio source which should be interrupted.</param>
+    public void InterruptPlayingSound(int sourceIndex = 0)
     {
-        Instance.audioSource.Stop();
-        Instance.audioSource.clip = null;
+        AudioSource source = Instance.audioSource;
+        if (sourceIndex == 1) { source = Instance.player1AS; }
+        if (sourceIndex == 2) { source = Instance.player2AS; }
+
+        if (!source.isPlaying) { return; }
+
+        source.Stop();
+        source.clip = null;
     }
     #endregion
 

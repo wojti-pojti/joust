@@ -353,6 +353,8 @@ public class GameManager : MonoBehaviour
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
 
+        SoundManager.Instance.PlaySound(SoundType.GASP, 0.7f);
+
         if(randomUpgradesBetweenTurns)
         {
             int upgradeIndex = UnityEngine.Random.Range(0, 6);

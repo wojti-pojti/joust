@@ -101,6 +101,8 @@ public class CustomizationManager : MonoBehaviour
     {
         colors[currentlyConsideredColorField] = color;
         UpdateCustomizationPanel();
+
+        if (colorPickerUI.activeSelf) { picker.UpdateDisplay(); }
     }
 
     /// <summary>

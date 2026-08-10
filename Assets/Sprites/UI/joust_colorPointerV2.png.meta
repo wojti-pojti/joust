@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 70a67ccdcdbd1404e9eba8699b02e3f5
+guid: c46493040c4ef094c83ba9b79a5d507f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8851640657584553215
-    second: lanceFragmented_1_0
+      213: 1251600029692435889
+    second: joust_colorPointerV2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,17 +96,30 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: lanceFragmented_1_0
+      name: joust_colorPointerV2_0
       rect:
         serializedVersion: 2
-        x: 42
-        y: 36
-        width: 88
-        height: 332
+        x: 5
+        y: 4
+        width: 248
+        height: 247
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ffc7bb2b74857da70800000000000000
-      internalID: 8851640657584553215
+      spriteID: 1bd9fa288939e5110800000000000000
+      internalID: 1251600029692435889
       vertices: []
       indices: 
       edges: []
@@ -125,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      lanceFragmented_1_0: 8851640657584553215
+      joust_colorPointerV2_0: 1251600029692435889
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
