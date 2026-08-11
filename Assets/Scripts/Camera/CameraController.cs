@@ -3,32 +3,30 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    //public bool dynamic;
-    [SerializeField] float distanceBetweenPlayers;
-    [SerializeField] float midpointX;
-    [SerializeField] float currentFOV;
+    [SerializeField] private float distanceBetweenPlayers;
+    [SerializeField] private float midpointX;
+    [SerializeField] private float currentFOV;
     [Header("")]
     public GameObject player1;
     public GameObject player2;
 
-    Camera cam;
+    private Camera cam;
     [Header("Starting values")]
-    [SerializeField] float startFOV;
-    [SerializeField] float startDistanceBetweenPlayers;
-    [SerializeField] Vector3 startPosition;
-    [SerializeField] Quaternion startRotation;
+    [SerializeField] private float startFOV;
+    [SerializeField] private float startDistanceBetweenPlayers;
+    [SerializeField] private Vector3 startPosition;
+    [SerializeField] private Quaternion startRotation;
 
     [Header("After match results")]
-    [SerializeField] bool facingBack;
+    [SerializeField] private bool facingBack;
     public bool cameraTurningAround;
 
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public float perspectiveFOV = 40f;
     public float perspectiveDistanceBoost = 2f;
 
-    //[SerializeField] float targetYRotation;
-    [SerializeField] float rotationSpeed;
-    [SerializeField] GameObject reactionPanel;
+    [SerializeField] private float rotationSpeed;
+    [SerializeField] private GameObject reactionPanel;
 
     #region Singleton
     public static CameraController Instance;
@@ -108,6 +106,7 @@ public class CameraController : MonoBehaviour
         facingBack = false;
         cam.orthographic = true;
         ResetCamera();
+        SoundManager.Instance.InterruptPlayingSound();
         GameManager.Instance.InterruptEndMatchScreen();
     }
 
@@ -127,6 +126,8 @@ public class CameraController : MonoBehaviour
         float delta = Mathf.DeltaAngle(startY, targetRotation);
         float elapsedTime = 0f;
 
+        SoundManager.Instance.PlayLongSound(SoundType.CAMERA_180TURN, 0.85f); // make it a 6.5s clip
+
         while (elapsedTime < duration) 
         {
             elapsedTime += Time.deltaTime;
@@ -140,10 +141,12 @@ public class CameraController : MonoBehaviour
 
         if(facingBack)
         {
+            SoundManager.Instance.PlayLongSound(SoundType.TRIUMPH);
             cam.orthographic = true;
             cam.orthographicSize = 15f;
             yield return new WaitForSeconds(stayDuration);
             facingBack = false;
+            SoundManager.Instance.InterruptPlayingSound();
             StartCoroutine(RotateCameraAround(duration, 0f, 0f));
         }
         else
@@ -151,6 +154,7 @@ public class CameraController : MonoBehaviour
             cam.orthographic = true;
             cam.orthographicSize = startFOV;
             cameraTurningAround = false;
+            SoundManager.Instance.InterruptPlayingSound();
         }
     }
     #endregion

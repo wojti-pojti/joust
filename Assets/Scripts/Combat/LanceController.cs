@@ -3,22 +3,19 @@ using UnityEngine;
 
 public class LanceController : MonoBehaviour
 {
-    [SerializeField] bool holdButton;
-    [SerializeField] bool releasedButton;
-    //[SerializeField] float charge;
-    [SerializeField] float chargeAccumulationMultiplier;
-    [SerializeField] float directionMultiplier;
+    [SerializeField] private bool holdButton;
+    [SerializeField] private bool releasedButton;
+    [SerializeField] private float chargeAccumulationMultiplier;
+    [SerializeField] private float directionMultiplier;
 
     [Header("")]
-    [SerializeField] KeyCode lowerLanceKeyCode;
-    Rigidbody2D rb;
-    HingeJoint2D joint;
-    Vector3 verticalPosition, startVerticalPosition;
+    [SerializeField] private KeyCode lowerLanceKeyCode;
+    private HingeJoint2D joint;
+    private Vector3 verticalPosition, startVerticalPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
         joint = GetComponent<HingeJoint2D>();
         verticalPosition = this.transform.localPosition;
         startVerticalPosition = verticalPosition;

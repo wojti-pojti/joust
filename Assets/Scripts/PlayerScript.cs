@@ -23,45 +23,45 @@ public class PlayerScript : MonoBehaviour
     public float shieldHealthPoints;
 
     [Header("Setup")]
-    [SerializeField] KeyCode shieldKeyCode;
-    [SerializeField] float maxShieldHealthPoints;
+    [SerializeField] private KeyCode shieldKeyCode;
+    [SerializeField] private float maxShieldHealthPoints;
     [Header("Knight")]
-    [SerializeField] GameObject knight;
-    [SerializeField] SpriteRenderer knightSpriteRenderer;
+    [SerializeField] private GameObject knight;
+    [SerializeField] private SpriteRenderer knightSpriteRenderer;
 
     [Header("Shield")]
-    [SerializeField] GameObject shieldParent;
-    [SerializeField] GameObject shield;
-    [SerializeField] Slider shieldHealthBar;
+    [SerializeField] private GameObject shieldParent;
+    [SerializeField] private GameObject shield;
+    [SerializeField] private Slider shieldHealthBar;
 
     [Header("Lance")]
-    [SerializeField] GameObject lance;
-    [SerializeField] LanceScript lScript;
-    [SerializeField] LanceController lanceController;
-    [SerializeField] BoxCollider2D lanceCd;
+    [SerializeField] private GameObject lance;
+    [SerializeField] private LanceScript lScript;
+    [SerializeField] private LanceController lanceController;
+    [SerializeField] private BoxCollider2D lanceCd;
 
     [Header("Horse")]
-    [SerializeField] GameObject horse;
-    [SerializeField] HorseMovement hScript;
+    [SerializeField] private GameObject horse;
+    [SerializeField] private HorseMovement hScript;
 
     [Header("Other")]
-    [SerializeField] GameObject PlayerUI;
-    [SerializeField] Material playerMaterial;
-    [SerializeField] Animator animator;
+    [SerializeField] private GameObject PlayerUI;
+    [SerializeField] private Material playerMaterial;
+    [SerializeField] private Animator animator;
 
-    int deathTrigger = Animator.StringToHash("Die");
-    int resetTrigger = Animator.StringToHash("Reset");
+    private int deathTrigger = Animator.StringToHash("Die");
+    private int resetTrigger = Animator.StringToHash("Reset");
 
     // start positions and rotations
-    Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
-    Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
+    private Vector3 knightPos, lancePos, shieldPos, UIPos, horsePos;
+    private Quaternion knightRot, lanceRot, shieldRot, UIRot, horseRot;
 
-    [SerializeField] BoxCollider2D collider;
-    BoxCollider2D opponentLanceCollider;
-    bool madeContact;
-    SpriteRenderer[] renderers;
+    [SerializeField] private BoxCollider2D collider;
+    private BoxCollider2D opponentLanceCollider;
+    private bool madeContact;
+    private SpriteRenderer[] renderers;
 
-    float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
+    private float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -344,6 +344,7 @@ public class PlayerScript : MonoBehaviour
     {
         BoxCollider2D cd = knight.GetComponent<BoxCollider2D>();
         Rigidbody2D rb = knight.GetComponent<Rigidbody2D>();
+        SoundManager.Instance.PlaySound(SoundType.LANCE_HIT);
 
         rb.simulated = true;
         cd.enabled = true;
@@ -423,13 +424,14 @@ public class PlayerScript : MonoBehaviour
         if (raise)
         {
             shieldTargetY = shield.transform.localPosition.y + 0.25f;
-
+            SoundManager.Instance.PlaySound(SoundType.SHIELD_RAISE, 0.8f);
             // apply shader
             StartCoroutine(HighlightPlayer(0.25f));
         }
         else
         {
             shieldTargetY = 0f;
+            SoundManager.Instance.PlaySound(SoundType.SHIELD_LOWER, 0.8f);
         }
         newShieldPositionY = Mathf.Lerp(shield.transform.localPosition.y, shieldTargetY, 0.5f);
     }
@@ -446,7 +448,12 @@ public class PlayerScript : MonoBehaviour
 
         if (shieldHealthPoints <= 0)
         {
+            SoundManager.Instance.PlaySound(SoundType.SHIELD_BREAK);
             StartCoroutine(ThrowShieldAway());
+        }
+        else
+        {
+            SoundManager.Instance.PlaySound(SoundType.SHIELD_HIT);
         }
     }
 

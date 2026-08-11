@@ -4,17 +4,17 @@ using UnityEngine.UI;
 
 public class ResultCalculator : MonoBehaviour
 {
-    [SerializeField] int matchScore;
+    [SerializeField] private int matchScore;
 
     [Header("UI")]
-    [SerializeField] SpriteRenderer reactionPanel;
-    [SerializeField] Image[] stars = new Image[4];
-    [SerializeField] TMP_Text scoreText;
+    [SerializeField] private SpriteRenderer reactionPanel;
+    [SerializeField] private Image[] stars = new Image[4];
+    [SerializeField] private TMP_Text scoreText;
 
     [Header("Sprites")]
-    [SerializeField] Sprite[] reactionImage = new Sprite[5];
-    [SerializeField] Sprite emptyStar;
-    [SerializeField] Sprite fullStar;
+    [SerializeField] private Sprite[] reactionImage = new Sprite[5];
+    [SerializeField] private Sprite emptyStar;
+    [SerializeField] private Sprite fullStar;
 
     /// <summary>
     /// Sets the correct look for the reaction panel based on the given index.
