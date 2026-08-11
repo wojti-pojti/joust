@@ -9,17 +9,17 @@ using UnityEngine.Rendering;
 /// </summary>
 public class ColorSetup : MonoBehaviour
 {
-    [SerializeField] Material originalMaterial;
-    [SerializeField] bool reassignColors = true;
+    [SerializeField] private Material originalMaterial;
+    [SerializeField] private bool reassignColors = true;
     [Header("")]
-    [SerializeField] bool randomizeColor1;
-    [SerializeField] Color color1;
-    [SerializeField] bool randomizeColor2;
-    [SerializeField] Color color2;
+    [SerializeField] private bool randomizeColor1;
+    [SerializeField] private Color color1;
+    [SerializeField] private bool randomizeColor2;
+    [SerializeField] private Color color2;
     [Header("")]
-    [SerializeField] bool animated;
-    float timer, delay;
-    Animator animator;
+    [SerializeField] private bool animated;
+    private float timer, delay;
+    private Animator animator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,10 +49,6 @@ public class ColorSetup : MonoBehaviour
             animator = GetComponent<Animator>();
             delay = Random.Range(0f, 1.49f);
             timer = 0f;
-        }
-        else 
-        {
-            this.enabled = false;
         }
     }
 
@@ -95,14 +91,17 @@ public class ColorSetup : MonoBehaviour
     /// <returns></returns>
     bool AreColorsTooSimilar(Color color1, Color color2, float threshhold)
     {
-        float sum1 = color1.r + color1.g + color1.b;
-        float sum2 = color2.r + color2.g + color2.b;
+        float hue1, sat1, bri1, hue2, sat2, bri2;
+        Color.RGBToHSV(color1, out hue1, out sat1, out bri1);
+        Color.RGBToHSV(color2, out hue2, out sat2, out bri2);
+
+        float sum1 = hue1 + 0.3f * sat1 + 0.3f * bri1;
+        float sum2 = hue2 + 0.3f * sat2 + 0.3f * bri2;
 
         float ratio = (Mathf.Min(sum1, sum2)) / (Mathf.Max(sum1, sum2)); // value from 0 to 1, where 1 is identical
 
         if(ratio > threshhold)
         {
-            //Debug.Log("Repeating color randomization.\t" + this.gameObject.name + " " + ratio);
             return true;
         }
 
@@ -115,7 +114,7 @@ public class ColorSetup : MonoBehaviour
     /// <returns></returns>
     IEnumerator AssignColors()
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(1f);
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         renderer.sharedMaterial = originalMaterial;
 
@@ -124,5 +123,10 @@ public class ColorSetup : MonoBehaviour
         mpb.SetColor("_Color1", color1);
         mpb.SetColor("_Color2", color2);
         renderer.SetPropertyBlock(mpb);
+
+        if (!animated)
+        {
+            this.enabled = false;
+        }
     }
 }

@@ -15,24 +15,24 @@ public enum GameState
 public class GameManager : MonoBehaviour
 {
     [Header("Game state")]
-    bool firstPlaythrough = true;
+    private bool firstPlaythrough = true;
     public GameState gameState;
     [HideInInspector] public static event Action<int> OnEndMatchEvent;
     [HideInInspector] public static event Action<bool> OnEnableGameUIEvent;
 
-    [SerializeField] int turnsPlayed;
+    [SerializeField] private int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
 
     [Header("Players")]
     public GameObject player1;
-    PlayerScript pScript1;
-    HorseMovement horse1;
-    bool hasPlayer1ArrivedToEndZone;
+    private PlayerScript pScript1;
+    private HorseMovement horse1;
+    private bool hasPlayer1ArrivedToEndZone;
 
     public GameObject player2;
-    PlayerScript pScript2;
-    HorseMovement horse2;
-    bool hasPlayer2ArrivedToEndZone;
+    private PlayerScript pScript2;
+    private HorseMovement horse2;
+    private bool hasPlayer2ArrivedToEndZone;
 
     [Header("Settings")]
     public bool randomUpgradesBetweenTurns;
@@ -40,27 +40,29 @@ public class GameManager : MonoBehaviour
     public float baseDeathChance;
     [Header("")]
     public float gameConditionsCheckInterval;
-    [SerializeField] ResultCalculator calc; // short for calculator btw
+    [SerializeField] private ResultCalculator calc; // short for calculator btw
 
     [Header("Arena")]
-    [SerializeField] Transform LeftStartPos;
-    [SerializeField] Transform RightStartPos;
+    [SerializeField] private Transform LeftStartPos;
+    [SerializeField] private Transform RightStartPos;
 
     [Header("UI")]
-    [SerializeField] GameObject menuUI;
-    [SerializeField] Image soundIndicatorImage;
-    [SerializeField] GameObject aftermatchUI;
-    [SerializeField] GameObject gameUI;
-    [SerializeField] TMP_Text turnCounter;
-    [SerializeField] GameObject messagePanel;
-    [SerializeField] TMP_Text message;
-    [SerializeField] GameObject controlsPanel;
+    [SerializeField] private GameObject menuUI;
+    [SerializeField] private Image soundIndicatorImage;
+    [SerializeField] private GameObject aftermatchUI;
+    [SerializeField] private GameObject gameUI;
+    [SerializeField] private TMP_Text turnCounter;
+    [SerializeField] private GameObject messagePanel;
+    [SerializeField] private TMP_Text message;
+    [SerializeField] private TransitionController controlsPanel; // for this and customization, use TransitionController instead !!
+    [SerializeField] private TransitionController titleCard;
+    [SerializeField] private TransitionController blackOutScreen;
 
     [Header("")]
-    [SerializeField] Sprite soundIcon;
-    [SerializeField] Sprite noSoundIcon;
+    [SerializeField] private Sprite soundIcon;
+    [SerializeField] private Sprite noSoundIcon;
 
-    #region Singleton
+    #region Singleton + black screen
     public static GameManager Instance;
     private void Awake()
     {
@@ -72,6 +74,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(Instance);
         }
+
+        blackOutScreen.Appear(true, true);
     }
     #endregion
 
@@ -84,11 +88,15 @@ public class GameManager : MonoBehaviour
         PrepareMatch();
         InvokeRepeating("CheckForEndTurnConditions", 0f, gameConditionsCheckInterval);
 
+        SoundManager.Instance.Setup(player1, player2);
+        SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
+
         menuUI.SetActive(true);
         aftermatchUI.SetActive(false);
-        controlsPanel.SetActive(false);
+        controlsPanel.Appear(false, true);
         gameUI.SetActive(false);
         messagePanel.SetActive(false);
+        blackOutScreen.Appear(false);
     }
 
     // Update is called once per frame
@@ -101,15 +109,18 @@ public class GameManager : MonoBehaviour
                 gameState = GameState.MENU;
                 PrepareMatch();
                 CameraController.Instance.ResetCamera();
+                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+                SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
 
                 // display menu screen
                 menuUI.SetActive(true);
-                controlsPanel.SetActive(false);
+                titleCard.Appear(true);
                 gameUI.SetActive(false);
                 messagePanel.SetActive(false);
             }
             else if(gameState == GameState.MENU) 
             {
+                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
                 StartCoroutine(StartMatch());
             }
             else if(CameraController.Instance.cameraTurningAround == true) // skip animation
@@ -122,21 +133,23 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.H)) // or whatever
             {
+                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
                 // show or hide controls panel
-                controlsPanel.SetActive(!controlsPanel.activeSelf);
+                controlsPanel.Appear(!controlsPanel.visible);
                 menuUI.SetActive(!menuUI.activeSelf);
             }
 
             if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
             {
-                if(SoundManager.Instance.globalVolume > 0)
+                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+                if (SoundManager.Instance.GetVolume() > 0)
                 {
-                    SoundManager.Instance.globalVolume = 0;
+                    SoundManager.Instance.SetVolume(0f);
                     soundIndicatorImage.sprite = noSoundIcon;
                 }
                 else
                 {
-                    SoundManager.Instance.globalVolume = 1;
+                    SoundManager.Instance.SetVolume(1f);
                     soundIndicatorImage.sprite = soundIcon;
                 }
             }
@@ -223,7 +236,13 @@ public class GameManager : MonoBehaviour
         hasPlayer2ArrivedToEndZone = false;
         gameState = GameState.MATCH;
 
+        SoundManager.Instance.InterruptPlayingSound();
+        SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
+        titleCard.Appear(false);
+
         yield return new WaitForSeconds(1.5f);
+
+        SoundManager.Instance.PlayLongSound(SoundType.MATCH_BG_MUSIC, 0.7f);
 
         gameUI.SetActive(true);
         OnEnableGameUIEvent?.Invoke(true);
@@ -249,12 +268,16 @@ public class GameManager : MonoBehaviour
         Debug.Log("The match has been forfeited. Returning to menu.");
         StartCoroutine(ShowMessage("Match forfeited"));
 
+        SoundManager.Instance.InterruptPlayingSound();
         gameState = GameState.MATCH;
         OnEnableGameUIEvent?.Invoke(false);
+        blackOutScreen.Appear(true);
         yield return new WaitForSeconds(1.75f);
+        blackOutScreen.Appear(false);
         PrepareMatch();
         gameUI.SetActive(false);
         menuUI.SetActive(true);
+        titleCard.Appear(true);
         gameState = GameState.MENU;
     }
 
@@ -271,6 +294,8 @@ public class GameManager : MonoBehaviour
         int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
         Debug.Log("Chosen reaction: " + reactionIndex);
         OnEndMatchEvent?.Invoke(reactionIndex);
+        SoundManager.Instance.InterruptPlayingSound();
+        SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
         yield return new WaitForSeconds(1.5f);
 
         if (winnerIndex == 0)
@@ -336,6 +361,8 @@ public class GameManager : MonoBehaviour
 
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
+
+        SoundManager.Instance.PlaySound(SoundType.GASP, 0.7f);
 
         if(randomUpgradesBetweenTurns)
         {

@@ -5,49 +5,43 @@ using UnityEngine;
 public class HorseMovement : MonoBehaviour
 {
     [Header("Player-specific")]
-    [SerializeField] int playerIndex;
-    [SerializeField] KeyCode accelerateKeyCode;
-    [SerializeField] KeyCode jumpKeyCode;
+    [SerializeField] private int playerIndex;
+    [SerializeField] private KeyCode accelerateKeyCode;
+    [SerializeField] private KeyCode jumpKeyCode;
 
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
     public float totalAppliedForce;
     public float speed;
-    [SerializeField] bool hasJumped;
-    [SerializeField] bool isBraking;
-    [SerializeField] bool isFleeing;
+    private int speedLevel;
+    [SerializeField] private bool hasJumped;
+    [SerializeField] private bool isBraking;
+    [SerializeField] private bool isFleeing;
 
     [Header("Attributes")]
-    [SerializeField] float forceAddedPerInput;
-    [SerializeField] float jogForce;
-    [SerializeField] float jumpForce;
-    [SerializeField] float maxSpeed;
-    [SerializeField] float idleTimeToStartAnimation;
+    [SerializeField] private float forceAddedPerInput;
+    [SerializeField] private float jogForce;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float idleTimeToStartAnimation;
 
     [Header("")]
-    [SerializeField] Rigidbody2D rb; // Rigidbody2D of the player
-    [SerializeField] PlayerScript player;
-    [SerializeField] Animator animator;
+    [SerializeField] private Rigidbody2D rb; // Rigidbody2D of the player
+    [SerializeField] private PlayerScript player;
+    [SerializeField] private Animator animator;
 
-    int speedFloat = Animator.StringToHash("Speed");
-    int idleStompTrigger = Animator.StringToHash("IdleStomp");
-    int landTrigger = Animator.StringToHash("Land");
-    int jumpTrigger = Animator.StringToHash("Jump");
-    int turnAroundTrigger = Animator.StringToHash("TurnAround");
-    int isBrakingBool = Animator.StringToHash("IsBraking");
+    private int speedFloat = Animator.StringToHash("Speed");
+    private int idleStompTrigger = Animator.StringToHash("IdleStomp");
+    private int landTrigger = Animator.StringToHash("Land");
+    private int jumpTrigger = Animator.StringToHash("Jump");
+    private int turnAroundTrigger = Animator.StringToHash("TurnAround");
+    private int isBrakingBool = Animator.StringToHash("IsBraking");
 
-    Rigidbody2D horseRb;
-    Vector2 movementDirection;
-    SpriteRenderer spriteRenderer;
-    bool tapConstraint; 
+    private Rigidbody2D horseRb;
+    private Vector2 movementDirection;
+    private bool tapConstraint; 
     [HideInInspector] public bool hasPassedTheOpponent;
-    float idleAnimationTimer;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+    private float idleAnimationTimer;
 
     // Update is called once per frame
     void Update()
@@ -75,7 +69,7 @@ public class HorseMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
+        if ((tapConstraint || hasPassedTheOpponent) && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
         {
             // while the user holds down accelerate button, small but constant force is applied continuously
             Vector2 movement = movementDirection * jogForce;
@@ -98,14 +92,17 @@ public class HorseMovement : MonoBehaviour
             {
                 isBraking = false;
                 animator.SetBool(isBrakingBool, false);
+                speedLevel = 0;
 
                 // indicate the run has ended
                 GameManager.Instance.InformOfReachingEndZone(playerIndex);
             }
         }
 
-        if (player.state == PlayerState.JUMP && player.transform.position.y < -0.5f && rb.linearVelocity.y < 0)
+        if (player.state == PlayerState.JUMP && player.transform.position.y < -2.5f && rb.linearVelocity.y < 0)
         {
+            player.state = PlayerState.COMBAT;
+            SoundManager.Instance.PlaySound(SoundType.HORSE_LAND);
             // land animation
             animator.SetTrigger(landTrigger);
         }
@@ -113,6 +110,7 @@ public class HorseMovement : MonoBehaviour
         if (idleAnimationTimer >= idleTimeToStartAnimation) 
         {
             animator.SetTrigger(idleStompTrigger);
+            if (Random.Range(1f, 5f) < 2f && GameManager.Instance.gameState == GameState.ACTIVE_COMBAT) { SoundManager.Instance.PlaySound(SoundType.HORSE_SNORT, 0.5f); }
             idleAnimationTimer = 0;
         }
 
@@ -120,9 +118,6 @@ public class HorseMovement : MonoBehaviour
         speed = rb.linearVelocity.magnitude;
         animator.SetFloat(speedFloat, speed);
         player.UpdateLanceDamage(speed);
-
-        //if(!isFleeing) totalAppliedForce = rb.totalForce.magnitude;
-        //else { totalAppliedForce = horseRb.totalForce.magnitude; }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -154,6 +149,7 @@ public class HorseMovement : MonoBehaviour
 
         rb.gravityScale = 1f;
         rb.bodyType = RigidbodyType2D.Dynamic;
+        InvokeRepeating("UpdateMovementBasedSFX", 0.5f, 0.1f);
         playerIndex = (side ? 2 : 1);
         if (side) { idleAnimationTimer = 0.5f * idleTimeToStartAnimation; }
 
@@ -188,13 +184,15 @@ public class HorseMovement : MonoBehaviour
     void Jump()
     {
         // relate it to speed somehow
-        rb.AddForce(Vector2.up * (jumpForce + speed * 0.1f), ForceMode2D.Impulse);
+        rb.AddForce(Vector2.up * (jumpForce + speed * 0.05f), ForceMode2D.Impulse);
         hasJumped = true;
 
         player.state = PlayerState.JUMP;
 
         // animation
         animator.SetTrigger(jumpTrigger);
+
+        SoundManager.Instance.PlaySound(SoundType.HORSE_JUMP);
     }
 
     /// <summary>
@@ -206,8 +204,38 @@ public class HorseMovement : MonoBehaviour
         isBraking = true;
         tapConstraint = false;
 
+        if (!isFleeing) { SoundManager.Instance.PlaySound(SoundType.HORSE_BRAKE, 0.4f); }
+
         // animation
         animator.SetBool(isBrakingBool, true);
+    }
+
+    /// <summary>
+    /// This function plays correct sounds based on the horse's speed.
+    /// </summary>
+    void UpdateMovementBasedSFX()
+    {
+        if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT)
+        {
+            SoundManager.Instance.InterruptPlayingSound(playerIndex);
+            return;
+        }
+
+        if (speedLevel != 1 && speed > 0.1f && speed < 3.5f)
+        {
+            SoundManager.Instance.PlayLongSound(SoundType.HORSE_JOG, 0.85f, playerIndex);
+            speedLevel = 1;
+        }
+        else if (speedLevel != 2 && speed >= 3.5f)
+        {
+            SoundManager.Instance.PlayLongSound(SoundType.HORSE_GALLOP, 0.85f, playerIndex);
+            speedLevel = 2;
+        }
+        else if (speedLevel != 0 && speed <= 0.1f)
+        {
+            SoundManager.Instance.InterruptPlayingSound(playerIndex);
+            speedLevel = 0;
+        }
     }
 
     /// <summary>

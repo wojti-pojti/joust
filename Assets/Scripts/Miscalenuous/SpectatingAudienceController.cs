@@ -7,17 +7,17 @@ using UnityEngine;
 /// </summary>
 public class SpectatingAudienceController : MonoBehaviour
 {
-    [SerializeField] bool capableOfApplause;
+    [SerializeField] private bool capableOfApplause;
     [Header("")]
-    [SerializeField] Vector2 visiblePosition;
-    [SerializeField] Vector2 hiddenPosition;
-    public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-    [SerializeField] float fadeInDuration;
-    [SerializeField] float fadeOutDuration;
+    [SerializeField] private Vector2 visiblePosition;
+    [SerializeField] private Vector2 hiddenPosition;
+    [SerializeField] private AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private float fadeInDuration;
+    [SerializeField] private float fadeOutDuration;
 
-    RectTransform rt = null;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private RectTransform rt = null;
+
+    private void Awake()
     {
         if (TryGetComponent<RectTransform>(out rt))
         {

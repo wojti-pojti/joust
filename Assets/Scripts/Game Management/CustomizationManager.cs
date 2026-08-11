@@ -3,24 +3,24 @@ using UnityEngine.UI;
 
 public class CustomizationManager : MonoBehaviour
 {
-    [SerializeField] GameObject customizationPanel;
-    [SerializeField] int currentlyConsideredColorField;
-    [SerializeField] Color selectedFieldColor;
+    [SerializeField] private TransitionController customizationPanel;
+    [SerializeField] private int currentlyConsideredColorField;
+    [SerializeField] private Color selectedFieldColor;
     [Header("")]
-    [SerializeField] Color[] colors = new Color[6];
-    [SerializeField] Button[] colorFields = new Button[6];
-    Image[] colorFieldDisplays = new Image[6];
-    [SerializeField] Image[] colorDisplays = new Image[6];
+    [SerializeField] private Color[] colors = new Color[6];
+    [SerializeField] private Button[] colorFields = new Button[6];
+    private Image[] colorFieldDisplays = new Image[6];
+    [SerializeField] private Image[] colorDisplays = new Image[6];
 
-    [SerializeField] GameObject colorPickerUI;
+    [SerializeField] private GameObject colorPickerUI;
     [Header("Affected materials")]
     public Material player1ColorSwapMaterial;
     public Material player2ColorSwapMaterial;
     public Material player1StaticMaterial;
     public Material player2StaticMaterial;
 
-    Color baseButtonColor;
-    ColorPicker picker;
+    private Color baseButtonColor;
+    private ColorPicker picker;
 
     #region Singleton
     public static CustomizationManager Instance;
@@ -48,7 +48,7 @@ public class CustomizationManager : MonoBehaviour
         }
         baseButtonColor = colorFieldDisplays[0].color;
         colorPickerUI.SetActive(false);
-        customizationPanel.SetActive(false);
+        customizationPanel.Appear(false, true);
     }
 
     // Update is called once per frame
@@ -57,20 +57,22 @@ public class CustomizationManager : MonoBehaviour
         if (GameManager.Instance.gameState == GameState.MENU)
         {
             if (Input.GetKeyDown(KeyCode.K)) 
-            { 
-                if (!customizationPanel.activeSelf) 
+            {
+                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+                if (!customizationPanel.visible) 
                 { 
                     Cursor.lockState = CursorLockMode.Confined;
                     UpdateColorsArray();
                     UpdateCustomizationPanel();
                 }
                 else 
-                { 
+                {
+                    colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
                     ApplyCustomizationSettings();
                     Cursor.lockState = CursorLockMode.Locked; 
                     colorPickerUI.SetActive(false);
                 }
-                customizationPanel.SetActive(!customizationPanel.activeSelf);
+                customizationPanel.Appear(!customizationPanel.visible);
             }
         }
     }
@@ -81,11 +83,8 @@ public class CustomizationManager : MonoBehaviour
     /// <param name="index">The index of the color field to modify.</param>
     public void ChooseNewColor(int index)
     {
+        colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
         currentlyConsideredColorField = index;
-        foreach (var display in colorFieldDisplays) 
-        {
-            display.color = baseButtonColor;
-        } 
         colorFieldDisplays[index].color = selectedFieldColor;
         colorPickerUI.SetActive(true);
         if (picker == null) picker = colorPickerUI.GetComponent<ColorPicker>();
@@ -102,6 +101,8 @@ public class CustomizationManager : MonoBehaviour
     {
         colors[currentlyConsideredColorField] = color;
         UpdateCustomizationPanel();
+
+        if (colorPickerUI.activeSelf) { picker.UpdateDisplay(); }
     }
 
     /// <summary>
