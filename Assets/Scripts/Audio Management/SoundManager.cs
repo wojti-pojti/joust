@@ -37,7 +37,7 @@ public struct SoundList
 [RequireComponent(typeof(AudioSource)), ExecuteInEditMode]
 public class SoundManager : MonoBehaviour
 {
-    public float globalVolume;
+    [SerializeField] private float globalVolume;
     [Header("")]
     [SerializeField] private SoundList[] soundList;
 
@@ -61,11 +61,42 @@ public class SoundManager : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        player1AS = GameManager.Instance.player1.GetComponent<AudioSource>();
-        player2AS = GameManager.Instance.player2.GetComponent<AudioSource>();
+    }
+
+    /// <summary>
+    /// Only used as a workaround since this file has the ExecuteInEditMode property.
+    /// </summary>
+    /// <param name="player1"></param>
+    /// <param name="player2"></param>
+    public void Setup(GameObject player1, GameObject player2)
+    {
+        player1AS = player1.GetComponent<AudioSource>();
+        player2AS = player2.GetComponent<AudioSource>();
     }
 
     #region Public functions
+
+    /// <summary>
+    /// Sets new volume of all audio sources.
+    /// </summary>
+    /// <param name="newValue">The new value [0; 1]</param>
+    public void SetVolume(float newValue)
+    {
+        globalVolume = newValue;
+        audioSource.volume = globalVolume;
+        player1AS.volume = globalVolume;
+        player2AS.volume = globalVolume;
+    }
+
+    /// <summary>
+    /// Getter function for the global volume.
+    /// </summary>
+    /// <returns>The overall volume of all soundtracks and effects.</returns>
+    public float GetVolume()
+    {
+        return globalVolume;
+    }
+
     /// <summary>
     /// Plays a one-shot of a random sound from the pool of sounds associated with that name.
     /// </summary>

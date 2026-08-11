@@ -2929,9 +2929,11 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 7b4fed7a6d2dc4b4da344a283c43579d, type: 3}
     - {fileID: 8300000, guid: 8128a5c3aaa038e488033c15b2324e88, type: 3}
   - name: MENU_BG_MUSIC
-    sounds: []
+    sounds:
+    - {fileID: 8300000, guid: 5604957edef03ce4c8a76f830022435e, type: 3}
   - name: MATCH_BG_MUSIC
-    sounds: []
+    sounds:
+    - {fileID: 8300000, guid: 72a59c24863d1b84485cc7c3f6b301ea, type: 3}
   - name: TRIUMPH
     sounds:
     - {fileID: 8300000, guid: 1a9fa80bb85c7354494f027f1b3782cc, type: 3}
@@ -2956,7 +2958,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

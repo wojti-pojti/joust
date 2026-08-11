@@ -145,8 +145,8 @@ public class CameraController : MonoBehaviour
             cam.orthographic = true;
             cam.orthographicSize = 15f;
             yield return new WaitForSeconds(stayDuration);
-            SoundManager.Instance.InterruptPlayingSound();
             facingBack = false;
+            SoundManager.Instance.InterruptPlayingSound();
             StartCoroutine(RotateCameraAround(duration, 0f, 0f));
         }
         else
@@ -154,6 +154,7 @@ public class CameraController : MonoBehaviour
             cam.orthographic = true;
             cam.orthographicSize = startFOV;
             cameraTurningAround = false;
+            SoundManager.Instance.InterruptPlayingSound();
         }
     }
     #endregion

@@ -88,6 +88,9 @@ public class GameManager : MonoBehaviour
         PrepareMatch();
         InvokeRepeating("CheckForEndTurnConditions", 0f, gameConditionsCheckInterval);
 
+        SoundManager.Instance.Setup(player1, player2);
+        SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
+
         menuUI.SetActive(true);
         aftermatchUI.SetActive(false);
         controlsPanel.Appear(false, true);
@@ -107,6 +110,7 @@ public class GameManager : MonoBehaviour
                 PrepareMatch();
                 CameraController.Instance.ResetCamera();
                 SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+                SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
 
                 // display menu screen
                 menuUI.SetActive(true);
@@ -138,14 +142,14 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
             {
                 SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                if (SoundManager.Instance.globalVolume > 0)
+                if (SoundManager.Instance.GetVolume() > 0)
                 {
-                    SoundManager.Instance.globalVolume = 0;
+                    SoundManager.Instance.SetVolume(0f);
                     soundIndicatorImage.sprite = noSoundIcon;
                 }
                 else
                 {
-                    SoundManager.Instance.globalVolume = 1;
+                    SoundManager.Instance.SetVolume(1f);
                     soundIndicatorImage.sprite = soundIcon;
                 }
             }
@@ -232,10 +236,13 @@ public class GameManager : MonoBehaviour
         hasPlayer2ArrivedToEndZone = false;
         gameState = GameState.MATCH;
 
+        SoundManager.Instance.InterruptPlayingSound();
         SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
         titleCard.Appear(false);
 
         yield return new WaitForSeconds(1.5f);
+
+        SoundManager.Instance.PlayLongSound(SoundType.MATCH_BG_MUSIC, 0.7f);
 
         gameUI.SetActive(true);
         OnEnableGameUIEvent?.Invoke(true);
@@ -261,6 +268,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("The match has been forfeited. Returning to menu.");
         StartCoroutine(ShowMessage("Match forfeited"));
 
+        SoundManager.Instance.InterruptPlayingSound();
         gameState = GameState.MATCH;
         OnEnableGameUIEvent?.Invoke(false);
         blackOutScreen.Appear(true);
@@ -286,6 +294,7 @@ public class GameManager : MonoBehaviour
         int reactionIndex = calc.DetermineReaction(winnerIndex, turnsPlayed, totalTimesJumped, pScript1.shieldHealthPoints, pScript2.shieldHealthPoints);
         Debug.Log("Chosen reaction: " + reactionIndex);
         OnEndMatchEvent?.Invoke(reactionIndex);
+        SoundManager.Instance.InterruptPlayingSound();
         SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
         yield return new WaitForSeconds(1.5f);
 
