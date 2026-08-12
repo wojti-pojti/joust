@@ -204,7 +204,7 @@ public class HorseMovement : MonoBehaviour
         isBraking = true;
         tapConstraint = false;
 
-        if (!isFleeing) { SoundManager.Instance.PlaySound(SoundType.HORSE_BRAKE, 0.4f); }
+        if (!isFleeing) { SoundManager.Instance.PlaySound(SoundType.HORSE_BRAKE, 0.3f); }
 
         // animation
         animator.SetBool(isBrakingBool, true);

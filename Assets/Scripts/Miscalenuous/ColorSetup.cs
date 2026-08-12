@@ -1,7 +1,5 @@
 using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 /// <summary>
 /// This script can assign a random color scheme to the parent object. 

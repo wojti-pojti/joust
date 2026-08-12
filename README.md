@@ -1,53 +1,27 @@
-Joust!
-
-A fun two-player minigame for settling conflicts over jousting.
-
-The most recent version of the game design document:
-https://docs.google.com/document/d/1DvmwzWdiJKuDVgFbDXoF7biz\_dahPQ6e5vFmW3iYVho/edit?usp=sharing
-
-
-
 In Joust!,  both players take control of jousting knights and face off in a battle of wits and courage! 
-
-
 
 Each knight is capable of handling their lance, raising their shield, and prompting their horse to accelerate or jump. The secret to winning lies in predicting the opponent's move. The true battle happens before the players come in contact. It only takes one hit to be de-horsed and perish. 
 
-
-
 After the battle, the match is evaluated and rated fairly by an audience!
-
-
 
 The players can customise their character by choosing their own unique colour scheme!
 
-
-
 Controls:
-
 Player 1:
 
-
-
 D - accelerate
-
 E - jump
-
 S - shield
-
 W - lower lance
-
 Player 2:
 
-
-
 left arrow - accelerate
-
 up arrow - jump
-
 down arrow - shield
-
 right arrow - lower lance
+
+
+
 
 Assets:
 
@@ -68,5 +42,4 @@ Gasp.mp3 by laft2k -- https://freesound.org/s/437667/ -- License: Creative Commo
 Car_Stop_Breaks_Screech_Engine-Rev_by-monnie101.mp4.WAV by monnie101 -- https://freesound.org/s/58150/ -- License: Creative Commons 0
 Attack Blocked.wav by LilMati -- https://freesound.org/s/523760/ -- License: Creative Commons 0
 Continuous Rock Sliding Sound Effect by Creator Templates - https://www.youtube.com/watch?v=ORTPtojo7tA
-
-
+Crown Of The Kingdom of Poland Anthem Instrumental "Bogurodzica" from Anthem Instrumental Channel - https://www.youtube.com/watch?v=uvFRB4J3tmo​​

@@ -74,10 +74,11 @@ Material:
     - _Static: 1
     - _ZWrite: 0
     m_Colors:
+    - White: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 0.9921569, g: 0.9490196, b: 0.01176471, a: 1}
-    - _Color2: {r: 0.3019601, g: 0.7215686, b: 0.2745091, a: 1}
-    - _MetallicColor: {r: 0.8156863, g: 0.5333333, b: 0, a: 1}
+    - _Color1: {r: 0.09834635, g: 0.09834635, b: 0.09834635, a: 1}
+    - _Color2: {r: 0.9764704, g: 0.5620858, b: 0.06564499, a: 1}
+    - _MetallicColor: {r: 0.3999998, g: 0.3999998, b: 0.3999998, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

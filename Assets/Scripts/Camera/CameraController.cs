@@ -54,7 +54,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(GameManager.Instance.gameState == GameState.MATCH || GameManager.Instance.gameState == GameState.ACTIVE_COMBAT)
+        if(GameManager.Instance.gameState == GameState.MATCH || GameManager.Instance.gameState == GameState.ACTIVE_COMBAT && !facingBack)
         {
             distanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
             midpointX = Mathf.Min(player1.transform.position.x, player2.transform.position.x) + 0.5f * distanceBetweenPlayers;
@@ -143,7 +143,7 @@ public class CameraController : MonoBehaviour
         {
             SoundManager.Instance.PlayLongSound(SoundType.TRIUMPH);
             cam.orthographic = true;
-            cam.orthographicSize = 15f;
+            cam.orthographicSize = 25f;
             yield return new WaitForSeconds(stayDuration);
             facingBack = false;
             SoundManager.Instance.InterruptPlayingSound();

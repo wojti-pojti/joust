@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text message;
     [SerializeField] private TransitionController controlsPanel; // for this and customization, use TransitionController instead !!
     [SerializeField] private TransitionController titleCard;
+    [SerializeField] private TransitionController menuInputPrompts;
     [SerializeField] private TransitionController blackOutScreen;
 
     [Header("")]
@@ -115,6 +116,7 @@ public class GameManager : MonoBehaviour
                 // display menu screen
                 menuUI.SetActive(true);
                 titleCard.Appear(true);
+                menuInputPrompts.Appear(true);
                 gameUI.SetActive(false);
                 messagePanel.SetActive(false);
             }
@@ -164,6 +166,8 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                PlayerPrefs.SetInt("SessionID", PlayerPrefs.GetInt("SessionID") + 1);
+                StartCoroutine(ShowMessage("Quitting tournament...", 0f));
                 Application.Quit();
             }
         }
@@ -239,6 +243,7 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.InterruptPlayingSound();
         SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
         titleCard.Appear(false);
+        menuInputPrompts.Appear(false);
 
         yield return new WaitForSeconds(1.5f);
 
@@ -278,6 +283,7 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         titleCard.Appear(true);
+        menuInputPrompts.Appear(true);
         gameState = GameState.MENU;
     }
 
@@ -436,7 +442,10 @@ public class GameManager : MonoBehaviour
     {
         messagePanel.SetActive(true);
         message.text = content;
-        yield return new WaitForSeconds(duration);
-        messagePanel.SetActive(false);
+        if(duration > 0)
+        {
+            yield return new WaitForSeconds(duration);
+            messagePanel.SetActive(false);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class CustomizationManager : MonoBehaviour
@@ -40,7 +41,15 @@ public class CustomizationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        LoadCustomizationSettigns();
+        int numberOfSessions = PlayerPrefs.GetInt("SessionID");
+        if (numberOfSessions > 0)
+        {
+            LoadCustomizationSettigns();
+        }
+        else
+        {
+            AssignStartingColors();
+        }
 
         for (int i = 0; i < colorFieldDisplays.Length; i++) 
         {
@@ -193,6 +202,22 @@ public class CustomizationManager : MonoBehaviour
         }
 
         SaveCustomizationSettigns();
+    }
+
+    /// <summary>
+    /// This function assigns player colors if it is the first game session.
+    /// </summary>
+    void AssignStartingColors()
+    {
+        colors[0] = new Color(0.16f, 0.84f, 0.16f, 1f);
+        colors[1] = new Color(0.03f, 0.04f, 0.03f, 1f);
+        colors[2] = new Color(0.92f, 0.94f, 0.06f, 1f);
+        colors[3] = new Color(0.98f, 0.54f, 0.02f, 1f);
+        colors[4] = new Color(0.83f, 0.53f, 0.17f, 1f);
+        colors[5] = new Color(0.4f, 0.4f, 0.4f, 1f);
+
+        SaveCustomizationSettigns();
+        ApplyCustomizationSettings();
     }
 
     #region Loading and saving

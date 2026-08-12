@@ -14,6 +14,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     [Header("")]
     [SerializeField] private Image colorPaletteImage;
+    [SerializeField] private Slider brightnessSlider;
     [SerializeField] private TMP_Text rgbText;
     [SerializeField] private GameObject colorPointer;
     [SerializeField] private float colorPointerTolerance;
@@ -35,6 +36,8 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void OnEnable()
     {
+        brightnessSlider.minValue = 0f;
+        brightnessSlider.maxValue = 1f;
         if (!texture) { texture = colorPaletteImage.sprite.texture; }
         if (!colorPointerImage) { colorPointerImage = colorPointer.GetComponent<Image>(); }
         UpdateDisplay();
@@ -59,11 +62,11 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         mostRecentEventData = eventData;
         CancelInvoke();
+        CustomizationManager.Instance.SetNewColor(output);
 
         UpdateDisplay();
         UpdatePointerPosition();
         holding = false;
-        CustomizationManager.Instance.SetNewColor(output);
     }
 
     /// <summary>
@@ -81,11 +84,33 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         point += colorPaletteImage.rectTransform.sizeDelta / 2;
 
-
         Vector2Int middlePoint = new Vector2Int((int)((texture.width * point.x) / colorPaletteImage.rectTransform.sizeDelta.x),
            (int)((texture.height * point.y) / colorPaletteImage.rectTransform.sizeDelta.y));
 
-        return texture.GetPixel(middlePoint.x, middlePoint.y);
+        Color resultColor = texture.GetPixel(middlePoint.x, middlePoint.y);
+        resultColor.a = 1;
+        float hue, sat, bri;
+        Color.RGBToHSV(resultColor, out hue, out sat, out bri);
+
+        bri = brightnessSlider.value;
+        resultColor = Color.HSVToRGB(hue, sat, bri);
+
+        return resultColor;
+    }
+
+    /// <summary>
+    /// To be called by the brightness slider, upon changes made.
+    /// </summary>
+    public void UpdateBrightness()
+    {
+        float hue, sat, bri;
+        Color.RGBToHSV(output, out hue, out sat, out bri);
+
+        bri = brightnessSlider.value;
+        output = Color.HSVToRGB(hue, sat, bri);
+
+        UpdateDisplay();
+        CustomizationManager.Instance.SetNewColor(output);
     }
 
     /// <summary>
@@ -96,7 +121,12 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         r = (int)(output.r * 255);
         g = (int)(output.g * 255);
         b = (int)(output.b * 255);
-        rgbText.text = "R: " + r.ToString() + "  G: " + g.ToString() + "  B: " + b.ToString();
+        rgbText.text = "R: " + r.ToString() + "  G: " + g.ToString() + "  B: " + b.ToString() + "\nHEX: " + output.ToHexString();
+
+        float hue, sat, bri;
+        Color.RGBToHSV(output, out hue, out sat, out bri);
+        brightnessSlider.value = bri;
+        colorPaletteImage.color = Color.HSVToRGB(0f, 0f, bri);
 
         // display the position of the color on the image
         if (!holding) 
@@ -177,14 +207,18 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
 
     /// <summary>
-    /// Calculates a sum of the differences between the r,g,b components of two given colors.
+    /// Calculates a sum of the differences between the hue component of two given colors.
     /// </summary>
     /// <param name="color1"></param>
     /// <param name="color2"></param>
     /// <returns>The calculated sum.</returns>
     float ColorDifference(Color color1, Color color2)
     {
-        return Mathf.Abs(color1.r - color2.r) + Mathf.Abs(color1.g - color2.g) + Mathf.Abs(color1.b - color2.b);
+        float hue1, hue2, sat1, sat2, bri;
+        Color.RGBToHSV(color1, out hue1, out sat1, out bri);
+        Color.RGBToHSV(color2, out hue2, out sat2, out bri);
+
+        return Mathf.Abs(hue1 - hue2) + Mathf.Abs(sat1 - sat2);
     }
 
     /// <summary>
