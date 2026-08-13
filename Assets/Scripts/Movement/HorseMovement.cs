@@ -29,6 +29,7 @@ public class HorseMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb; // Rigidbody2D of the player
     [SerializeField] private PlayerScript player;
     [SerializeField] private Animator animator;
+    [SerializeField] private ParticleSystem dustTrail;
 
     private int speedFloat = Animator.StringToHash("Speed");
     private int idleStompTrigger = Animator.StringToHash("IdleStomp");
@@ -105,6 +106,7 @@ public class HorseMovement : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundType.HORSE_LAND);
             // land animation
             animator.SetTrigger(landTrigger);
+            dustTrail.gameObject.SetActive(false);
         }
 
         if (idleAnimationTimer >= idleTimeToStartAnimation) 
@@ -193,6 +195,8 @@ public class HorseMovement : MonoBehaviour
         animator.SetTrigger(jumpTrigger);
 
         SoundManager.Instance.PlaySound(SoundType.HORSE_JUMP);
+
+        dustTrail.gameObject.SetActive(false);
     }
 
     /// <summary>

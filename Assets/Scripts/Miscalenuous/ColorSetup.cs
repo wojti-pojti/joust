@@ -16,6 +16,7 @@ public class ColorSetup : MonoBehaviour
     [SerializeField] private Color color2;
     [Header("")]
     [SerializeField] private bool animated;
+    [SerializeField] private float delayThreshhold;
     private float timer, delay;
     private Animator animator;
 
@@ -45,7 +46,7 @@ public class ColorSetup : MonoBehaviour
         if (animated)
         {
             animator = GetComponent<Animator>();
-            delay = Random.Range(0f, 1.49f);
+            delay = Random.Range(0f, delayThreshhold);
             timer = 0f;
         }
     }
@@ -112,7 +113,7 @@ public class ColorSetup : MonoBehaviour
     /// <returns></returns>
     IEnumerator AssignColors()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForFixedUpdate();
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         renderer.sharedMaterial = originalMaterial;
 

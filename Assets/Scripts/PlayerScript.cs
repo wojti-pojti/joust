@@ -225,7 +225,7 @@ public class PlayerScript : MonoBehaviour
             state = PlayerState.IDLE;
             madeContact = false;
             if (!lanceController) lanceController = lance.GetComponent<LanceController>();
-            lanceController.RaiseBackToPosition();
+            lanceController.RaiseBackToPosition(false);
         }
     }
 

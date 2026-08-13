@@ -72,7 +72,7 @@ public class LanceScript : MonoBehaviour
         // switch and resize the sprite
         spriteRenderer.sprite = damagedLances[segmentsLeft - 1];
 
-        Vector3 newVerticalPosition = new Vector3(this.transform.localPosition.x, damagedLancePosition[segmentsLeft - 1].y, 0f);
+        Vector3 newVerticalPosition = damagedLancePosition[segmentsLeft - 1];
         controller.SetNewVerticalPosition(newVerticalPosition);
 
         float direction = (this.transform.localScale.x > 0 ? 1f : -1f);

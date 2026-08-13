@@ -47,11 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ColorSetup
   originalMaterial: {fileID: 2100000, guid: 3f1a3efbed6d9814fb7dfe20d6374a56, type: 2}
+  reassignColors: 1
   randomizeColor1: 1
   color1: {r: 0.9775506, g: 1, b: 0, a: 1}
   randomizeColor2: 1
   color2: {r: 0, g: 0, b: 0, a: 0}
   animated: 1
+  delayThreshhold: 1.49
 --- !u!212 &7944391163866494059
 SpriteRenderer:
   serializedVersion: 3
