@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class LanceController : MonoBehaviour
 {
+    [HideInInspector] public LanceScript parentLanceScript;
+
     [SerializeField] private bool holdButton;
     [SerializeField] private bool releasedButton;
     [SerializeField] private float chargeAccumulationMultiplier;
@@ -10,13 +12,13 @@ public class LanceController : MonoBehaviour
 
     [Header("")]
     [SerializeField] private KeyCode lowerLanceKeyCode;
-    private HingeJoint2D joint;
+    [Header("")]
+    [SerializeField] private HingeJoint2D joint;
     private Vector3 verticalPosition, startVerticalPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        joint = GetComponent<HingeJoint2D>();
         verticalPosition = this.transform.localPosition;
         startVerticalPosition = verticalPosition;
     }
@@ -87,8 +89,10 @@ public class LanceController : MonoBehaviour
     /// Called initially to assign the input keycode based on starting side;
     /// </summary>
     /// <param name="side">False for left, True for right.</param>
-    public void AssignInputKey(bool side)
+    /// <param name="caller">The parent lance script.</param>
+    public void AssignInputKey(bool side, LanceScript caller)
     {
+        parentLanceScript = caller;
         if (!side)
         {
             lowerLanceKeyCode = KeyCode.W;

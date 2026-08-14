@@ -35,9 +35,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private Slider shieldHealthBar;
 
     [Header("Lance")]
-    [SerializeField] private GameObject lance;
+    public GameObject lance;
     [SerializeField] private LanceScript lScript;
-    [SerializeField] private LanceController lanceController;
+    public LanceController activeLanceController;
     [SerializeField] private BoxCollider2D lanceCd;
 
     [Header("Horse")]
@@ -69,12 +69,12 @@ public class PlayerScript : MonoBehaviour
         if (index == 1)
         {
             shieldKeyCode = KeyCode.S;
-            lanceController.AssignInputKey(false);
+            lScript.AssignInputKey(false);
         }
         else if (index == 2)
         {
             shieldKeyCode = KeyCode.DownArrow;
-            lanceController.AssignInputKey(true);
+            lScript.AssignInputKey(true);
         }
 
         shieldUIToObjectDifference = shieldParent.transform.localPosition.y - shieldHealthBar.transform.localPosition.y;
@@ -109,9 +109,11 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        LanceController controller;
         LanceScript opponentLance;
-        if(!madeContact && collision.gameObject.tag == "Weapon" && collision.gameObject.TryGetComponent<LanceScript>(out opponentLance))
+        if(!madeContact && collision.gameObject.tag == "Weapon" && collision.gameObject.TryGetComponent<LanceController>(out controller))
         {
+            opponentLance = controller.parentLanceScript;
             if(opponentLance.enabled && opponentLance.index != index)
             {
                 madeContact = true;
@@ -171,7 +173,7 @@ public class PlayerScript : MonoBehaviour
             lScript.index = index;
         }
         lScript.ResetLance();
-        lanceController.RaiseBackToPosition();
+        activeLanceController.RaiseBackToPosition();
         lance.GetComponent<HingeJoint2D>().enabled = true;
 
         shield.transform.position = shieldParent.transform.position;
@@ -224,8 +226,8 @@ public class PlayerScript : MonoBehaviour
         { 
             state = PlayerState.IDLE;
             madeContact = false;
-            if (!lanceController) lanceController = lance.GetComponent<LanceController>();
-            lanceController.RaiseBackToPosition(false);
+            if (!activeLanceController) activeLanceController = lance.GetComponent<LanceController>();
+            activeLanceController.RaiseBackToPosition(false);
         }
     }
 
@@ -299,8 +301,8 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     public void ChangeLanceDirection()
     {
-        if (!lanceController) lanceController = lance.GetComponent<LanceController>();
-        lanceController.ReverseHingeDirection();
+        if (!activeLanceController) activeLanceController = lance.GetComponent<LanceController>();
+        activeLanceController.ReverseHingeDirection();
     }
 
     /// <summary>
