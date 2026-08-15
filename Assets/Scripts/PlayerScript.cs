@@ -38,7 +38,8 @@ public class PlayerScript : MonoBehaviour
     public GameObject lance;
     [SerializeField] private LanceScript lScript;
     public LanceController activeLanceController;
-    [SerializeField] private BoxCollider2D lanceCd;
+    public BoxCollider2D lanceCd;
+    [SerializeField] private float afterlifeLanceActiveTime;
 
     [Header("Horse")]
     [SerializeField] private GameObject horse;
@@ -46,7 +47,7 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Other")]
     [SerializeField] private GameObject PlayerUI;
-    [SerializeField] private Material playerMaterial;
+    public Material playerMaterial;
     [SerializeField] private Animator animator;
 
     private int deathTrigger = Animator.StringToHash("Die");
@@ -109,11 +110,18 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        LanceController controller;
         LanceScript opponentLance;
-        if(!madeContact && collision.gameObject.tag == "Weapon" && collision.gameObject.TryGetComponent<LanceController>(out controller))
+        try
         {
-            opponentLance = controller.parentLanceScript;
+          opponentLance = collision.gameObject.GetComponentInParent<LanceController>().parentLanceScript;
+        }
+        catch 
+        {
+            opponentLance = null;
+        }
+
+        if(!madeContact && collision.gameObject.tag == "Weapon" && opponentLance != null)
+        {
             if(opponentLance.enabled && opponentLance.index != index)
             {
                 madeContact = true;
@@ -174,7 +182,7 @@ public class PlayerScript : MonoBehaviour
         }
         lScript.ResetLance();
         activeLanceController.RaiseBackToPosition();
-        lance.GetComponent<HingeJoint2D>().enabled = true;
+        activeLanceController.joint.enabled = true;
 
         shield.transform.position = shieldParent.transform.position;
 
@@ -207,7 +215,6 @@ public class PlayerScript : MonoBehaviour
 
         lance.transform.localScale = new Vector3(-1f * lScale.x, lScale.y, lScale.z);
         shieldParent.transform.localScale = new Vector3(-1f * sScale.x, sScale.y, sScale.z);
-        //horse.transform.localScale = new Vector3(-1 * hScale.x, hScale.y, hScale.z);
     }
 
     /// <summary>
@@ -268,10 +275,20 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when player is turning around.
+    /// </summary>
     public void TurnPlayerAround()
     {
         StartCoroutine(HidePlayerTemporarily(0.4f, 0.4f));
     }
+
+    /// <summary>
+    /// Temporarily makes player invisible for the purpose of horse turning around.
+    /// </summary>
+    /// <param name="duration">How long should the player remain invisible?</param>
+    /// <param name="offset">Time delay before turning invisible.</param>
+    /// <returns></returns>
     IEnumerator HidePlayerTemporarily(float duration, float offset)
     {
         yield return new WaitForSeconds(offset);
@@ -311,8 +328,8 @@ public class PlayerScript : MonoBehaviour
     IEnumerator ThrowLanceAway()
     {
         yield return new WaitForFixedUpdate();
-        Rigidbody2D lanceRb = lance.GetComponent<Rigidbody2D>();
-        lance.GetComponent<HingeJoint2D>().enabled = false;
+        Rigidbody2D lanceRb = activeLanceController.gameObject.GetComponent<Rigidbody2D>();
+        activeLanceController.joint.enabled = false;
 
         // detach and throw away
         float knockback = 3;
@@ -333,7 +350,7 @@ public class PlayerScript : MonoBehaviour
     /// <returns></returns>
     IEnumerator DisableLanceCollider()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(afterlifeLanceActiveTime);
         lanceCd.enabled = false;
     }
     #endregion

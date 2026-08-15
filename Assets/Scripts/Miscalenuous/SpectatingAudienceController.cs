@@ -55,13 +55,14 @@ public class SpectatingAudienceController : MonoBehaviour
 
         // determine specifics based on the reaction index
         // reaction index [0; 4]
-        float duration = 2.5f, period = 0.5f, amplitude = 0.3f;
+        float duration = 2.5f, period = 0.3f, amplitude = 0.2f;
 
         duration += (reactionIndex + 1) * 0.5f;
         if (reactionIndex > 2) { period -= 0.1f; amplitude += 0.1f; }
         if (reactionIndex == 4) { period -= 0.1f; amplitude += 0.1f; }
 
-        StartCoroutine(ActExcited(duration, period, amplitude));
+        float randomDelay = Random.Range(0, 0.5f * period);
+        StartCoroutine(ActExcited(duration, period, amplitude, randomDelay));
     }
 
     /// <summary>
@@ -133,22 +134,27 @@ public class SpectatingAudienceController : MonoBehaviour
     /// <param name="duration">How long the gameobject should vibrate.</param>
     /// <param name="period">The duration of a single vibration.</param>
     /// <param name="amplitude">The difference between the highest and lowest position.</param>
+    /// <param name="delay">The delay before the member starts moving.</param>
     /// <returns></returns>
-    IEnumerator ActExcited(float duration, float period, float amplitude)
+    IEnumerator ActExcited(float duration, float period, float amplitude, float delay)
     {
+        yield return new WaitForSeconds(delay);
         Coroutine currentShiftRoutine = null;
-        //Debug.Log(this.gameObject.name + " - duration: "+ duration + ", period: " + period + ", amplitude: " + amplitude);
+        if (this.gameObject.name == "audienceMember") Debug.Log(this.gameObject.name + " - duration: "+ duration + ", period: " + period + ", amplitude: " + amplitude);
         Vector2 startPos = visiblePosition;
+        int cycles = 0;
         while (duration > 0f) 
         {
             if(currentShiftRoutine != null) { StopCoroutine(currentShiftRoutine); }
-            currentShiftRoutine = StartCoroutine(ShiftPosition(0.5f * period, visiblePosition + new Vector2(0, amplitude * 0.5f)));
+            currentShiftRoutine = StartCoroutine(ShiftPosition(0.5f * period, visiblePosition + new Vector2(0, rt.rect.size.y * amplitude * 0.5f)));
             yield return new WaitForSeconds(0.5f * period);
             StopCoroutine(currentShiftRoutine);
-            currentShiftRoutine = StartCoroutine(ShiftPosition(0.5f * period, visiblePosition + new Vector2(0, -(amplitude * 0.5f))));
+            currentShiftRoutine = StartCoroutine(ShiftPosition(0.5f * period, visiblePosition + new Vector2(0, rt.rect.size.y * -(amplitude * 0.5f))));
             yield return new WaitForSeconds(0.5f * period);
             duration -= period;
+            cycles++;
         }
+        if (this.gameObject.name == "audienceMember") Debug.Log(this.gameObject.name + " completed " + cycles + " cycles of movement.");
         ShiftPosition(0.2f, startPos);
     }
 }

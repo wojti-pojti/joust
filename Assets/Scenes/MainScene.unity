@@ -1770,8 +1770,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Score:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 93b13e56252fa62418e5c1e09115219d, type: 2}
+  m_sharedMaterial: {fileID: -1593132684164099248, guid: 93b13e56252fa62418e5c1e09115219d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2747,11 +2747,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 253335319}
-  - component: {fileID: 253335324}
   - component: {fileID: 253335323}
-  - component: {fileID: 253335322}
   - component: {fileID: 253335321}
-  - component: {fileID: 253335320}
   m_Layer: 8
   m_Name: LanceBroken2
   m_TagString: Weapon
@@ -2768,38 +2765,12 @@ Transform:
   m_GameObject: {fileID: 253335318}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.39, y: 1.1, z: 0}
+  m_LocalPosition: {x: 0.39000034, y: 1.1, z: 0}
   m_LocalScale: {x: 0.45273, y: 0.376555, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2035941640}
+  m_Father: {fileID: 1348036066}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!233 &253335320
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 253335318}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 2035941638}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -3.1}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &253335321
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2846,33 +2817,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 3.731513}
   m_EdgeRadius: 0
---- !u!50 &253335322
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 253335318}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &253335323
 SpriteRenderer:
   serializedVersion: 3
@@ -2933,25 +2877,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &253335324
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 253335318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 253335320}
 --- !u!1 &259961386
 GameObject:
   m_ObjectHideFlags: 0
@@ -3558,11 +3483,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 290891785}
-  - component: {fileID: 290891791}
   - component: {fileID: 290891786}
-  - component: {fileID: 290891789}
   - component: {fileID: 290891788}
-  - component: {fileID: 290891787}
   m_Layer: 8
   m_Name: Lance
   m_TagString: Weapon
@@ -3645,32 +3567,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!233 &290891787
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 290891784}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 1965503016}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -3.1}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &290891788
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3717,52 +3613,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 6.746415}
   m_EdgeRadius: 0
---- !u!50 &290891789
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 290891784}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!114 &290891791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 290891784}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 290891787}
 --- !u!1 &292010155
 GameObject:
   m_ObjectHideFlags: 0
@@ -4905,6 +4755,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionController
   visible: 0
+  inTransition: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -4937,6 +4788,7 @@ MonoBehaviour:
   transitionViaFade: 0
   fadeInDuration: 0
   fadeOutDuration: 0
+  fadeTimeStep: 0
 --- !u!1 &388568764
 GameObject:
   m_ObjectHideFlags: 0
@@ -4946,11 +4798,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 388568765}
-  - component: {fileID: 388568771}
   - component: {fileID: 388568769}
-  - component: {fileID: 388568768}
   - component: {fileID: 388568767}
-  - component: {fileID: 388568766}
   m_Layer: 8
   m_Name: LanceBroken1
   m_TagString: Weapon
@@ -4973,32 +4822,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1332042395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!233 &388568766
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 388568764}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 1965503016}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -2.34}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &388568767
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5045,33 +4868,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 5.627983}
   m_EdgeRadius: 0
---- !u!50 &388568768
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 388568764}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &388568769
 SpriteRenderer:
   serializedVersion: 3
@@ -5132,25 +4928,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &388568771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 388568764}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 388568766}
 --- !u!1 &393277135
 GameObject:
   m_ObjectHideFlags: 0
@@ -5203,6 +4980,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionController
   visible: 1
+  inTransition: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -5235,6 +5013,7 @@ MonoBehaviour:
   transitionViaFade: 0
   fadeInDuration: 0
   fadeOutDuration: 0
+  fadeTimeStep: 0
 --- !u!1 &408636856
 GameObject:
   m_ObjectHideFlags: 0
@@ -5387,6 +5166,119 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &418482044
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 418482045}
+  - component: {fileID: 418482047}
+  - component: {fileID: 418482046}
+  m_Layer: 0
+  m_Name: tent (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &418482045
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418482044}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.40578, y: -0.06, z: 0}
+  m_LocalScale: {x: -0.0754864, y: 0.17000903, z: 0.72003764}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 2038283081}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &418482046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418482044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f46f97d1174d41149935bb9a8951615d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ColorSetup
+  originalMaterial: {fileID: 2100000, guid: 3f1a3efbed6d9814fb7dfe20d6374a56, type: 2}
+  reassignColors: 1
+  randomizeColor1: 1
+  color1: {r: 0.625, g: 0.19875002, b: 0.19875002, a: 0}
+  randomizeColor2: 1
+  color2: {r: 0, g: 0, b: 0, a: 0}
+  animated: 0
+  delayThreshhold: 0
+--- !u!212 &418482047
+SpriteRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418482044}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 6ba50ad1c9f2d00428de927c62c18cd4, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 2
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: e369491068ece034aa8e0d68d6eb9bd9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
 --- !u!1 &423608978
 GameObject:
   m_ObjectHideFlags: 0
@@ -5610,11 +5502,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 441130484}
-  - component: {fileID: 441130483}
   - component: {fileID: 441130481}
-  - component: {fileID: 441130480}
   - component: {fileID: 441130479}
-  - component: {fileID: 441130478}
   m_Layer: 8
   m_Name: 'Lance '
   m_TagString: Weapon
@@ -5622,32 +5511,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!233 &441130478
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441130477}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 2035941638}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -3.1}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &441130479
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5694,33 +5557,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 6.2417035}
   m_EdgeRadius: 0
---- !u!50 &441130480
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441130477}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &441130481
 SpriteRenderer:
   serializedVersion: 3
@@ -5781,25 +5617,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &441130483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441130477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 441130478}
 --- !u!4 &441130484
 Transform:
   m_ObjectHideFlags: 0
@@ -5809,11 +5626,11 @@ Transform:
   m_GameObject: {fileID: 441130477}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 1.73, z: 0}
+  m_LocalPosition: {x: 0.39999962, y: 1.73, z: 0}
   m_LocalScale: {x: 0.45273, y: 0.376555, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2035941640}
+  m_Father: {fileID: 1348036066}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &443642448
 GameObject:
@@ -7213,7 +7030,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 31ba8b149cb218b43b2a9123d767c599, type: 3}
-  m_Type: 1
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -7243,6 +7060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionController
   visible: 0
+  inTransition: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -7275,6 +7093,7 @@ MonoBehaviour:
   transitionViaFade: 0
   fadeInDuration: 0
   fadeOutDuration: 0
+  fadeTimeStep: 0
 --- !u!1 &604250772
 GameObject:
   m_ObjectHideFlags: 0
@@ -8262,6 +8081,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionController
   visible: 0
+  inTransition: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -8292,8 +8112,9 @@ MonoBehaviour:
   shiftInDuration: 0
   shiftOutDuration: 0
   transitionViaFade: 1
-  fadeInDuration: 0.3
-  fadeOutDuration: 0.4
+  fadeInDuration: 0.5
+  fadeOutDuration: 0.7
+  fadeTimeStep: 0.075
 --- !u!1 &704809113
 GameObject:
   m_ObjectHideFlags: 0
@@ -9398,6 +9219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionController
   visible: 1
+  inTransition: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -9430,6 +9252,7 @@ MonoBehaviour:
   transitionViaFade: 0
   fadeInDuration: 0.7
   fadeOutDuration: 0.7
+  fadeTimeStep: 0
 --- !u!1 &833480503
 GameObject:
   m_ObjectHideFlags: 0
@@ -10103,7 +9926,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 31ba8b149cb218b43b2a9123d767c599, type: 3}
-  m_Type: 1
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -10510,6 +10333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98494e3a17e730c4e89eaa5e48b40aef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomizationManager
+  inCustomization: 0
   customizationPanel: {fileID: 387130929}
   currentlyConsideredColorField: 0
   selectedFieldColor: {r: 0.6745098, g: 0.5176471, b: 1, a: 0.9372549}
@@ -17085,8 +16909,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.6
-      minScalar: 0.4
+      scalar: 1
+      minScalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -17400,7 +17224,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    randomizeRotationDirection: 0
+    randomizeRotationDirection: 0.2
     gravitySource: 0
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
@@ -17409,7 +17233,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: -0.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -17720,9 +17544,9 @@ ParticleSystem:
         m_RotationOrder: 4
     rateOverDistance:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 1
-      minScalar: 0
+      minMaxState: 3
+      scalar: 2
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -17994,10 +17818,10 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   RotationModule:
-    enabled: 0
+    enabled: 1
     x:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -18050,7 +17874,7 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -18103,9 +17927,9 @@ ParticleSystem:
         m_RotationOrder: 4
     curve:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0.7853982
-      minScalar: 0.7853982
+      minMaxState: 3
+      scalar: 0.08726646
+      minScalar: -0.08726646
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -18173,7 +17997,7 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 65535
+        ctime1: 60524
         ctime2: 0
         ctime3: 0
         ctime4: 0
@@ -18188,8 +18012,8 @@ ParticleSystem:
         atime5: 0
         atime6: 0
         atime7: 0
-        m_Mode: 0
-        m_ColorSpace: -1
+        m_Mode: 1
+        m_ColorSpace: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -18933,12 +18757,12 @@ ParticleSystem:
         m_RotationOrder: 4
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 0
     m_Curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -22658,8 +22482,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.6
-      minScalar: 0.4
+      scalar: 1
+      minScalar: 0.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -22973,7 +22797,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    randomizeRotationDirection: 0
+    randomizeRotationDirection: 0.2
     gravitySource: 0
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
@@ -22982,7 +22806,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: -0.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -23293,9 +23117,9 @@ ParticleSystem:
         m_RotationOrder: 4
     rateOverDistance:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 1
-      minScalar: 0
+      minMaxState: 3
+      scalar: 2
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -23509,10 +23333,10 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   RotationModule:
-    enabled: 0
+    enabled: 1
     x:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -23565,7 +23389,7 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -23618,9 +23442,9 @@ ParticleSystem:
         m_RotationOrder: 4
     curve:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0.7853982
-      minScalar: 0.7853982
+      minMaxState: 3
+      scalar: 0.08726646
+      minScalar: -0.08726646
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -23688,7 +23512,7 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 65535
+        ctime1: 60524
         ctime2: 0
         ctime3: 0
         ctime4: 0
@@ -23703,8 +23527,8 @@ ParticleSystem:
         atime5: 0
         atime6: 0
         atime7: 0
-        m_Mode: 0
-        m_ColorSpace: -1
+        m_Mode: 1
+        m_ColorSpace: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -24448,12 +24272,12 @@ ParticleSystem:
         m_RotationOrder: 4
     inWorldSpace: 0
   InheritVelocityModule:
-    enabled: 0
+    enabled: 1
     m_Mode: 0
     m_Curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -27496,7 +27320,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.75970316, y: -0.45024437}
+  m_Offset: {x: -0.75970316, y: -0.9370029}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -27506,7 +27330,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.5194063, y: 1.9004894}
+  m_Size: {x: 2.5194063, y: 2.8740067}
   m_EdgeRadius: 0
 --- !u!95 &1213181796
 Animator:
@@ -28761,6 +28585,116 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1342905121}
   m_CullTransparentMesh: 1
+--- !u!1 &1348036065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1348036066}
+  - component: {fileID: 1348036069}
+  - component: {fileID: 1348036068}
+  - component: {fileID: 1348036067}
+  m_Layer: 7
+  m_Name: LanceParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1348036066
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348036065}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 441130484}
+  - {fileID: 1413372852}
+  - {fileID: 253335319}
+  - {fileID: 1413072480}
+  m_Father: {fileID: 2035941640}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!233 &1348036067
+HingeJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348036065}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 2035941638}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 0
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: 0.38, y: 0.55}
+  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
+  m_UseConnectedAnchor: 1
+  m_UseMotor: 1
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 1
+  m_AngleLimits:
+    m_LowerAngle: 0
+    m_UpperAngle: 110
+--- !u!50 &1348036068
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348036065}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &1348036069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348036065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanceController
+  parentLanceScript: {fileID: 0}
+  holdButton: 0
+  releasedButton: 0
+  chargeAccumulationMultiplier: 25
+  directionMultiplier: 1
+  lowerLanceKeyCode: 0
+  joint: {fileID: 1348036067}
 --- !u!1 &1355481318
 GameObject:
   m_ObjectHideFlags: 0
@@ -28770,11 +28704,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1355481319}
-  - component: {fileID: 1355481325}
   - component: {fileID: 1355481323}
-  - component: {fileID: 1355481322}
   - component: {fileID: 1355481321}
-  - component: {fileID: 1355481320}
   m_Layer: 8
   m_Name: LanceBroken2
   m_TagString: Weapon
@@ -28797,32 +28728,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1332042395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!233 &1355481320
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355481318}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 1965503016}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -1.42}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &1355481321
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -28869,33 +28774,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 3.731513}
   m_EdgeRadius: 0
---- !u!50 &1355481322
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355481318}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &1355481323
 SpriteRenderer:
   serializedVersion: 3
@@ -28956,25 +28834,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &1355481325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1355481318}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 1355481320}
 --- !u!1 &1363557027
 GameObject:
   m_ObjectHideFlags: 0
@@ -29448,11 +29307,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1404941125}
-  - component: {fileID: 1404941131}
   - component: {fileID: 1404941129}
-  - component: {fileID: 1404941128}
   - component: {fileID: 1404941127}
-  - component: {fileID: 1404941126}
   m_Layer: 8
   m_Name: LanceBroken3
   m_TagString: Weapon
@@ -29475,32 +29331,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1332042395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!233 &1404941126
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1404941124}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 1965503016}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -0.41}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &1404941127
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -29547,33 +29377,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 1.7864121}
   m_EdgeRadius: 0
---- !u!50 &1404941128
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1404941124}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &1404941129
 SpriteRenderer:
   serializedVersion: 3
@@ -29634,25 +29437,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &1404941131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1404941124}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 1404941126}
 --- !u!1 &1413072479
 GameObject:
   m_ObjectHideFlags: 0
@@ -29662,11 +29446,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1413072480}
-  - component: {fileID: 1413072485}
   - component: {fileID: 1413072484}
-  - component: {fileID: 1413072483}
   - component: {fileID: 1413072482}
-  - component: {fileID: 1413072481}
   m_Layer: 8
   m_Name: LanceBroken3
   m_TagString: Weapon
@@ -29683,38 +29464,12 @@ Transform:
   m_GameObject: {fileID: 1413072479}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.39, y: 0.72, z: 0}
+  m_LocalPosition: {x: 0.39000034, y: 0.72, z: 0}
   m_LocalScale: {x: 0.45273, y: 0.376555, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2035941640}
+  m_Father: {fileID: 1348036066}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!233 &1413072481
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413072479}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 2035941638}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -3.1}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &1413072482
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -29761,33 +29516,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 1.7864121}
   m_EdgeRadius: 0
---- !u!50 &1413072483
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413072479}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &1413072484
 SpriteRenderer:
   serializedVersion: 3
@@ -29848,25 +29576,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &1413072485
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413072479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 1413072481}
 --- !u!1 &1413372851
 GameObject:
   m_ObjectHideFlags: 0
@@ -29876,11 +29585,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1413372852}
-  - component: {fileID: 1413372857}
   - component: {fileID: 1413372856}
-  - component: {fileID: 1413372855}
   - component: {fileID: 1413372854}
-  - component: {fileID: 1413372853}
   m_Layer: 8
   m_Name: LanceBroken1
   m_TagString: Weapon
@@ -29897,38 +29603,12 @@ Transform:
   m_GameObject: {fileID: 1413372851}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.39, y: 1.45, z: 0}
+  m_LocalPosition: {x: 0.39000034, y: 1.45, z: 0}
   m_LocalScale: {x: 0.45273, y: 0.376555, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2035941640}
+  m_Father: {fileID: 1348036066}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!233 &1413372853
-HingeJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413372851}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 2035941638}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_BreakAction: 0
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: -3.1}
-  m_ConnectedAnchor: {x: 0.39999962, y: 0.5626795}
-  m_UseConnectedAnchor: 1
-  m_UseMotor: 1
-  m_Motor:
-    m_MotorSpeed: 0
-    m_MaximumMotorForce: 10000
-  m_UseLimits: 1
-  m_AngleLimits:
-    m_LowerAngle: 0
-    m_UpperAngle: 110
 --- !u!61 &1413372854
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -29975,33 +29655,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4430567, y: 5.627983}
   m_EdgeRadius: 0
---- !u!50 &1413372855
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413372851}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!212 &1413372856
 SpriteRenderer:
   serializedVersion: 3
@@ -30062,25 +29715,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &1413372857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413372851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f83f594f1965fa439e548a970ea88e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LanceController
-  parentLanceScript: {fileID: 0}
-  holdButton: 0
-  releasedButton: 0
-  chargeAccumulationMultiplier: 25
-  directionMultiplier: 1
-  lowerLanceKeyCode: 0
-  joint: {fileID: 1413372853}
 --- !u!1 &1419653741
 GameObject:
   m_ObjectHideFlags: 0
@@ -33510,7 +33144,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 31ba8b149cb218b43b2a9123d767c599, type: 3}
-  m_Type: 1
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -34204,16 +33838,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1724274955}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2123873381}
+  m_Father: {fileID: 1731879704}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000012994, y: -22}
+  m_AnchoredPosition: {x: 0.000012994, y: -0.0000042915}
   m_SizeDelta: {x: 333.2259, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1724274957
@@ -34239,14 +33873,14 @@ MonoBehaviour:
   m_text: press [SPACE] to continue
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 93b13e56252fa62418e5c1e09115219d, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: -1593132684164099248, guid: 93b13e56252fa62418e5c1e09115219d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -34305,7 +33939,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1724274958
@@ -34452,6 +34086,82 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1726487326}
+  m_CullTransparentMesh: 1
+--- !u!1 &1731879703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1731879704}
+  - component: {fileID: 1731879706}
+  - component: {fileID: 1731879705}
+  m_Layer: 5
+  m_Name: bg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1731879704
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731879703}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1724274956}
+  m_Father: {fileID: 2123873381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.0010070801, y: -10.5178}
+  m_SizeDelta: {x: -466.77, y: -287.4872}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1731879705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731879703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 31ba8b149cb218b43b2a9123d767c599, type: 3}
+  m_Type: 2
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1731879706
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731879703}
   m_CullTransparentMesh: 1
 --- !u!1 &1741729834
 GameObject:
@@ -35948,7 +35658,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.75970316, y: -0.45024437}
+  m_Offset: {x: -0.75970316, y: -0.9370029}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -35958,7 +35668,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.5194063, y: 1.9004894}
+  m_Size: {x: 2.5194063, y: 2.8740067}
   m_EdgeRadius: 0
 --- !u!95 &1820132992
 Animator:
@@ -37656,8 +37366,9 @@ MonoBehaviour:
   shieldHealthBar: {fileID: 1642396851}
   lance: {fileID: 290891784}
   lScript: {fileID: 1965503019}
-  activeLanceController: {fileID: 290891791}
+  activeLanceController: {fileID: 1332042398}
   lanceCd: {fileID: 290891788}
+  afterlifeLanceActiveTime: 0.05
   horse: {fileID: 2143809562}
   hScript: {fileID: 2143809565}
   PlayerUI: {fileID: 353819238}
@@ -37779,15 +37490,11 @@ MonoBehaviour:
   maxLanceSegments: 4
   damageMultiplier: 0.65
   startLance: {fileID: 290891784}
-  startController: {fileID: 290891791}
+  mainLanceController: {fileID: 1332042398}
   brokenLance:
   - {fileID: 1404941124}
   - {fileID: 1355481318}
   - {fileID: 388568764}
-  controllers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   fragments:
   - {fileID: 0}
   - {fileID: 627267195559011145, guid: c7255421dfc85b84a8755743ffc8eff1, type: 3}
@@ -38456,8 +38163,9 @@ MonoBehaviour:
   shieldHealthBar: {fileID: 504230102}
   lance: {fileID: 441130477}
   lScript: {fileID: 2035941642}
-  activeLanceController: {fileID: 441130483}
+  activeLanceController: {fileID: 1348036069}
   lanceCd: {fileID: 441130479}
+  afterlifeLanceActiveTime: 0.05
   horse: {fileID: 1109312585}
   hScript: {fileID: 1109312588}
   PlayerUI: {fileID: 265153626}
@@ -38480,10 +38188,7 @@ Transform:
   - {fileID: 1820132989}
   - {fileID: 1109312589}
   - {fileID: 1270119424}
-  - {fileID: 441130484}
-  - {fileID: 1413372852}
-  - {fileID: 253335319}
-  - {fileID: 1413072480}
+  - {fileID: 1348036066}
   - {fileID: 265153627}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -38602,15 +38307,11 @@ MonoBehaviour:
   maxLanceSegments: 4
   damageMultiplier: 0.65
   startLance: {fileID: 441130477}
-  startController: {fileID: 441130483}
+  mainLanceController: {fileID: 1348036069}
   brokenLance:
   - {fileID: 1413072479}
   - {fileID: 253335318}
   - {fileID: 1413372851}
-  controllers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   fragments:
   - {fileID: 0}
   - {fileID: 627267195559011145, guid: c7255421dfc85b84a8755743ffc8eff1, type: 3}
@@ -38650,6 +38351,7 @@ Transform:
   - {fileID: 1174002883}
   - {fileID: 1775609180}
   - {fileID: 1675154353}
+  - {fileID: 418482045}
   - {fileID: 83442773}
   - {fileID: 37669988}
   - {fileID: 894105340}
@@ -39264,7 +38966,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1724274956}
+  - {fileID: 1731879704}
   m_Father: {fileID: 1229908869}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

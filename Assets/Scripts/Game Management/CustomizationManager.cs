@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class CustomizationManager : MonoBehaviour
 {
+    public bool inCustomization;
+    [Header("")]
     [SerializeField] private TransitionController customizationPanel;
     [SerializeField] private int currentlyConsideredColorField;
     [SerializeField] private Color selectedFieldColor;
@@ -82,6 +84,7 @@ public class CustomizationManager : MonoBehaviour
                     colorPickerUI.SetActive(false);
                 }
                 customizationPanel.Appear(!customizationPanel.visible);
+                inCustomization = !customizationPanel.visible;
             }
         }
     }

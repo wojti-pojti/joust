@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text turnCounter;
     [SerializeField] private GameObject messagePanel;
     [SerializeField] private TMP_Text message;
-    [SerializeField] private TransitionController controlsPanel; // for this and customization, use TransitionController instead !!
+    [SerializeField] private TransitionController controlsPanel; 
     [SerializeField] private TransitionController titleCard;
     [SerializeField] private TransitionController menuInputPrompts;
     [SerializeField] private TransitionController blackOutScreen;
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
                 gameUI.SetActive(false);
                 messagePanel.SetActive(false);
             }
-            else if(gameState == GameState.MENU) 
+            else if(gameState == GameState.MENU && !controlsPanel.visible) 
             {
                 SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
                 StartCoroutine(StartMatch());
@@ -133,12 +133,16 @@ public class GameManager : MonoBehaviour
 
         if(gameState == GameState.MENU)
         {
-            if (Input.GetKeyDown(KeyCode.H)) // or whatever
+            if (Input.GetKeyDown(KeyCode.H) && !CustomizationManager.Instance.inCustomization) // or whatever
             {
                 SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
                 // show or hide controls panel
                 controlsPanel.Appear(!controlsPanel.visible);
-                menuUI.SetActive(!menuUI.activeSelf);
+            }
+
+            if (controlsPanel.visible && Input.GetKeyDown(KeyCode.K)) // customization panel instead
+            {
+                controlsPanel.Appear(false);
             }
 
             if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
@@ -277,7 +281,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.MATCH;
         OnEnableGameUIEvent?.Invoke(false);
         blackOutScreen.Appear(true);
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.2f);
         blackOutScreen.Appear(false);
         PrepareMatch();
         gameUI.SetActive(false);

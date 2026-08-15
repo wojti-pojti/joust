@@ -13,7 +13,7 @@ public class LanceController : MonoBehaviour
     [Header("")]
     [SerializeField] private KeyCode lowerLanceKeyCode;
     [Header("")]
-    [SerializeField] private HingeJoint2D joint;
+    public HingeJoint2D joint;
     private Vector3 verticalPosition, startVerticalPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

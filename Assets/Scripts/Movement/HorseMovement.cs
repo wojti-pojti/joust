@@ -96,7 +96,7 @@ public class HorseMovement : MonoBehaviour
                 speedLevel = 0;
 
                 // indicate the run has ended
-                GameManager.Instance.InformOfReachingEndZone(playerIndex);
+                if (GameManager.Instance.gameState == GameState.ACTIVE_COMBAT) GameManager.Instance.InformOfReachingEndZone(playerIndex);
             }
         }
 

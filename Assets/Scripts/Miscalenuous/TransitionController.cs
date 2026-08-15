@@ -10,6 +10,7 @@ public class TransitionController : MonoBehaviour
 {
     [Header("General")]
     public bool visible;
+    public bool inTransition;
     [SerializeField] private AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Shift")]
@@ -23,6 +24,7 @@ public class TransitionController : MonoBehaviour
     [SerializeField] private bool transitionViaFade;
     [SerializeField] private float fadeInDuration;
     [SerializeField] private float fadeOutDuration;
+    [SerializeField] private float fadeTimeStep;
 
     int childrenQuantity;
     SpriteRenderer exactSpriteRenderer;
@@ -36,6 +38,7 @@ public class TransitionController : MonoBehaviour
 
     private void Awake()
     {
+        inTransition = false;
         if(transitionViaShift) TryGetComponent<RectTransform>(out rt);
         if(transitionViaFade)
         {
@@ -60,6 +63,12 @@ public class TransitionController : MonoBehaviour
     /// <param name="instantenuously">True if exclude the assigned transition animation.</param>
     public void Appear(bool showThisGameobject, bool instantenuously = false)
     {
+        if(inTransition && !instantenuously) // already during a transition, ignore input
+        {
+            Debug.LogWarning(this.gameObject.name + " cannot transition as another transition is in progress.");
+            return;
+        }
+
         if(showThisGameobject == visible)
         {
             Debug.LogWarning(this.gameObject.name + " already is " + (visible ? "" : "not") + " visible.");
@@ -79,6 +88,7 @@ public class TransitionController : MonoBehaviour
             return;
         }
 
+        inTransition = true;
         if (showThisGameobject)
         {
             if (transitionViaShift) StartCoroutine(ShiftPosition(shiftInDuration, visiblePosition));
@@ -168,6 +178,7 @@ public class TransitionController : MonoBehaviour
             transform.position = endPos;
         }
         visible = !visible;
+        inTransition = false;
     }
 
     /// <summary>
@@ -179,19 +190,21 @@ public class TransitionController : MonoBehaviour
     IEnumerator FadeGameObject(float duration, bool show)
     {
         yield return null;
+        if (fadeTimeStep <= 0) { fadeTimeStep = 0.1f; }
         float startOpacity = (show ? 0f : 1f);
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += fadeTimeStep;
             float change = easeCurve.Evaluate(elapsedTime / duration);
             if (!show) change *= -1f;
             AdjustOpacity(startOpacity + change);
 
-            yield return new WaitForSeconds(0.075f);
+            yield return new WaitForSeconds(fadeTimeStep);
         }
         
         visible = show;
+        inTransition = false;
     }
 
     /// <summary>
