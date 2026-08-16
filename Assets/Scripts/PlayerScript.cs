@@ -157,6 +157,18 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+    #endregion
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (opponentLanceCollider != null && opponentLanceCollider.enabled == false)
@@ -533,5 +545,15 @@ public class PlayerScript : MonoBehaviour
         playerMaterial.SetInt("_Highlight", 1);
         yield return new WaitForSeconds(duration);
         playerMaterial.SetInt("_Highlight", 0);
+    }
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
     }
 }

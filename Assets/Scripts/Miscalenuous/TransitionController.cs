@@ -36,6 +36,28 @@ public class TransitionController : MonoBehaviour
 
     private RectTransform rt = null;
 
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+    #endregion
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
+    }
+
     private void Awake()
     {
         inTransition = false;

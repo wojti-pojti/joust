@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
     [HideInInspector] public static event Action<int> OnEndMatchEvent;
     [HideInInspector] public static event Action<bool> OnEnableGameUIEvent;
+    [HideInInspector] public static event Action<bool> OnGameCloseEvent;
 
     [SerializeField] private int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
@@ -170,8 +171,22 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                PlayerPrefs.SetInt("SessionID", PlayerPrefs.GetInt("SessionID") + 1);
-                StartCoroutine(ShowMessage("Quitting tournament...", 0f));
+                int sessionID;
+                try
+                {
+                    sessionID = PlayerPrefs.GetInt("SessionID");
+                }
+                catch 
+                {
+                    sessionID = 0;
+                }
+                sessionID++;
+                PlayerPrefs.SetInt("SessionID", sessionID);
+                OnGameCloseEvent?.Invoke(true);
+                CancelInvoke();
+                StopAllCoroutines();
+                messagePanel.SetActive(true);
+                message.text = "Quitting tournament...";
                 Application.Quit();
             }
         }

@@ -36,14 +36,26 @@ public class SpectatingAudienceController : MonoBehaviour
     {
         GameManager.OnEndMatchEvent += Applause;
         GameManager.OnEnableGameUIEvent += Fade;
+        GameManager.OnGameCloseEvent += StopAllProcesses;
     }
 
     void OnDisable() // unsubscribe to the event
     {
         GameManager.OnEndMatchEvent -= Applause;
         GameManager.OnEnableGameUIEvent -= Fade;
+        GameManager.OnGameCloseEvent += StopAllProcesses;
     }
     #endregion
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
+    }
 
     /// <summary>
     /// Simulate the reaction of the audience to the match end. The audience member should vibrate excitedly.

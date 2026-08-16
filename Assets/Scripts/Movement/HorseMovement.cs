@@ -44,6 +44,18 @@ public class HorseMovement : MonoBehaviour
     [HideInInspector] public bool hasPassedTheOpponent;
     private float idleAnimationTimer;
 
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+    #endregion
+
     // Update is called once per frame
     void Update()
     {
@@ -312,5 +324,15 @@ public class HorseMovement : MonoBehaviour
         yield return new WaitForSeconds(5f);
         if(cd) cd.enabled = true;
         Destroy(horseRb);
+    }
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
     }
 }

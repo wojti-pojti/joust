@@ -40,7 +40,7 @@ public class ColorSetup : MonoBehaviour
                 } while (AreColorsTooSimilar(color1, color2, 0.8f));
             }
 
-            StartCoroutine(AssignColors());
+            AssignColors();
         }
 
         if (animated)
@@ -111,9 +111,8 @@ public class ColorSetup : MonoBehaviour
     /// Delayed assigning of colors, as it appears to fix an issue.
     /// </summary>
     /// <returns></returns>
-    IEnumerator AssignColors()
+    void AssignColors()
     {
-        yield return new WaitForFixedUpdate();
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         renderer.sharedMaterial = originalMaterial;
 
