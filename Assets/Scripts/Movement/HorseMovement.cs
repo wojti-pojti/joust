@@ -1,13 +1,16 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class HorseMovement : MonoBehaviour
 {
     [Header("Player-specific")]
     [SerializeField] private int playerIndex;
+    private Controls controls;
+    [SerializeField] private string controlScheme;
+
     [SerializeField] private KeyCode accelerateKeyCode;
-    [SerializeField] private KeyCode jumpKeyCode;
 
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
@@ -44,15 +47,26 @@ public class HorseMovement : MonoBehaviour
     [HideInInspector] public bool hasPassedTheOpponent;
     private float idleAnimationTimer;
 
+    private void Awake()
+    {
+        controls = new Controls();
+
+        //controls.Match.Forward.performed += ctx => ForwardAction(); 
+        //controls.Match.Forward.started += ctx => ForwardAction(); // differ between tapping and holding
+        controls.Match.Jump.performed += ctx => Jump();
+    }
+
     #region Adding and removing this instance as listener
     void OnEnable() // subscribe to the event
     {
         GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Enable();
     }
 
     void OnDisable() // unsubscribe to the event
     {
         GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Disable();
     }
     #endregion
 
@@ -70,12 +84,6 @@ public class HorseMovement : MonoBehaviour
             if (Input.GetKeyUp(accelerateKeyCode))
             {
                 tapConstraint = false;
-            }
-
-            if (Input.GetKeyDown(jumpKeyCode) && !hasJumped)
-            {
-                Jump();
-                idleAnimationTimer = 0f;
             }
         }
     }
@@ -179,7 +187,9 @@ public class HorseMovement : MonoBehaviour
 
         // set correct inputs
         accelerateKeyCode = (side ? KeyCode.LeftArrow : KeyCode.D);
-        jumpKeyCode = (side ? KeyCode.UpArrow : KeyCode.E);
+
+        controlScheme = (side ? "KeyboardP2" : "KeyboardP1");
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
     }
 
     /// <summary>
@@ -197,6 +207,10 @@ public class HorseMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
+
+        if (hasJumped || hasPassedTheOpponent || (player.state != PlayerState.COMBAT && player.state != PlayerState.SHIELD)) { return; }
+        idleAnimationTimer = 0f;
+
         // relate it to speed somehow
         rb.AddForce(Vector2.up * (jumpForce + speed * 0.05f), ForceMode2D.Impulse);
         hasJumped = true;

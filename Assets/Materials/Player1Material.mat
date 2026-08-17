@@ -62,7 +62,7 @@ Material:
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.7863795, g: 0.9263284, b: 0.7663867, a: 1}
-    - _Color2: {r: 0.9411765, g: 0.07029529, b: 0.0507688, a: 1}
+    - _Color2: {r: 0.9411765, g: 0.07029507, b: 0.05076861, a: 1}
     - _MetallicColor: {r: 0.5774319, g: 0.5818396, b: 0.5421687, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

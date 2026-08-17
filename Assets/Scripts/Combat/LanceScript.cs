@@ -31,6 +31,7 @@ public class LanceScript : MonoBehaviour
     void Start()
     {
         ResetLance();
+        player.activeLanceController = mainLanceController;
     }
 
     /// <summary>
@@ -39,7 +40,6 @@ public class LanceScript : MonoBehaviour
     /// <param name="side">False for left, True for right.</param>
     public void AssignInputKey(bool side)
     {
-        player.activeLanceController = mainLanceController;
         mainLanceController.AssignInputKey(side, this);
     }
 

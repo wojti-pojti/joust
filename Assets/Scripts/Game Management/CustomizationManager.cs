@@ -1,9 +1,12 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class CustomizationManager : MonoBehaviour
 {
+    private Controls controls;
+
     public bool inCustomization;
     [Header("")]
     [SerializeField] private TransitionController customizationPanel;
@@ -37,6 +40,10 @@ public class CustomizationManager : MonoBehaviour
         {
             Destroy(Instance);
         }
+
+        // assigning input controls
+        controls = new Controls();
+        controls.Menu.Customize.performed += ctx => CustomizeAction();
     }
     #endregion
 
@@ -62,32 +69,39 @@ public class CustomizationManager : MonoBehaviour
         customizationPanel.Appear(false, true);
     }
 
-    // Update is called once per frame
-    void Update()
+    #region Input Actions
+    private void OnEnable()
     {
-        if (GameManager.Instance.gameState == GameState.MENU)
-        {
-            if (Input.GetKeyDown(KeyCode.K)) 
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                if (!customizationPanel.visible) 
-                { 
-                    Cursor.lockState = CursorLockMode.Confined;
-                    UpdateColorsArray();
-                    UpdateCustomizationPanel();
-                }
-                else 
-                {
-                    colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
-                    ApplyCustomizationSettings();
-                    Cursor.lockState = CursorLockMode.Locked; 
-                    colorPickerUI.SetActive(false);
-                }
-                customizationPanel.Appear(!customizationPanel.visible);
-                inCustomization = !customizationPanel.visible;
-            }
-        }
+        controls.Menu.Enable();
     }
+
+    private void OnDisable()
+    {
+        controls.Menu.Disable();
+    }
+
+    void CustomizeAction()
+    {
+        if (GameManager.Instance.gameState != GameState.MENU) { return; }
+
+        SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+        if (!customizationPanel.visible)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            UpdateColorsArray();
+            UpdateCustomizationPanel();
+        }
+        else
+        {
+            colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
+            ApplyCustomizationSettings();
+            Cursor.lockState = CursorLockMode.Locked;
+            colorPickerUI.SetActive(false);
+        }
+        customizationPanel.Appear(!customizationPanel.visible);
+        inCustomization = !customizationPanel.visible;
+    }
+    #endregion
 
     /// <summary>
     /// Begins the selection of the new color for the color field of a given index.

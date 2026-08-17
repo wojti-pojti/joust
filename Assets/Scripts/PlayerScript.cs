@@ -1,6 +1,8 @@
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
@@ -18,12 +20,15 @@ public class PlayerScript : MonoBehaviour
 {
     [Header("State")]
     public int index;
-    public PlayerState state; 
+    public PlayerState state;
+
+    [Header("Input")]
+    private Controls controls;
+    [SerializeField] private string controlScheme;
 
     public float shieldHealthPoints;
 
     [Header("Setup")]
-    [SerializeField] private KeyCode shieldKeyCode;
     [SerializeField] private float maxShieldHealthPoints;
     [Header("Knight")]
     [SerializeField] private GameObject knight;
@@ -64,38 +69,28 @@ public class PlayerScript : MonoBehaviour
 
     private float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
+        shieldUIToObjectDifference = shieldParent.transform.localPosition.y - shieldHealthBar.transform.localPosition.y;
+
+        controls = new Controls();
         if (index == 1)
         {
-            shieldKeyCode = KeyCode.S;
+            controlScheme = "KeyboardP1";
+
             lScript.AssignInputKey(false);
         }
         else if (index == 2)
         {
-            shieldKeyCode = KeyCode.DownArrow;
+            controlScheme = "KeyboardP2";
+
             lScript.AssignInputKey(true);
         }
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
 
-        shieldUIToObjectDifference = shieldParent.transform.localPosition.y - shieldHealthBar.transform.localPosition.y;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(shieldKeyCode) && state == PlayerState.COMBAT && shieldHealthPoints > 0)
-        {
-            state = PlayerState.SHIELD;
-            UseShield(true);
-            lScript.enabled = false;
-        }
-        if (Input.GetKeyUp(shieldKeyCode) && state == PlayerState.SHIELD)
-        {
-            state = PlayerState.COMBAT;
-            UseShield(false);
-            lScript.enabled = true;
-        }
+        controls.Match.Shield.started += ctx => RaiseShieldAction();
+        controls.Match.Shield.canceled += ctx => LowerShieldAction();
+        controls.Match.Lance.performed += ctx => ForwardAction();
     }
 
     private void FixedUpdate()
@@ -107,6 +102,46 @@ public class PlayerScript : MonoBehaviour
             shieldHealthBar.transform.localPosition = new Vector3(shieldHealthBar.transform.localPosition.x, newShieldPositionY - shieldUIToObjectDifference, shieldHealthBar.transform.localPosition.z);
         }
     }
+
+
+    #region Input Actions
+    void ForwardAction()
+    {
+
+    }
+    void RaiseShieldAction()
+    {
+        if (state == PlayerState.COMBAT && shieldHealthPoints > 0)
+        {
+            state = PlayerState.SHIELD;
+            UseShield(true);
+            lScript.enabled = false;
+        }
+    }
+    void LowerShieldAction()
+    {
+        if (state == PlayerState.SHIELD)
+        {
+            state = PlayerState.COMBAT;
+            UseShield(false);
+            lScript.enabled = true;
+        }
+    }
+    #endregion
+
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Enable();
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Disable();
+    }
+    #endregion
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -156,18 +191,6 @@ public class PlayerScript : MonoBehaviour
             }
         }
     }
-
-    #region Adding and removing this instance as listener
-    void OnEnable() // subscribe to the event
-    {
-        GameManager.OnGameCloseEvent += StopAllProcesses;
-    }
-
-    void OnDisable() // unsubscribe to the event
-    {
-        GameManager.OnGameCloseEvent += StopAllProcesses;
-    }
-    #endregion
 
     private void OnTriggerExit2D(Collider2D collision)
     {

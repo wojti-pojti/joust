@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public enum GameState
 {
@@ -23,6 +24,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
+
+    private Controls controls;
 
     [Header("Players")]
     public GameObject player1;
@@ -64,7 +67,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite soundIcon;
     [SerializeField] private Sprite noSoundIcon;
 
-    #region Singleton + black screen
+    #region Singleton + black screen + assigning inputs
     public static GameManager Instance;
     private void Awake()
     {
@@ -78,6 +81,15 @@ public class GameManager : MonoBehaviour
         }
 
         blackOutScreen.Appear(true, true);
+
+        // assigning input controls
+        controls = new Controls();
+        controls.Menu.Continue.performed += ctx => ContinueAction();
+        controls.Menu.Controls.performed += ctx => ControlsAction();
+        controls.Menu.Customize.performed += ctx => CustomizeAction();
+        controls.Menu.Mute.performed += ctx => MuteAction();
+        controls.Menu.Quit.performed += ctx => QuitAction();
+        controls.Match.Forfeit.performed += ctx => ForfeitAction();
     }
     #endregion
 
@@ -99,97 +111,6 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         messagePanel.SetActive(false);
         blackOutScreen.Appear(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-            if (gameState == GameState.AFTERMATCH) 
-            {
-                gameState = GameState.MENU;
-                PrepareMatch();
-                CameraController.Instance.ResetCamera();
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
-
-                // display menu screen
-                menuUI.SetActive(true);
-                titleCard.Appear(true);
-                menuInputPrompts.Appear(true);
-                gameUI.SetActive(false);
-                messagePanel.SetActive(false);
-            }
-            else if(gameState == GameState.MENU && !controlsPanel.visible) 
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                StartCoroutine(StartMatch());
-            }
-            else if(CameraController.Instance.cameraTurningAround == true) // skip animation
-            {
-                CameraController.Instance.InterruptAftermatchDisplay();
-            }
-        }
-
-        if(gameState == GameState.MENU)
-        {
-            if (Input.GetKeyDown(KeyCode.H) && !CustomizationManager.Instance.inCustomization) // or whatever
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                // show or hide controls panel
-                controlsPanel.Appear(!controlsPanel.visible);
-            }
-
-            if (controlsPanel.visible && Input.GetKeyDown(KeyCode.K)) // customization panel instead
-            {
-                controlsPanel.Appear(false);
-            }
-
-            if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                if (SoundManager.Instance.GetVolume() > 0)
-                {
-                    SoundManager.Instance.SetVolume(0f);
-                    soundIndicatorImage.sprite = noSoundIcon;
-                }
-                else
-                {
-                    SoundManager.Instance.SetVolume(1f);
-                    soundIndicatorImage.sprite = soundIcon;
-                }
-            }
-        }
-
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            if ((gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT) 
-                && pScript1.state != PlayerState.DEAD && pScript2.state != PlayerState.DEAD)
-            {
-                StartCoroutine(ForfeitMatch());
-            }
-            else
-            {
-                int sessionID;
-                try
-                {
-                    sessionID = PlayerPrefs.GetInt("SessionID");
-                }
-                catch 
-                {
-                    sessionID = 0;
-                }
-                sessionID++;
-                PlayerPrefs.SetInt("SessionID", sessionID);
-                OnGameCloseEvent?.Invoke(true);
-                CancelInvoke();
-                StopAllCoroutines();
-                messagePanel.SetActive(true);
-                message.text = "Quitting tournament...";
-                Application.Quit();
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -214,6 +135,114 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    #region Input Actions
+    private void OnEnable()
+    {
+        controls.Menu.Enable();
+        controls.Match.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Menu.Disable();
+        controls.Match.Disable();
+    }
+
+    void ContinueAction()
+    {
+        if (gameState == GameState.AFTERMATCH)
+        {
+            gameState = GameState.MENU;
+            PrepareMatch();
+            CameraController.Instance.ResetCamera();
+            SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+            SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
+
+            // display menu screen
+            menuUI.SetActive(true);
+            titleCard.Appear(true);
+            menuInputPrompts.Appear(true);
+            gameUI.SetActive(false);
+            messagePanel.SetActive(false);
+        }
+        else if (gameState == GameState.MENU && !controlsPanel.visible)
+        {
+            SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+            StartCoroutine(StartMatch());
+        }
+        else if (CameraController.Instance.cameraTurningAround == true) // skip animation
+        {
+            CameraController.Instance.InterruptAftermatchDisplay();
+        }
+    }
+
+    void ControlsAction()
+    {
+        if (CustomizationManager.Instance.inCustomization) { return; }
+
+        SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+        // show or hide controls panel
+        controlsPanel.Appear(!controlsPanel.visible);
+    }
+
+    void CustomizeAction()
+    {
+        if (controlsPanel.visible)
+        {
+            controlsPanel.Appear(false);
+        }
+    }
+
+    void MuteAction()
+    {
+        if (gameState != GameState.MENU) { return; }
+
+        SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+        if (SoundManager.Instance.GetVolume() > 0)
+        {
+            SoundManager.Instance.SetVolume(0f);
+            soundIndicatorImage.sprite = noSoundIcon;
+        }
+        else
+        {
+            SoundManager.Instance.SetVolume(1f);
+            soundIndicatorImage.sprite = soundIcon;
+        }
+    }
+
+    void QuitAction()
+    {
+        if (gameState != GameState.MENU) { return; }
+
+        int sessionID;
+        try
+        {
+            sessionID = PlayerPrefs.GetInt("SessionID");
+        }
+        catch
+        {
+            sessionID = 0;
+        }
+        sessionID++;
+        PlayerPrefs.SetInt("SessionID", sessionID);
+        OnGameCloseEvent?.Invoke(true);
+        CancelInvoke();
+        StopAllCoroutines();
+        messagePanel.SetActive(true);
+        message.text = "Quitting tournament...";
+        Application.Quit();
+    }
+
+    void ForfeitAction()
+    {
+        if ((gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT)
+                && pScript1.state != PlayerState.DEAD && pScript2.state != PlayerState.DEAD)
+        {
+            StartCoroutine(ForfeitMatch());
+        }
+    }
+    #endregion
 
     #region Match initialization
 

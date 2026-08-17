@@ -11,10 +11,18 @@ public class LanceController : MonoBehaviour
     [SerializeField] private float directionMultiplier;
 
     [Header("")]
+    private Controls controls;
+    [SerializeField] private string controlScheme;
+
     [SerializeField] private KeyCode lowerLanceKeyCode;
     [Header("")]
     public HingeJoint2D joint;
     private Vector3 verticalPosition, startVerticalPosition;
+
+    private void Awake()
+    {
+        controls = new Controls();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,6 +65,18 @@ public class LanceController : MonoBehaviour
             joint.motor = newMotor;
         }
     }
+
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        controls.Match.Enable();
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        controls.Match.Disable();
+    }
+    #endregion
 
     /// <summary>
     /// Setter function for the vertical position vector. Adjustments may be needed when lance segments are broken off.

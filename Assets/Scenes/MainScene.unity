@@ -8031,7 +8031,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16.251587, y: 0.95599365}
+  m_AnchoredPosition: {x: 16.251587, y: 0.9560547}
   m_SizeDelta: {x: 204.578, y: 162.5153}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &698523937
@@ -21695,7 +21695,7 @@ Transform:
   m_GameObject: {fileID: 1144759923}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.38900003, y: -0.258, z: 0}
+  m_LocalPosition: {x: 0.386, y: -0.242, z: 0}
   m_LocalScale: {x: 0.039465018, y: 0.064703956, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21748,7 +21748,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 0ad9858157e171f4c99781c56e9e1235, type: 3}
   m_Color: {r: 0.9169811, g: 0.9169811, b: 0.9169811, a: 1}
@@ -27544,7 +27544,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -33048,7 +33048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2.399994, y: 201.3}
+  m_AnchoredPosition: {x: 2.3999023, y: 201.29999}
   m_SizeDelta: {x: -544.2578, y: -181.075}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1645828100
@@ -34126,7 +34126,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0010070801, y: -10.5178}
+  m_AnchoredPosition: {x: -0.0009765625, y: -10.517822}
   m_SizeDelta: {x: -466.77, y: -287.4872}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1731879705
@@ -35122,7 +35122,7 @@ MonoBehaviour:
   originalMaterial: {fileID: 2100000, guid: 3f1a3efbed6d9814fb7dfe20d6374a56, type: 2}
   reassignColors: 1
   randomizeColor1: 1
-  color1: {r: 0.625, g: 0.19875002, b: 0.19875002, a: 0}
+  color1: {r: 0, g: 0.6156863, b: 0, a: 0}
   randomizeColor2: 1
   color2: {r: 0, g: 0, b: 0, a: 0}
   animated: 0
@@ -37674,6 +37674,50 @@ MonoBehaviour:
   gameState: 0
   turnsPlayed: 0
   totalTimesJumped: 0
+  continueAction:
+    m_Name: Continue
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 342619f1-0d3d-4d02-a432-c05f68e6e5b9
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: cb52e560-4daa-4854-801a-3121f29d9a5a
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Continue
+      m_Flags: 0
+    m_Flags: 0
+  controlsAction:
+    m_Name: Controls
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 815c05cd-57de-4f49-98a7-68469b515299
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  customizeAction:
+    m_Name: Customize
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 5c339654-7d98-47fc-adb7-ae6798a536b7
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  quitAction:
+    m_Name: Quit
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: af340da8-314a-4469-bf85-d35f74d52f76
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   player1: {fileID: 1965503013}
   player2: {fileID: 2035941636}
   randomUpgradesBetweenTurns: 0

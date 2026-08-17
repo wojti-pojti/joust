@@ -42,4 +42,4 @@ Gasp.mp3 by laft2k -- https://freesound.org/s/437667/ -- License: Creative Commo
 Car_Stop_Breaks_Screech_Engine-Rev_by-monnie101.mp4.WAV by monnie101 -- https://freesound.org/s/58150/ -- License: Creative Commons 0
 Attack Blocked.wav by LilMati -- https://freesound.org/s/523760/ -- License: Creative Commons 0
 Continuous Rock Sliding Sound Effect by Creator Templates - https://www.youtube.com/watch?v=ORTPtojo7tA
-Crown Of The Kingdom of Poland Anthem Instrumental "Bogurodzica" from Anthem Instrumental Channel - https://www.youtube.com/watch?v=uvFRB4J3tmo​​
+BOGURODZICA IMPROWIZACJA ORGANOWA (Trąbki Hiszpańskie) by EucharisticaTV - https://www.youtube.com/watch?v=CiesHeogiMw - used for both soundtracks, edited in Audacity.
