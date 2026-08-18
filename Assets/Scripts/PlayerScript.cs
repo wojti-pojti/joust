@@ -11,7 +11,7 @@ public enum PlayerState
 {
     IDLE,
     COMBAT,
-    JUMP, // maybe unnecessary
+    JUMP, 
     SHIELD,
     OFFHORSE,
     DEAD
@@ -90,7 +90,6 @@ public class PlayerScript : MonoBehaviour
 
         controls.Match.Shield.started += ctx => RaiseShieldAction();
         controls.Match.Shield.canceled += ctx => LowerShieldAction();
-        controls.Match.Lance.performed += ctx => ForwardAction();
     }
 
     private void FixedUpdate()
@@ -103,12 +102,20 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Assigns a new control scheme to the player and all children taking inputs.
+    /// </summary>
+    /// <param name="newControlScheme"></param>
+    public void AssignControlScheme(string newControlScheme)
+    {
+        controlScheme = newControlScheme;
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+
+        hScript.AssignControlScheme(newControlScheme);
+        activeLanceController.AssignControlScheme(newControlScheme);
+    }
 
     #region Input Actions
-    void ForwardAction()
-    {
-
-    }
     void RaiseShieldAction()
     {
         if (state == PlayerState.COMBAT && shieldHealthPoints > 0)

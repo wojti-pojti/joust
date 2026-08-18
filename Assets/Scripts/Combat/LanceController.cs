@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class LanceController : MonoBehaviour
 {
@@ -14,7 +15,6 @@ public class LanceController : MonoBehaviour
     private Controls controls;
     [SerializeField] private string controlScheme;
 
-    [SerializeField] private KeyCode lowerLanceKeyCode;
     [Header("")]
     public HingeJoint2D joint;
     private Vector3 verticalPosition, startVerticalPosition;
@@ -29,24 +29,6 @@ public class LanceController : MonoBehaviour
     {
         verticalPosition = this.transform.localPosition;
         startVerticalPosition = verticalPosition;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(GameManager.Instance.gameState == GameState.ACTIVE_COMBAT)
-        {
-            if (Input.GetKeyDown(lowerLanceKeyCode) && !releasedButton)
-            {
-                holdButton = true;
-            }
-
-            if (Input.GetKeyUp(lowerLanceKeyCode) && holdButton)
-            {
-                holdButton = false;
-                releasedButton = true;
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -66,6 +48,27 @@ public class LanceController : MonoBehaviour
         }
     }
 
+    #region Input Actions
+    void LanceKeyDownAction()
+    {
+        if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT) { return; }
+        if (!releasedButton)
+        {
+            holdButton = true;
+        }
+    }
+
+    void LanceKeyUpAction()
+    {
+        if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT) { return; }
+        if (holdButton)
+        {
+            holdButton = false;
+            releasedButton = true;
+        }
+    }
+    #endregion
+
     #region Adding and removing this instance as listener
     void OnEnable() // subscribe to the event
     {
@@ -77,6 +80,16 @@ public class LanceController : MonoBehaviour
         controls.Match.Disable();
     }
     #endregion
+
+    /// <summary>
+    /// Assigns a new control scheme to the lance.
+    /// </summary>
+    /// <param name="newControlScheme"></param>
+    public void AssignControlScheme(string newControlScheme)
+    {
+        controlScheme = newControlScheme;
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+    }
 
     /// <summary>
     /// Setter function for the vertical position vector. Adjustments may be needed when lance segments are broken off.
@@ -115,12 +128,15 @@ public class LanceController : MonoBehaviour
         parentLanceScript = caller;
         if (!side)
         {
-            lowerLanceKeyCode = KeyCode.W;
+            controlScheme = "KeyboardP1";
         }
         else
         {
-            lowerLanceKeyCode = KeyCode.RightArrow;
+            controlScheme = "KeyboardP2";
         }
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+        controls.Match.Lance.started += ctx => LanceKeyDownAction();
+        controls.Match.Lance.canceled += ctx => LanceKeyUpAction();
     }
 
     /// <summary>

@@ -101,6 +101,5 @@ public class LanceScript : MonoBehaviour
         }
 
         player.activeLanceController.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-        //Debug.Log("Player " + player.index + "'s lance has been restored.");
     }
 }

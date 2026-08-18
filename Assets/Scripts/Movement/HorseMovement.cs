@@ -10,8 +10,6 @@ public class HorseMovement : MonoBehaviour
     private Controls controls;
     [SerializeField] private string controlScheme;
 
-    [SerializeField] private KeyCode accelerateKeyCode;
-
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
     public float totalAppliedForce;
@@ -51,9 +49,25 @@ public class HorseMovement : MonoBehaviour
     {
         controls = new Controls();
 
-        //controls.Match.Forward.performed += ctx => ForwardAction(); 
-        //controls.Match.Forward.started += ctx => ForwardAction(); // differ between tapping and holding
-        controls.Match.Jump.performed += ctx => Jump();
+        controls.Match.Forward.started += ctx => ForwardSurgeAction(); 
+        controls.Match.Forward.canceled += ctx => ForwardAction(); 
+        controls.Match.Jump.started += ctx => Jump();
+    }
+
+    void ForwardSurgeAction()
+    {
+        if (hasPassedTheOpponent || (player.state != PlayerState.COMBAT && player.state != PlayerState.SHIELD)) { return; }
+
+        Accelerate();
+        idleAnimationTimer = 0f;
+        tapConstraint = true;
+    }
+
+    void ForwardAction()
+    {
+        if (hasPassedTheOpponent || (player.state != PlayerState.COMBAT && player.state != PlayerState.SHIELD)) { return; }
+
+        tapConstraint = false;
     }
 
     #region Adding and removing this instance as listener
@@ -69,24 +83,6 @@ public class HorseMovement : MonoBehaviour
         controls.Match.Disable();
     }
     #endregion
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!hasPassedTheOpponent && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
-        {
-            if (Input.GetKeyDown(accelerateKeyCode))
-            {
-                Accelerate();
-                idleAnimationTimer = 0f;
-                tapConstraint = true;
-            }
-            if (Input.GetKeyUp(accelerateKeyCode))
-            {
-                tapConstraint = false;
-            }
-        }
-    }
 
     private void FixedUpdate()
     {
@@ -185,10 +181,17 @@ public class HorseMovement : MonoBehaviour
         hasPassedTheOpponent = false;
         tapConstraint = false;
 
-        // set correct inputs
-        accelerateKeyCode = (side ? KeyCode.LeftArrow : KeyCode.D);
-
         controlScheme = (side ? "KeyboardP2" : "KeyboardP1");
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+    }
+
+    /// <summary>
+    /// Assigns a new control scheme to the horse.
+    /// </summary>
+    /// <param name="newControlScheme"></param>
+    public void AssignControlScheme(string newControlScheme)
+    {
+        controlScheme = newControlScheme;
         controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
     }
 

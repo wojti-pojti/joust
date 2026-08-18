@@ -183,6 +183,14 @@ public class GameManager : MonoBehaviour
 
         SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
         // show or hide controls panel
+        if (controlsPanel.visible)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
         controlsPanel.Appear(!controlsPanel.visible);
     }
 
@@ -243,6 +251,17 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
+
+    /// <summary>
+    /// Assigns a new control scheme to a chosen player.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player to receive new control scheme.</param>
+    /// <param name="newControlScheme">The string identifying the control scheme.</param>
+    public void AssignControlSchemeToPlayer(int playerIndex, string newControlScheme)
+    {
+        if (playerIndex == 1) { pScript1.AssignControlScheme(newControlScheme); }
+        else if (playerIndex == 2) { pScript2.AssignControlScheme(newControlScheme); }
+    }
 
     #region Match initialization
 
