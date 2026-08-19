@@ -27,12 +27,7 @@ public class InputBindingsController : MonoBehaviour
         {
             Destroy(Instance);
         }
-    }
-    #endregion
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
         player1Dropdown.ClearOptions();
         player2Dropdown.ClearOptions();
 
@@ -46,7 +41,12 @@ public class InputBindingsController : MonoBehaviour
         player2Dropdown.value = 1;
         currentPlayer2Input = 1;
         player2Dropdown.RefreshShownValue();
+    }
+    #endregion
 
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
         UpdateControlSchemeDisplays();
     }
 
