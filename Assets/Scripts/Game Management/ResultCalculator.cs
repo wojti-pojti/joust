@@ -7,7 +7,7 @@ public class ResultCalculator : MonoBehaviour
     [SerializeField] private int matchScore;
 
     [Header("UI")]
-    [SerializeField] private SpriteRenderer reactionPanel;
+    [SerializeField] private Image reactionPanel;
     [SerializeField] private Image[] stars = new Image[4];
     [SerializeField] private TMP_Text scoreText;
 
@@ -60,7 +60,7 @@ public class ResultCalculator : MonoBehaviour
         if (shp1 < 0) { score = (int)(score * 1.2f); }
         if (shp2 < 0) { score = (int)(score * 1.2f); }
 
-        score += Random.Range(0, 8); // random bonus
+        score += Random.Range(0, 4 * turnsPlayed); // random bonus
 
         Debug.Log("Result of the match: " + score + " score");
         matchScore = score;
