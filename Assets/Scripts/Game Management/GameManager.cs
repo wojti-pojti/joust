@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject aftermatchUI;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private TMP_Text turnCounter;
-    [SerializeField] private GameObject messagePanel;
+    [SerializeField] private TransitionController messagePanel;
     [SerializeField] private TMP_Text message;
     [SerializeField] private TransitionController controlsPanel; 
     [SerializeField] private TransitionController titleCard;
@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
         aftermatchUI.SetActive(false);
         controlsPanel.Appear(false, true);
         gameUI.SetActive(false);
-        messagePanel.SetActive(false);
+        messagePanel.Appear(false, true);
         blackOutScreen.Appear(false);
     }
 
@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
             titleCard.Appear(true);
             menuInputPrompts.Appear(true);
             gameUI.SetActive(false);
-            messagePanel.SetActive(false);
+            messagePanel.Appear(false, true);
         }
         else if (gameState == GameState.MENU && !controlsPanel.visible)
         {
@@ -182,6 +182,14 @@ public class GameManager : MonoBehaviour
         if (CustomizationManager.Instance.inCustomization) { return; }
 
         SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+
+        if (controlsPanel.visible && ((InputBindingsController.Instance.currentPlayer1Input == 2 && InputBindingsController.Instance.player1Gamepad == null) ||
+                (InputBindingsController.Instance.currentPlayer2Input == 2 && InputBindingsController.Instance.player2Gamepad == null)))
+        {
+            DisplayMessage("Unable to proceed", 1f);
+            return;
+        }
+
         // show or hide controls panel
         if (controlsPanel.visible)
         {
@@ -237,7 +245,7 @@ public class GameManager : MonoBehaviour
         OnGameCloseEvent?.Invoke(true);
         CancelInvoke();
         StopAllCoroutines();
-        messagePanel.SetActive(true);
+        messagePanel.Appear(true, true);
         message.text = "Quitting tournament...";
         Application.Quit();
     }
@@ -252,6 +260,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region Controls
     /// <summary>
     /// Assigns a new control scheme to a chosen player.
     /// </summary>
@@ -262,6 +271,29 @@ public class GameManager : MonoBehaviour
         if (playerIndex == 1) { pScript1.AssignControlScheme(newControlScheme); }
         else if (playerIndex == 2) { pScript2.AssignControlScheme(newControlScheme); }
     }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player to receive new control scheme.</param>
+    /// <param name="gamepad">The string identifying the control scheme.</param>
+    public void AssignGamepadToPlayer(int playerIndex, Gamepad gamepad)
+    {
+        if (playerIndex == 1) { pScript1.AssignGamepad(gamepad); }
+        else if (playerIndex == 2) { pScript2.AssignGamepad(gamepad); }
+    }
+
+    /// <summary>
+    /// Removes the recently removed gamepad from the player of given index.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player to receive new control scheme.</param>
+    /// <param name="newControlScheme">The string identifying the control scheme.</param>
+    public void RemoveGamepadFromPlayer(int playerIndex, Gamepad gamepad)
+    {
+        if (playerIndex == 1) { pScript1.RemoveGamepad(gamepad); }
+        else if (playerIndex == 2) { pScript2.RemoveGamepad(gamepad); }
+    }
+    #endregion
 
     #region Match initialization
 
@@ -324,7 +356,7 @@ public class GameManager : MonoBehaviour
         pScript2.state = PlayerState.COMBAT;
         CameraController.Instance.ResetCamera();
         Debug.Log("JOUST!");
-        StartCoroutine(ShowMessage("JOUST!"));
+        DisplayMessage("JOUST!");
         pScript1.Charge(true);
         pScript2.Charge(true);
     }
@@ -338,7 +370,7 @@ public class GameManager : MonoBehaviour
     IEnumerator ForfeitMatch()
     {
         Debug.Log("The match has been forfeited. Returning to menu.");
-        StartCoroutine(ShowMessage("Match forfeited"));
+        DisplayMessage("Match forfeited");
 
         SoundManager.Instance.InterruptPlayingSound();
         gameState = GameState.MATCH;
@@ -374,18 +406,18 @@ public class GameManager : MonoBehaviour
         if (winnerIndex == 0)
         {
             // draw
-            StartCoroutine(ShowMessage("Draw!"));
+            DisplayMessage("Draw!");
         }
 
         if (winnerIndex == 1)
         {
             horse1.TurnAround();
-            StartCoroutine(ShowMessage("Player 1 wins!"));
+            DisplayMessage("Player 1 wins!");
         }
         if (winnerIndex == 2)
         {
             horse2.TurnAround();
-            StartCoroutine(ShowMessage("Player 2 wins!"));
+            DisplayMessage("Player 2 wins!");
         }
 
         OnEnableGameUIEvent?.Invoke(false);
@@ -500,6 +532,17 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Starts a coroutine to display a message panel in the center of the screen, conveying a message.
+    /// </summary>
+    /// <param name="content">The string to be written on the panel.</param>
+    /// <param name="duration">How long the message should be visible.</param>
+    /// <returns></returns>
+    public void DisplayMessage(string content, float duration = 1.5f)
+    {
+        StartCoroutine(ShowMessage(content, duration));
+    }
+
+    /// <summary>
     /// Display a message panel in the center of the screen, conveying a message.
     /// </summary>
     /// <param name="content">The string to be written on the panel.</param>
@@ -507,12 +550,12 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator ShowMessage(string content, float duration = 1.5f)
     {
-        messagePanel.SetActive(true);
+        messagePanel.Appear(true);
         message.text = content;
         if(duration > 0)
         {
             yield return new WaitForSeconds(duration);
-            messagePanel.SetActive(false);
+            messagePanel.Appear(false);
         }
     }
 }

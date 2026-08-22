@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// This script controls the lance - mainly it's durability and the mechanics of the lance breaking down.
+/// </summary>
 public class LanceScript : MonoBehaviour
 {
     [HideInInspector] public int index;

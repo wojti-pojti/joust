@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 public class HorseMovement : MonoBehaviour
 {
@@ -185,6 +186,7 @@ public class HorseMovement : MonoBehaviour
         controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
     }
 
+    #region Controls
     /// <summary>
     /// Assigns a new control scheme to the horse.
     /// </summary>
@@ -194,6 +196,25 @@ public class HorseMovement : MonoBehaviour
         controlScheme = newControlScheme;
         controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
     }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void AssignGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { gamepad });
+    }
+
+    /// <summary>
+    /// Removes the gamepad from the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void RemoveGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { Keyboard.current });
+    }
+    #endregion
 
     /// <summary>
     /// Function called everytime the player taps the accelerate button. Adds a significant amount of force to the horse charge.

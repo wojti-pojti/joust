@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
@@ -110,9 +111,33 @@ public class PlayerScript : MonoBehaviour
     {
         controlScheme = newControlScheme;
         controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
-
+        
         hScript.AssignControlScheme(newControlScheme);
         activeLanceController.AssignControlScheme(newControlScheme);
+    }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void AssignGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { gamepad });
+
+        hScript.AssignGamepad(gamepad);
+        activeLanceController.AssignGamepad(gamepad);
+    }
+
+    /// <summary>
+    /// Removes the gamepad from the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void RemoveGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { Keyboard.current });
+
+        hScript.RemoveGamepad(gamepad);
+        activeLanceController.RemoveGamepad(gamepad);
     }
 
     #region Input Actions

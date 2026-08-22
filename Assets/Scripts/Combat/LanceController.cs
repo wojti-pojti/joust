@@ -1,7 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
+/// <summary>
+/// This script controls the movement of the lance, including taking inputs.
+/// </summary>
 public class LanceController : MonoBehaviour
 {
     [HideInInspector] public LanceScript parentLanceScript;
@@ -81,6 +85,7 @@ public class LanceController : MonoBehaviour
     }
     #endregion
 
+    #region Controls
     /// <summary>
     /// Assigns a new control scheme to the lance.
     /// </summary>
@@ -90,6 +95,25 @@ public class LanceController : MonoBehaviour
         controlScheme = newControlScheme;
         controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
     }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void AssignGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { gamepad });
+    }
+
+    /// <summary>
+    /// Removes the gamepad from the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void RemoveGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { Keyboard.current });
+    }
+    #endregion
 
     /// <summary>
     /// Setter function for the vertical position vector. Adjustments may be needed when lance segments are broken off.
