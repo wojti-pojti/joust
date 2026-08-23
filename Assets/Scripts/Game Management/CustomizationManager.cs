@@ -1,8 +1,9 @@
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+/// <summary>
+/// This script keeps track of the chosen color scheme of each player, allowing for modification using the color picker.
+/// </summary>
 public class CustomizationManager : MonoBehaviour
 {
     private Controls controls;

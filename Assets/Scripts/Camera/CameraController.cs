@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// This script handles the movement of the main camera.
+/// </summary>
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private float distanceBetweenPlayers;

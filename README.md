@@ -35,10 +35,6 @@ Please leave a comment if you have encountered any issues with the game.
 
 
 
-Source Code:
-Github
-
-
 
 Assets:
 

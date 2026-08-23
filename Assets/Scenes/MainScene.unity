@@ -14026,8 +14026,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1.8}
-  m_SizeDelta: {x: -14.9359, y: -2.3592}
+  m_AnchoredPosition: {x: 0, y: -1.7338}
+  m_SizeDelta: {x: -14.9359, y: -2.2269}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &902153657
 MonoBehaviour:
@@ -48652,6 +48652,7 @@ MonoBehaviour:
   titleCard: {fileID: 393277137}
   menuInputPrompts: {fileID: 829387818}
   blackOutScreen: {fileID: 698523939}
+  quitGamePromptText: {fileID: 1306951586}
   soundIcon: {fileID: -1655999036069358545, guid: 7405a73350e6400489cbf24925186fe7, type: 3}
   noSoundIcon: {fileID: 6747947587380265571, guid: 7405a73350e6400489cbf24925186fe7, type: 3}
 --- !u!4 &2002643143

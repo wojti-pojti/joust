@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Indicates which stage of gameplay loop is currently active.
+/// </summary>
 public enum GameState
 {
     MENU,
@@ -13,6 +15,9 @@ public enum GameState
     ACTIVE_COMBAT,
     AFTERMATCH  // after the game has concluded
 }
+/// <summary>
+/// The script responsible for maintaining the gameplay loop along with UI.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [Header("Game state")]
@@ -62,6 +67,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TransitionController titleCard;
     [SerializeField] private TransitionController menuInputPrompts;
     [SerializeField] private TransitionController blackOutScreen;
+    [SerializeField] private GameObject quitGamePromptText;
 
     [Header("")]
     [SerializeField] private Sprite soundIcon;
@@ -96,6 +102,10 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        #if UNITY_WEBGL
+        quitGamePromptText.SetActive(false);
+        #endif
+
         Cursor.lockState = CursorLockMode.Locked;
         pScript1 = player1.GetComponent<PlayerScript>();
         pScript2 = player2.GetComponent<PlayerScript>();
@@ -242,12 +252,17 @@ public class GameManager : MonoBehaviour
         }
         sessionID++;
         PlayerPrefs.SetInt("SessionID", sessionID);
+
+        #if UNITY_WEBGL
+
+        #else
         OnGameCloseEvent?.Invoke(true);
         CancelInvoke();
         StopAllCoroutines();
         messagePanel.Appear(true, true);
         message.text = "Quitting tournament...";
         Application.Quit();
+        #endif
     }
 
     void ForfeitAction()
@@ -258,7 +273,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(ForfeitMatch());
         }
     }
-    #endregion
+#endregion
 
     #region Controls
     /// <summary>

@@ -3,8 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using Unity.VisualScripting;
-using System.Linq;
 
+/// <summary>
+/// This script is responsible for the color picker functionality of the Customization panel. It allows the user to select a color from the given image, 
+/// and it can find an approximation of a chosen color in that image to update UI elements.
+/// </summary>
 public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public Color output;

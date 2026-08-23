@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
+/// <summary>
+/// This script handles the movement of the horse (and consequently, player) as well as connected inputs.
+/// </summary>
 public class HorseMovement : MonoBehaviour
 {
     [Header("Player-specific")]

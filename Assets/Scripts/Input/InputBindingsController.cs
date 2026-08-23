@@ -10,7 +10,6 @@ public class InputBindingsController : MonoBehaviour
 {
     public int currentPlayer1Input;
     public int currentPlayer2Input;
-    [Header("")]
     [HideInInspector] public Gamepad player1Gamepad {  get; private set; }
     [HideInInspector] public Gamepad player2Gamepad { get; private set; }
     [Header("UI")]

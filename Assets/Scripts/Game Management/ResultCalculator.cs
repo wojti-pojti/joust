@@ -2,6 +2,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>
+/// This script is responsible for determining the final score of the match and setting up the reaction panel based on that.
+/// </summary>
 public class ResultCalculator : MonoBehaviour
 {
     [SerializeField] private int matchScore;

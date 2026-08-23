@@ -1,13 +1,12 @@
 using System.Collections;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
+/// <summary>
+/// Describes the state of the player, which leads to different capabilities or consequences.
+/// </summary>
 public enum PlayerState
 {
     IDLE,
@@ -17,6 +16,9 @@ public enum PlayerState
     OFFHORSE,
     DEAD
 }
+/// <summary>
+/// This script keeps track of all the player's data, including their state and the state of their shield.
+/// </summary>
 public class PlayerScript : MonoBehaviour
 {
     [Header("State")]
