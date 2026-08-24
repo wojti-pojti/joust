@@ -85,7 +85,7 @@ public class CameraController : MonoBehaviour
         {
             distanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
             midpointX = Mathf.Min(player1.transform.position.x, player2.transform.position.x) + 0.5f * distanceBetweenPlayers;
-            currentFOV = Mathf.Max(startFOV - (startDistanceBetweenPlayers / distanceBetweenPlayers), 4);
+            currentFOV = Mathf.Max(startFOV - (startDistanceBetweenPlayers / distanceBetweenPlayers) + 1, 4);
 
             Vector3 newPos = new Vector3(midpointX,
                 Mathf.Max(startPosition.y - 0.25f * (startDistanceBetweenPlayers / distanceBetweenPlayers), -2f),

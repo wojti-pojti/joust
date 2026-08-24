@@ -69,6 +69,7 @@ public class PlayerScript : MonoBehaviour
     private BoxCollider2D opponentLanceCollider;
     private bool madeContact;
     private SpriteRenderer[] renderers;
+    private LanceScript recordedOpponentLance;
 
     private float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
 
@@ -98,7 +99,7 @@ public class PlayerScript : MonoBehaviour
     private void FixedUpdate()
     {
         // raise/lower shield animations
-        if(shieldTargetY != shield.transform.localPosition.y && shieldHealthPoints > 0 && state != PlayerState.DEAD)
+        if (shieldTargetY != shield.transform.localPosition.y && shieldHealthPoints > 0 && state != PlayerState.DEAD)
         {
             shield.transform.localPosition = new Vector3(shield.transform.localPosition.x, newShieldPositionY, shield.transform.localPosition.z);
             shieldHealthBar.transform.localPosition = new Vector3(shieldHealthBar.transform.localPosition.x, newShieldPositionY - shieldUIToObjectDifference, shieldHealthBar.transform.localPosition.z);
@@ -180,18 +181,26 @@ public class PlayerScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         LanceScript opponentLance;
-        try
+        if (recordedOpponentLance == null)
         {
-          opponentLance = collision.gameObject.GetComponentInParent<LanceController>().parentLanceScript;
+            try
+            {
+                opponentLance = collision.gameObject.GetComponentInParent<LanceController>().parentLanceScript;
+            }
+            catch
+            {
+                opponentLance = null;
+            }
+            recordedOpponentLance = opponentLance;
         }
-        catch 
+        else
         {
-            opponentLance = null;
+            opponentLance = recordedOpponentLance;
         }
 
-        if(!madeContact && collision.gameObject.tag == "Weapon" && opponentLance != null)
+        if (!madeContact && collision.gameObject.tag == "Weapon" && opponentLance != null)
         {
-            if(opponentLance.enabled && opponentLance.index != index)
+            if (opponentLance.enabled && opponentLance.index != index)
             {
                 madeContact = true;
                 if (state == PlayerState.SHIELD)

@@ -14,6 +14,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private bool holding;
     private int r, g, b;
     private PointerEventData mostRecentEventData;
+    private Camera mainCam;
 
     [Header("")]
     [SerializeField] private Image colorPaletteImage;
@@ -25,12 +26,16 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private Texture2D texture;
 
-    // Update is called once per frame
+    private void Start()
+    {
+        mainCam = Camera.main;
+    }
+
     void Update()
     {
         if (holding)
         {
-            output = PickColor(Camera.main.WorldToScreenPoint(mostRecentEventData.position));
+            output = PickColor(mainCam.WorldToScreenPoint(mostRecentEventData.position));
 
             CustomizationManager.Instance.SetNewColor(output);
             UpdateDisplay();
@@ -80,7 +85,7 @@ public class ColorPicker : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     Color PickColor(Vector2 screenPoint)
     {
         Vector2 point;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(colorPaletteImage.rectTransform, screenPoint, Camera.main, out point);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(colorPaletteImage.rectTransform, screenPoint, mainCam, out point);
 
         point.x = Mathf.Clamp(point.x, colorPaletteImage.rectTransform.rect.xMin, colorPaletteImage.rectTransform.rect.xMax);
         point.y = Mathf.Clamp(point.y, colorPaletteImage.rectTransform.rect.yMin, colorPaletteImage.rectTransform.rect.yMax);

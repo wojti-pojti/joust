@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
         if (gameState == GameState.ACTIVE_COMBAT)
         {
             if ((horse1.side == false && player1.transform.position.x > player2.transform.position.x) ||
-            (horse1.side == true && player1.transform.position.x < player2.transform.position.x))
+           (horse1.side == true && player1.transform.position.x < player2.transform.position.x))
             {
                 horse1.hasPassedTheOpponent = true;
                 horse2.hasPassedTheOpponent = true;
