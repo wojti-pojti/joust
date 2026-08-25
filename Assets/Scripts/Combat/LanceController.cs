@@ -22,6 +22,8 @@ public class LanceController : MonoBehaviour
     public HingeJoint2D joint;
     private Vector3 verticalPosition, startVerticalPosition;
 
+    private float accumulatedCharge;
+
     private void Awake()
     {
         controls = new Controls();
@@ -48,6 +50,16 @@ public class LanceController : MonoBehaviour
             JointMotor2D newMotor = joint.motor;
             newMotor.motorSpeed = 0;
             joint.motor = newMotor;
+        }
+
+        if (holdButton)
+        {
+            accumulatedCharge += chargeAccumulationMultiplier * directionMultiplier * Time.deltaTime;
+
+            if (accumulatedCharge > 25f) 
+            {
+                parentLanceScript.SetLanceOpacity(1f);
+            }
         }
     }
 
@@ -139,6 +151,7 @@ public class LanceController : MonoBehaviour
 
         holdButton = false;
         releasedButton = false;
+        accumulatedCharge = 0f;
     }
 
     /// <summary>
@@ -182,5 +195,14 @@ public class LanceController : MonoBehaviour
             newLimits.max = 0;
         }
         joint.limits = newLimits;
+    }
+
+    /// <summary>
+    /// Getter function for the charge accumulated by lowering the lance.
+    /// </summary>
+    /// <returns></returns>
+    public float GetAccumulatedCharge()
+    {
+        return Mathf.Abs(accumulatedCharge);
     }
 }

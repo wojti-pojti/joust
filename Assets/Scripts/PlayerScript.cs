@@ -200,7 +200,9 @@ public class PlayerScript : MonoBehaviour
 
         if (!madeContact && collision.gameObject.tag == "Weapon" && opponentLance != null)
         {
-            if (opponentLance.enabled && opponentLance.index != index)
+            float lanceRotation = opponentLance.GetLanceRotation();
+
+            if (opponentLance.enabled && opponentLance.index != index && lanceRotation >= 25f)
             {
                 madeContact = true;
                 if (state == PlayerState.SHIELD)
@@ -313,6 +315,7 @@ public class PlayerScript : MonoBehaviour
             madeContact = false;
             if (!activeLanceController) activeLanceController = lance.GetComponent<LanceController>();
             activeLanceController.RaiseBackToPosition(false);
+            lScript.SetLanceOpacity(0.5f);
         }
     }
 

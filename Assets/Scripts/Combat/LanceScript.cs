@@ -23,11 +23,13 @@ public class LanceScript : MonoBehaviour
 
     private PlayerScript player;
     private Material playerMaterial;
+    SpriteRenderer lanceRenderer;
 
     private void Awake()
     {
         player = this.GetComponent<PlayerScript>();
         playerMaterial = player.playerMaterial;
+        lanceRenderer = player.lance.GetComponent<SpriteRenderer>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -104,5 +106,25 @@ public class LanceScript : MonoBehaviour
         }
 
         player.activeLanceController.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+    }
+
+    /// <summary>
+    /// A getter function for the lance controller's gameobject's rotation.
+    /// </summary>
+    /// <returns>The z component of the object's rotation.</returns>
+    public float GetLanceRotation()
+    {
+        Debug.Log(mainLanceController.GetAccumulatedCharge().ToString());
+        return mainLanceController.GetAccumulatedCharge();
+    }
+
+    /// <summary>
+    /// This function adjusts the opacity of the lance.
+    /// </summary>
+    /// <param name="newOpacity"></param>
+    public void SetLanceOpacity(float newOpacity)  // doesn't work because of the shader probably
+    {
+        if(newOpacity == lanceRenderer.color.a) { return; }
+        lanceRenderer.color = new Color(1f, 1f, 1f, newOpacity);
     }
 }

@@ -352,6 +352,8 @@ public class GameManager : MonoBehaviour
         turnCounter.text = turnsPlayed.ToString();
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
+        pScript1.Charge(false);
+        pScript2.Charge(false);
         gameState = GameState.MATCH;
 
         SoundManager.Instance.InterruptPlayingSound();
