@@ -76,9 +76,9 @@ Material:
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 0.7863795, g: 0.9263284, b: 0.7663867, a: 1}
-    - _Color2: {r: 0.9411765, g: 0.07029491, b: 0.05076842, a: 1}
-    - _MetallicColor: {r: 0.5774319, g: 0.5818396, b: 0.5421687, a: 1}
+    - _Color1: {r: 0.2406663, g: 0.5828455, b: 0.4118358, a: 1}
+    - _Color2: {r: 0.7943857, g: 0.3737365, b: 0.7706966, a: 1}
+    - _MetallicColor: {r: 0.7391275, g: 0.3713842, b: 0.17841, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

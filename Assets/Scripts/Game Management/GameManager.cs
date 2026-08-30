@@ -176,7 +176,7 @@ public class GameManager : MonoBehaviour
             gameUI.SetActive(false);
             messagePanel.Appear(false, true);
         }
-        else if (gameState == GameState.MENU && !controlsPanel.visible)
+        else if (gameState == GameState.MENU && !controlsPanel.visible && !CustomizationManager.Instance.inCustomization)
         {
             SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
             StartCoroutine(StartMatch());
@@ -189,7 +189,7 @@ public class GameManager : MonoBehaviour
 
     void ControlsAction()
     {
-        if (CustomizationManager.Instance.inCustomization) { return; }
+        if (CustomizationManager.Instance.inCustomization || gameState != GameState.MENU) { return; }
 
         SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
 
@@ -443,9 +443,9 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         // display result / some fancy animation
         calc.SetupReactionScreen(reactionIndex);
-        CameraController.Instance.DisplayViewersReaction(6.5f, 5f);
+        CameraController.Instance.DisplayViewersReaction(6.5f, 5.5f);
 
-        yield return new WaitForSeconds(19f);
+        yield return new WaitForSeconds(19.5f);
 
         // display input prompt
         gameState = GameState.AFTERMATCH;

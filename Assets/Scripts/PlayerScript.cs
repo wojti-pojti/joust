@@ -499,12 +499,6 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     void RepairPlayer()
     {
-        //knight.transform.SetParent(this.transform);
-        //lance.transform.SetParent(this.transform);
-        //horse.transform.SetParent(this.transform);
-        //shieldParent.transform.SetParent(this.transform);
-        //PlayerUI.transform.SetParent(this.transform);
-
         knight.transform.SetLocalPositionAndRotation(knightPos, knightRot);
         lance.transform.SetLocalPositionAndRotation(lancePos, lanceRot);
         horse.transform.SetLocalPositionAndRotation(horsePos, horseRot);

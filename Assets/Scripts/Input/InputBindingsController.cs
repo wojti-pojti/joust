@@ -76,44 +76,92 @@ public class InputBindingsController : MonoBehaviour
     /// <param name="change"></param>
     void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
-        if(device.GetType() != typeof(Gamepad)) { return; }
-
-        Gamepad gamepad = (Gamepad)device;
+        if(device is not Gamepad gamepad) { return; }
 
         if (change == InputDeviceChange.Added) 
         {
             GameManager.Instance.DisplayMessage("Gamepad connected", 1f);
-            if (currentPlayer1Input == 2 && player1Gamepad != null)
-            {
-                player1Gamepad = gamepad;
-                GameManager.Instance.AssignGamepadToPlayer(1, gamepad);
-            }
-            else if (currentPlayer2Input == 2 && player2Gamepad != null)
-            {
-                player2Gamepad = gamepad;
-                GameManager.Instance.AssignGamepadToPlayer(2, gamepad);
-            }
-            else
-            {
-                Debug.Log("New gamepad connected, but no player has Gamepad control scheme assigned.");
-            }
+            AssignNewGamepad(gamepad);
         }
 
         if (change == InputDeviceChange.Removed)
         {
-            if (gamepad == player1Gamepad) 
-            { 
-                player1Gamepad = null;
-                GameManager.Instance.RemoveGamepadFromPlayer(1, gamepad);
-            }
-            if (gamepad == player2Gamepad) 
-            {
-                player2Gamepad = null;
-                GameManager.Instance.RemoveGamepadFromPlayer(2, gamepad);
-            }
+            DismissGamepad(gamepad);
         }
 
         UpdateControlSchemeDisplays();
+    }
+
+    /// <summary>
+    /// This function assigns a gamepad to the first available player.
+    /// </summary>
+    /// <param name="gamepad">The new gamepad.</param>
+    void AssignNewGamepad(Gamepad gamepad)
+    {
+        if (currentPlayer1Input == 2 && player1Gamepad == null)
+        {
+            player1Gamepad = gamepad;
+            GameManager.Instance.AssignGamepadToPlayer(1, gamepad);
+        }
+        else if (currentPlayer2Input == 2 && player2Gamepad == null)
+        {
+            player2Gamepad = gamepad;
+            GameManager.Instance.AssignGamepadToPlayer(2, gamepad);
+        }
+        else
+        {
+            Debug.Log("New gamepad connected, but no player has Gamepad control scheme assigned.");
+        }
+    }
+
+    /// <summary>
+    /// Removes a chosen gamepad from the correct player's control scheme.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    void DismissGamepad(Gamepad gamepad)
+    {
+        if (gamepad == player1Gamepad)
+        {
+            player1Gamepad = null;
+            GameManager.Instance.RemoveGamepadFromPlayer(1, gamepad);
+        }
+        if (gamepad == player2Gamepad)
+        {
+            player2Gamepad = null;
+            GameManager.Instance.RemoveGamepadFromPlayer(2, gamepad);
+        }
+    }
+
+    /// <summary>
+    /// Looks through each connected gamepad and assigns them accordingly.
+    /// </summary>
+    /// <param name="playerIndex"></param>
+    void TryAssigningAlreadyConnectedGamepad(int playerIndex)
+    {
+        if((player1Gamepad != null && playerIndex == 1) || (player2Gamepad != null && playerIndex == 2))
+        {
+            return;
+        }
+
+        foreach(Gamepad candidate in Gamepad.all)
+        {
+            if (candidate == player1Gamepad || candidate == player2Gamepad) 
+            {
+                continue;
+            }
+
+            if(playerIndex == 1)
+            {
+                player1Gamepad = candidate;
+                GameManager.Instance.AssignGamepadToPlayer(1, candidate);
+            }
+            else
+            {
+                player2Gamepad = candidate;
+                GameManager.Instance.AssignGamepadToPlayer(2, candidate);
+            }
+            return;
+        }
     }
 
     #region Dropdown
@@ -123,6 +171,15 @@ public class InputBindingsController : MonoBehaviour
     /// <param name="index">Input option index.</param>
     void OnPlayer1DropdownChanged(int index)
     {
+        if (currentPlayer1Input != 2 && index == 2)
+        {
+            TryAssigningAlreadyConnectedGamepad(1);
+        }
+        if (currentPlayer1Input == 2 && index != 2)
+        {
+            DismissGamepad(player1Gamepad);
+        }
+
         currentPlayer1Input = index;
 
         if (currentPlayer2Input == currentPlayer1Input && currentPlayer1Input < 2) // excluding gamepad
@@ -139,6 +196,15 @@ public class InputBindingsController : MonoBehaviour
     /// <param name="index">Input option index.</param>
     void OnPlayer2DropdownChanged(int index)
     {
+        if (currentPlayer2Input != 2 && index == 2)
+        {
+            TryAssigningAlreadyConnectedGamepad(2);
+        }
+        if (currentPlayer2Input == 2 && index != 2)
+        {
+            DismissGamepad(player2Gamepad);
+        }
+
         currentPlayer2Input = index;
 
         if (currentPlayer2Input == currentPlayer1Input && currentPlayer2Input < 2) // excluding gamepad
