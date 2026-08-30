@@ -1,8 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// This script keeps track of the chosen color scheme of each player, allowing for modification using the color picker.
+/// </summary>
 public class CustomizationManager : MonoBehaviour
 {
+    private Controls controls;
+
+    public bool inCustomization;
+    [Header("")]
     [SerializeField] private TransitionController customizationPanel;
     [SerializeField] private int currentlyConsideredColorField;
     [SerializeField] private Color selectedFieldColor;
@@ -34,13 +41,25 @@ public class CustomizationManager : MonoBehaviour
         {
             Destroy(Instance);
         }
+
+        // assigning input controls
+        controls = new Controls();
+        controls.Menu.Customize.performed += ctx => CustomizeAction();
     }
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        LoadCustomizationSettigns();
+        int numberOfSessions = PlayerPrefs.GetInt("SessionID");
+        if (numberOfSessions > 0)
+        {
+            LoadCustomizationSettigns();
+        }
+        else
+        {
+            AssignStartingColors();
+        }
 
         for (int i = 0; i < colorFieldDisplays.Length; i++) 
         {
@@ -51,31 +70,39 @@ public class CustomizationManager : MonoBehaviour
         customizationPanel.Appear(false, true);
     }
 
-    // Update is called once per frame
-    void Update()
+    #region Input Actions
+    private void OnEnable()
     {
-        if (GameManager.Instance.gameState == GameState.MENU)
-        {
-            if (Input.GetKeyDown(KeyCode.K)) 
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                if (!customizationPanel.visible) 
-                { 
-                    Cursor.lockState = CursorLockMode.Confined;
-                    UpdateColorsArray();
-                    UpdateCustomizationPanel();
-                }
-                else 
-                {
-                    colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
-                    ApplyCustomizationSettings();
-                    Cursor.lockState = CursorLockMode.Locked; 
-                    colorPickerUI.SetActive(false);
-                }
-                customizationPanel.Appear(!customizationPanel.visible);
-            }
-        }
+        controls.Menu.Enable();
     }
+
+    private void OnDisable()
+    {
+        controls.Menu.Disable();
+    }
+
+    void CustomizeAction()
+    {
+        if (GameManager.Instance.gameState != GameState.MENU) { return; }
+
+        SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+        if (!customizationPanel.visible)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            UpdateColorsArray();
+            UpdateCustomizationPanel();
+        }
+        else
+        {
+            colorFieldDisplays[currentlyConsideredColorField].color = baseButtonColor;
+            ApplyCustomizationSettings();
+            Cursor.lockState = CursorLockMode.Locked;
+            colorPickerUI.SetActive(false);
+        }
+        customizationPanel.Appear(!customizationPanel.visible);
+        inCustomization = !customizationPanel.visible;
+    }
+    #endregion
 
     /// <summary>
     /// Begins the selection of the new color for the color field of a given index.
@@ -193,6 +220,22 @@ public class CustomizationManager : MonoBehaviour
         }
 
         SaveCustomizationSettigns();
+    }
+
+    /// <summary>
+    /// This function assigns player colors if it is the first game session.
+    /// </summary>
+    void AssignStartingColors()
+    {
+        colors[0] = new Color(0.16f, 0.84f, 0.16f, 1f);
+        colors[1] = new Color(0.03f, 0.04f, 0.03f, 1f);
+        colors[2] = new Color(0.92f, 0.94f, 0.06f, 1f);
+        colors[3] = new Color(0.98f, 0.54f, 0.02f, 1f);
+        colors[4] = new Color(0.83f, 0.53f, 0.17f, 1f);
+        colors[5] = new Color(0.4f, 0.4f, 0.4f, 1f);
+
+        SaveCustomizationSettigns();
+        ApplyCustomizationSettings();
     }
 
     #region Loading and saving

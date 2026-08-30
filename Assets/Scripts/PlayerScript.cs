@@ -1,29 +1,37 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
+/// <summary>
+/// Describes the state of the player, which leads to different capabilities or consequences.
+/// </summary>
 public enum PlayerState
 {
     IDLE,
     COMBAT,
-    JUMP, // maybe unnecessary
+    JUMP, 
     SHIELD,
     OFFHORSE,
     DEAD
 }
+/// <summary>
+/// This script keeps track of all the player's data, including their state and the state of their shield.
+/// </summary>
 public class PlayerScript : MonoBehaviour
 {
     [Header("State")]
     public int index;
-    public PlayerState state; 
+    public PlayerState state;
+
+    [Header("Input")]
+    private Controls controls;
+    [SerializeField] private string controlScheme;
 
     public float shieldHealthPoints;
 
     [Header("Setup")]
-    [SerializeField] private KeyCode shieldKeyCode;
     [SerializeField] private float maxShieldHealthPoints;
     [Header("Knight")]
     [SerializeField] private GameObject knight;
@@ -35,10 +43,11 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private Slider shieldHealthBar;
 
     [Header("Lance")]
-    [SerializeField] private GameObject lance;
+    public GameObject lance;
     [SerializeField] private LanceScript lScript;
-    [SerializeField] private LanceController lanceController;
-    [SerializeField] private BoxCollider2D lanceCd;
+    public LanceController activeLanceController;
+    public BoxCollider2D lanceCd;
+    [SerializeField] private float afterlifeLanceActiveTime;
 
     [Header("Horse")]
     [SerializeField] private GameObject horse;
@@ -46,7 +55,7 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Other")]
     [SerializeField] private GameObject PlayerUI;
-    [SerializeField] private Material playerMaterial;
+    public Material playerMaterial;
     [SerializeField] private Animator animator;
 
     private int deathTrigger = Animator.StringToHash("Die");
@@ -60,59 +69,140 @@ public class PlayerScript : MonoBehaviour
     private BoxCollider2D opponentLanceCollider;
     private bool madeContact;
     private SpriteRenderer[] renderers;
+    private LanceScript recordedOpponentLance;
 
     private float newShieldPositionY, shieldTargetY, shieldUIToObjectDifference;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
+        shieldUIToObjectDifference = shieldParent.transform.localPosition.y - shieldHealthBar.transform.localPosition.y;
+
+        controls = new Controls();
         if (index == 1)
         {
-            shieldKeyCode = KeyCode.S;
-            lanceController.AssignInputKey(false);
+            controlScheme = "KeyboardP1";
+
+            lScript.AssignInputKey(false);
         }
         else if (index == 2)
         {
-            shieldKeyCode = KeyCode.DownArrow;
-            lanceController.AssignInputKey(true);
-        }
+            controlScheme = "KeyboardP2";
 
-        shieldUIToObjectDifference = shieldParent.transform.localPosition.y - shieldHealthBar.transform.localPosition.y;
-    }
+            lScript.AssignInputKey(true);
+        }
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(shieldKeyCode) && state == PlayerState.COMBAT && shieldHealthPoints > 0)
-        {
-            state = PlayerState.SHIELD;
-            UseShield(true);
-            lScript.enabled = false;
-        }
-        if (Input.GetKeyUp(shieldKeyCode) && state == PlayerState.SHIELD)
-        {
-            state = PlayerState.COMBAT;
-            UseShield(false);
-            lScript.enabled = true;
-        }
+        controls.Match.Shield.started += ctx => RaiseShieldAction();
+        controls.Match.Shield.canceled += ctx => LowerShieldAction();
     }
 
     private void FixedUpdate()
     {
         // raise/lower shield animations
-        if(shieldTargetY != shield.transform.localPosition.y && shieldHealthPoints > 0 && state != PlayerState.DEAD)
+        if (shieldTargetY != shield.transform.localPosition.y && shieldHealthPoints > 0 && state != PlayerState.DEAD)
         {
             shield.transform.localPosition = new Vector3(shield.transform.localPosition.x, newShieldPositionY, shield.transform.localPosition.z);
             shieldHealthBar.transform.localPosition = new Vector3(shieldHealthBar.transform.localPosition.x, newShieldPositionY - shieldUIToObjectDifference, shieldHealthBar.transform.localPosition.z);
         }
     }
 
+    /// <summary>
+    /// Assigns a new control scheme to the player and all children taking inputs.
+    /// </summary>
+    /// <param name="newControlScheme"></param>
+    public void AssignControlScheme(string newControlScheme)
+    {
+        controlScheme = newControlScheme;
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+        
+        hScript.AssignControlScheme(newControlScheme);
+        activeLanceController.AssignControlScheme(newControlScheme);
+    }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void AssignGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { gamepad });
+
+        hScript.AssignGamepad(gamepad);
+        activeLanceController.AssignGamepad(gamepad);
+    }
+
+    /// <summary>
+    /// Removes the gamepad from the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void RemoveGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { Keyboard.current });
+
+        hScript.RemoveGamepad(gamepad);
+        activeLanceController.RemoveGamepad(gamepad);
+    }
+
+    #region Input Actions
+    void RaiseShieldAction()
+    {
+        if (state == PlayerState.COMBAT && shieldHealthPoints > 0)
+        {
+            state = PlayerState.SHIELD;
+            UseShield(true);
+            lScript.enabled = false;
+        }
+    }
+    void LowerShieldAction()
+    {
+        if (state == PlayerState.SHIELD)
+        {
+            state = PlayerState.COMBAT;
+            UseShield(false);
+            lScript.enabled = true;
+        }
+    }
+    #endregion
+
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Enable();
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Disable();
+    }
+    #endregion
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         LanceScript opponentLance;
-        if(!madeContact && collision.gameObject.tag == "Weapon" && collision.gameObject.TryGetComponent<LanceScript>(out opponentLance))
+        if (recordedOpponentLance == null)
         {
-            if(opponentLance.enabled && opponentLance.index != index)
+            try
+            {
+                opponentLance = collision.gameObject.GetComponentInParent<LanceController>().parentLanceScript;
+            }
+            catch
+            {
+                opponentLance = null;
+            }
+            recordedOpponentLance = opponentLance;
+        }
+        else
+        {
+            opponentLance = recordedOpponentLance;
+        }
+
+        if (!madeContact && collision.gameObject.tag == "Weapon" && opponentLance != null)
+        {
+            float lanceRotation = opponentLance.GetLanceRotation();
+
+            if (opponentLance.enabled && opponentLance.index != index && lanceRotation >= 25f)
             {
                 madeContact = true;
                 if (state == PlayerState.SHIELD)
@@ -171,8 +261,8 @@ public class PlayerScript : MonoBehaviour
             lScript.index = index;
         }
         lScript.ResetLance();
-        lanceController.RaiseBackToPosition();
-        lance.GetComponent<HingeJoint2D>().enabled = true;
+        activeLanceController.RaiseBackToPosition();
+        activeLanceController.joint.enabled = true;
 
         shield.transform.position = shieldParent.transform.position;
 
@@ -205,7 +295,6 @@ public class PlayerScript : MonoBehaviour
 
         lance.transform.localScale = new Vector3(-1f * lScale.x, lScale.y, lScale.z);
         shieldParent.transform.localScale = new Vector3(-1f * sScale.x, sScale.y, sScale.z);
-        //horse.transform.localScale = new Vector3(-1 * hScale.x, hScale.y, hScale.z);
     }
 
     /// <summary>
@@ -224,8 +313,9 @@ public class PlayerScript : MonoBehaviour
         { 
             state = PlayerState.IDLE;
             madeContact = false;
-            if (!lanceController) lanceController = lance.GetComponent<LanceController>();
-            lanceController.RaiseBackToPosition();
+            if (!activeLanceController) activeLanceController = lance.GetComponent<LanceController>();
+            activeLanceController.RaiseBackToPosition(false);
+            lScript.SetLanceOpacity(0.5f);
         }
     }
 
@@ -266,10 +356,20 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when player is turning around.
+    /// </summary>
     public void TurnPlayerAround()
     {
         StartCoroutine(HidePlayerTemporarily(0.4f, 0.4f));
     }
+
+    /// <summary>
+    /// Temporarily makes player invisible for the purpose of horse turning around.
+    /// </summary>
+    /// <param name="duration">How long should the player remain invisible?</param>
+    /// <param name="offset">Time delay before turning invisible.</param>
+    /// <returns></returns>
     IEnumerator HidePlayerTemporarily(float duration, float offset)
     {
         yield return new WaitForSeconds(offset);
@@ -299,8 +399,8 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     public void ChangeLanceDirection()
     {
-        if (!lanceController) lanceController = lance.GetComponent<LanceController>();
-        lanceController.ReverseHingeDirection();
+        if (!activeLanceController) activeLanceController = lance.GetComponent<LanceController>();
+        activeLanceController.ReverseHingeDirection();
     }
 
     /// <summary>
@@ -309,8 +409,8 @@ public class PlayerScript : MonoBehaviour
     IEnumerator ThrowLanceAway()
     {
         yield return new WaitForFixedUpdate();
-        Rigidbody2D lanceRb = lance.GetComponent<Rigidbody2D>();
-        lance.GetComponent<HingeJoint2D>().enabled = false;
+        Rigidbody2D lanceRb = activeLanceController.gameObject.GetComponent<Rigidbody2D>();
+        activeLanceController.joint.enabled = false;
 
         // detach and throw away
         float knockback = 3;
@@ -331,7 +431,7 @@ public class PlayerScript : MonoBehaviour
     /// <returns></returns>
     IEnumerator DisableLanceCollider()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(afterlifeLanceActiveTime);
         lanceCd.enabled = false;
     }
     #endregion
@@ -399,12 +499,6 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     void RepairPlayer()
     {
-        //knight.transform.SetParent(this.transform);
-        //lance.transform.SetParent(this.transform);
-        //horse.transform.SetParent(this.transform);
-        //shieldParent.transform.SetParent(this.transform);
-        //PlayerUI.transform.SetParent(this.transform);
-
         knight.transform.SetLocalPositionAndRotation(knightPos, knightRot);
         lance.transform.SetLocalPositionAndRotation(lancePos, lanceRot);
         horse.transform.SetLocalPositionAndRotation(horsePos, horseRot);
@@ -514,5 +608,15 @@ public class PlayerScript : MonoBehaviour
         playerMaterial.SetInt("_Highlight", 1);
         yield return new WaitForSeconds(duration);
         playerMaterial.SetInt("_Highlight", 0);
+    }
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
     }
 }

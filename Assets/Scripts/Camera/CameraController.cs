@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// This script handles the movement of the main camera.
+/// </summary>
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private float distanceBetweenPlayers;
@@ -27,6 +30,7 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] private float rotationSpeed;
     [SerializeField] private GameObject reactionPanel;
+    private RectTransform reactionRect;
 
     #region Singleton
     public static CameraController Instance;
@@ -43,6 +47,28 @@ public class CameraController : MonoBehaviour
     }
     #endregion
 
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+    }
+    #endregion
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -50,15 +76,16 @@ public class CameraController : MonoBehaviour
         startFOV = cam.orthographicSize;
         startDistanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
         this.transform.GetPositionAndRotation(out startPosition, out startRotation);
+        reactionRect = reactionPanel.GetComponent<RectTransform>();
     }
 
     private void FixedUpdate()
     {
-        if(GameManager.Instance.gameState == GameState.MATCH || GameManager.Instance.gameState == GameState.ACTIVE_COMBAT)
+        if((GameManager.Instance.gameState == GameState.MATCH || GameManager.Instance.gameState == GameState.ACTIVE_COMBAT) && !facingBack)
         {
             distanceBetweenPlayers = Mathf.Abs(player1.transform.position.x - player2.transform.position.x);
             midpointX = Mathf.Min(player1.transform.position.x, player2.transform.position.x) + 0.5f * distanceBetweenPlayers;
-            currentFOV = Mathf.Max(startFOV - (startDistanceBetweenPlayers / distanceBetweenPlayers), 4);
+            currentFOV = Mathf.Max(startFOV - (startDistanceBetweenPlayers / distanceBetweenPlayers) + 1, 4);
 
             Vector3 newPos = new Vector3(midpointX,
                 Mathf.Max(startPosition.y - 0.25f * (startDistanceBetweenPlayers / distanceBetweenPlayers), -2f),
@@ -69,7 +96,7 @@ public class CameraController : MonoBehaviour
             cam.orthographicSize = currentFOV;
         }
 
-        reactionPanel.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -20f);
+        reactionRect.anchoredPosition = new Vector3(this.transform.position.x, this.transform.position.y, -20f);
     }
 
     /// <summary>
@@ -143,7 +170,7 @@ public class CameraController : MonoBehaviour
         {
             SoundManager.Instance.PlayLongSound(SoundType.TRIUMPH);
             cam.orthographic = true;
-            cam.orthographicSize = 15f;
+            cam.orthographicSize = 8f;
             yield return new WaitForSeconds(stayDuration);
             facingBack = false;
             SoundManager.Instance.InterruptPlayingSound();

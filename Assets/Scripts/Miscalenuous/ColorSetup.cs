@@ -1,7 +1,4 @@
-using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 /// <summary>
 /// This script can assign a random color scheme to the parent object. 
@@ -18,6 +15,7 @@ public class ColorSetup : MonoBehaviour
     [SerializeField] private Color color2;
     [Header("")]
     [SerializeField] private bool animated;
+    [SerializeField] private float delayThreshhold;
     private float timer, delay;
     private Animator animator;
 
@@ -41,13 +39,13 @@ public class ColorSetup : MonoBehaviour
                 } while (AreColorsTooSimilar(color1, color2, 0.8f));
             }
 
-            StartCoroutine(AssignColors());
+            AssignColors();
         }
 
         if (animated)
         {
             animator = GetComponent<Animator>();
-            delay = Random.Range(0f, 1.49f);
+            delay = Random.Range(0f, delayThreshhold);
             timer = 0f;
         }
     }
@@ -112,9 +110,8 @@ public class ColorSetup : MonoBehaviour
     /// Delayed assigning of colors, as it appears to fix an issue.
     /// </summary>
     /// <returns></returns>
-    IEnumerator AssignColors()
+    void AssignColors()
     {
-        yield return new WaitForSeconds(1f);
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         renderer.sharedMaterial = originalMaterial;
 

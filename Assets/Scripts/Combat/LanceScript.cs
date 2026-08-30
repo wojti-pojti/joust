@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// This script controls the lance - mainly it's durability and the mechanics of the lance breaking down.
+/// </summary>
 public class LanceScript : MonoBehaviour
 {
     [HideInInspector] public int index;
@@ -8,43 +11,41 @@ public class LanceScript : MonoBehaviour
     public float damage;
     [Header("")]
     [SerializeField] private int maxLanceSegments = 4;
-    private float segmentLength;
-    private float baseLength = 2.75f;
-    private float startColliderOffset, startColliderSize;
-    private Vector3 startLocalPosition, startScale;
-    private Sprite startSprite;
-    private Material playerMaterial;
     [SerializeField] private float damageMultiplier;
 
-    [Header("Sprites and transforms")]
-    [SerializeField] private Sprite[] damagedLances = new Sprite[3];
-    [SerializeField] private Vector3[] damagedLancePosition = new Vector3[3];
-    [SerializeField] private Vector3[] damagedLanceScale = new Vector3[3];
+    [Header("Lance Breaking")]
+    [SerializeField] private GameObject startLance;
+    [SerializeField] private LanceController mainLanceController;
+    [SerializeField] private GameObject[] brokenLance = new GameObject[3];
 
     [Header("Fragments")]
     [SerializeField] private GameObject[] fragments = new GameObject[4];
 
-    private LanceController controller;
-    private BoxCollider2D collider;
-    private SpriteRenderer spriteRenderer;
+    private PlayerScript player;
+    private Material playerMaterial;
+    SpriteRenderer lanceRenderer;
+
+    private void Awake()
+    {
+        player = this.GetComponent<PlayerScript>();
+        playerMaterial = player.playerMaterial;
+        lanceRenderer = player.lance.GetComponent<SpriteRenderer>();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        collider = GetComponent<BoxCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        controller = GetComponent<LanceController>();
-        startSprite = spriteRenderer.sprite;
-        playerMaterial = spriteRenderer.material;
-
-        startLocalPosition = transform.localPosition;
-        startScale = transform.localScale;
-        startColliderOffset = collider.offset.y;
-        startColliderSize = collider.size.y;
-
-        segmentLength = (float)(collider.size.y - baseLength) / 3;
-
         ResetLance();
+        player.activeLanceController = mainLanceController;
+    }
+
+    /// <summary>
+    /// Called initially to assign the input keycode based on starting side;
+    /// </summary>
+    /// <param name="side">False for left, True for right.</param>
+    public void AssignInputKey(bool side)
+    {
+        mainLanceController.AssignInputKey(side, this);
     }
 
     /// <summary>
@@ -66,27 +67,26 @@ public class LanceScript : MonoBehaviour
         if(segmentsLeft <= 1) { return; }
         segmentsLeft--;
 
-        collider.size = new Vector2(collider.size.x, ((segmentsLeft - 1) * segmentLength) + baseLength);
-        collider.offset = new Vector2(collider.offset.x, collider.offset.y - 0.5f * segmentLength);
+        GameObject retiredLance = player.lance;
+        //player.activeLanceController = controllers[segmentsLeft - 1];
+        player.lance = brokenLance[segmentsLeft - 1];
+        player.lance.SetActive(true);
+        player.lanceCd = player.lance.GetComponent<BoxCollider2D>();
+        retiredLance.SetActive(false);
 
-        // switch and resize the sprite
-        spriteRenderer.sprite = damagedLances[segmentsLeft - 1];
+        GameObject flyingSegment = Instantiate(fragments[segmentsLeft], brokenLance[segmentsLeft - 1].transform.position,
+            brokenLance[segmentsLeft - 1].transform.rotation);
+        SpriteRenderer renderer = flyingSegment.GetComponent<SpriteRenderer>();
+        renderer.material = playerMaterial;
+        flyingSegment.transform.localScale = flyingSegment.transform.localScale * 1.1f; // i guess to emphasize the fragment
 
-        Vector3 newVerticalPosition = new Vector3(this.transform.localPosition.x, damagedLancePosition[segmentsLeft - 1].y, 0f);
-        controller.SetNewVerticalPosition(newVerticalPosition);
-
-        float direction = (this.transform.localScale.x > 0 ? 1f : -1f);
-        transform.localScale = new Vector3(damagedLanceScale[segmentsLeft - 1].x * direction, damagedLanceScale[segmentsLeft - 1].y, 1f);
-
-        GameObject flyingSegment = Instantiate(fragments[segmentsLeft], transform.position, transform.rotation);
-        flyingSegment.GetComponent<SpriteRenderer>().material = playerMaterial;
-
-        float force = Random.Range(0, 0.5f * damage);
+        float force = Random.Range(0.5f * damage, 0.8f * damage);
         float randX = Random.Range(0.5f, 1f);
         float randY = Random.Range(0.5f, 1f);
         Vector2 knockback = new Vector2(randX, randY) * force;
         Rigidbody2D rb = flyingSegment.GetComponent<Rigidbody2D>();
         rb.AddForce(knockback, ForceMode2D.Impulse);
+        rb.AddTorque(force * 1.5f, ForceMode2D.Impulse);
         Destroy(flyingSegment, 5f);
     }
 
@@ -97,14 +97,34 @@ public class LanceScript : MonoBehaviour
     {
         segmentsLeft = maxLanceSegments;
 
-        // sprite and collider
-        spriteRenderer.sprite = startSprite;
-        //this.transform.localScale = startScale;
-        this.transform.localPosition = startLocalPosition;
+        player.lance = startLance;
+        player.lance.SetActive(true);
+        foreach (GameObject weapon in brokenLance) 
+        {
+            weapon.GetComponent<BoxCollider2D>().enabled = true;
+            weapon.SetActive(false);
+        }
 
-        collider.size = new Vector2(collider.size.x, startColliderSize);
-        collider.offset = new Vector2(collider.offset.x, startColliderOffset);
+        player.activeLanceController.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+    }
 
-        this.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+    /// <summary>
+    /// A getter function for the lance controller's gameobject's rotation.
+    /// </summary>
+    /// <returns>The z component of the object's rotation.</returns>
+    public float GetLanceRotation()
+    {
+        Debug.Log(mainLanceController.GetAccumulatedCharge().ToString());
+        return mainLanceController.GetAccumulatedCharge();
+    }
+
+    /// <summary>
+    /// This function adjusts the opacity of the lance.
+    /// </summary>
+    /// <param name="newOpacity"></param>
+    public void SetLanceOpacity(float newOpacity)  // doesn't work because of the shader probably
+    {
+        if(newOpacity == lanceRenderer.color.a) { return; }
+        lanceRenderer.color = new Color(1f, 1f, 1f, newOpacity);
     }
 }

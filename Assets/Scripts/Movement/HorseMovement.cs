@@ -1,13 +1,18 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
+/// <summary>
+/// This script handles the movement of the horse (and consequently, player) as well as connected inputs.
+/// </summary>
 public class HorseMovement : MonoBehaviour
 {
     [Header("Player-specific")]
     [SerializeField] private int playerIndex;
-    [SerializeField] private KeyCode accelerateKeyCode;
-    [SerializeField] private KeyCode jumpKeyCode;
+    private Controls controls;
+    [SerializeField] private string controlScheme;
 
     [Header("Turn-specific")]
     public bool side; // F - left, T - right
@@ -29,6 +34,7 @@ public class HorseMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb; // Rigidbody2D of the player
     [SerializeField] private PlayerScript player;
     [SerializeField] private Animator animator;
+    [SerializeField] private ParticleSystem dustTrail;
 
     private int speedFloat = Animator.StringToHash("Speed");
     private int idleStompTrigger = Animator.StringToHash("IdleStomp");
@@ -43,29 +49,44 @@ public class HorseMovement : MonoBehaviour
     [HideInInspector] public bool hasPassedTheOpponent;
     private float idleAnimationTimer;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        if (!hasPassedTheOpponent && (player.state == PlayerState.COMBAT || player.state == PlayerState.SHIELD))
-        {
-            if (Input.GetKeyDown(accelerateKeyCode))
-            {
-                Accelerate();
-                idleAnimationTimer = 0f;
-                tapConstraint = true;
-            }
-            if (Input.GetKeyUp(accelerateKeyCode))
-            {
-                tapConstraint = false;
-            }
+        controls = new Controls();
 
-            if (Input.GetKeyDown(jumpKeyCode) && !hasJumped)
-            {
-                Jump();
-                idleAnimationTimer = 0f;
-            }
-        }
+        controls.Match.Forward.started += ctx => ForwardSurgeAction(); 
+        controls.Match.Forward.canceled += ctx => ForwardAction(); 
+        controls.Match.Jump.started += ctx => Jump();
     }
+
+    void ForwardSurgeAction()
+    {
+        if (hasPassedTheOpponent || (player.state != PlayerState.COMBAT && player.state != PlayerState.SHIELD)) { return; }
+
+        Accelerate();
+        idleAnimationTimer = 0f;
+        tapConstraint = true;
+    }
+
+    void ForwardAction()
+    {
+        if (hasPassedTheOpponent || (player.state != PlayerState.COMBAT && player.state != PlayerState.SHIELD)) { return; }
+
+        tapConstraint = false;
+    }
+
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Enable();
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        GameManager.OnGameCloseEvent += StopAllProcesses;
+        controls.Match.Disable();
+    }
+    #endregion
 
     private void FixedUpdate()
     {
@@ -95,7 +116,7 @@ public class HorseMovement : MonoBehaviour
                 speedLevel = 0;
 
                 // indicate the run has ended
-                GameManager.Instance.InformOfReachingEndZone(playerIndex);
+                if (GameManager.Instance.gameState == GameState.ACTIVE_COMBAT) GameManager.Instance.InformOfReachingEndZone(playerIndex);
             }
         }
 
@@ -105,6 +126,7 @@ public class HorseMovement : MonoBehaviour
             SoundManager.Instance.PlaySound(SoundType.HORSE_LAND);
             // land animation
             animator.SetTrigger(landTrigger);
+            dustTrail.gameObject.SetActive(false);
         }
 
         if (idleAnimationTimer >= idleTimeToStartAnimation) 
@@ -163,10 +185,39 @@ public class HorseMovement : MonoBehaviour
         hasPassedTheOpponent = false;
         tapConstraint = false;
 
-        // set correct inputs
-        accelerateKeyCode = (side ? KeyCode.LeftArrow : KeyCode.D);
-        jumpKeyCode = (side ? KeyCode.UpArrow : KeyCode.E);
+        controlScheme = (side ? "KeyboardP2" : "KeyboardP1");
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
     }
+
+    #region Controls
+    /// <summary>
+    /// Assigns a new control scheme to the horse.
+    /// </summary>
+    /// <param name="newControlScheme"></param>
+    public void AssignControlScheme(string newControlScheme)
+    {
+        controlScheme = newControlScheme;
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+    }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void AssignGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { gamepad });
+    }
+
+    /// <summary>
+    /// Removes the gamepad from the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void RemoveGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { Keyboard.current });
+    }
+    #endregion
 
     /// <summary>
     /// Function called everytime the player taps the accelerate button. Adds a significant amount of force to the horse charge.
@@ -183,6 +234,10 @@ public class HorseMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
+
+        if (hasJumped || hasPassedTheOpponent || (player.state != PlayerState.COMBAT && player.state != PlayerState.SHIELD)) { return; }
+        idleAnimationTimer = 0f;
+
         // relate it to speed somehow
         rb.AddForce(Vector2.up * (jumpForce + speed * 0.05f), ForceMode2D.Impulse);
         hasJumped = true;
@@ -193,6 +248,8 @@ public class HorseMovement : MonoBehaviour
         animator.SetTrigger(jumpTrigger);
 
         SoundManager.Instance.PlaySound(SoundType.HORSE_JUMP);
+
+        dustTrail.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -204,7 +261,7 @@ public class HorseMovement : MonoBehaviour
         isBraking = true;
         tapConstraint = false;
 
-        if (!isFleeing) { SoundManager.Instance.PlaySound(SoundType.HORSE_BRAKE, 0.4f); }
+        if (!isFleeing) { SoundManager.Instance.PlaySound(SoundType.HORSE_BRAKE, 0.3f); }
 
         // animation
         animator.SetBool(isBrakingBool, true);
@@ -308,5 +365,15 @@ public class HorseMovement : MonoBehaviour
         yield return new WaitForSeconds(5f);
         if(cd) cd.enabled = true;
         Destroy(horseRb);
+    }
+
+    /// <summary>
+    /// Called upon closing the game. Stops all coroutines.
+    /// </summary>
+    /// <param name="placeholder">No function associated with this boolean.</param>
+    void StopAllProcesses(bool placeholder)
+    {
+        CancelInvoke();
+        StopAllCoroutines();
     }
 }

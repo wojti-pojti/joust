@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
+/// <summary>
+/// Indicates which stage of gameplay loop is currently active.
+/// </summary>
 public enum GameState
 {
     MENU,
@@ -12,6 +15,9 @@ public enum GameState
     ACTIVE_COMBAT,
     AFTERMATCH  // after the game has concluded
 }
+/// <summary>
+/// The script responsible for maintaining the gameplay loop along with UI.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [Header("Game state")]
@@ -19,9 +25,12 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
     [HideInInspector] public static event Action<int> OnEndMatchEvent;
     [HideInInspector] public static event Action<bool> OnEnableGameUIEvent;
+    [HideInInspector] public static event Action<bool> OnGameCloseEvent;
 
     [SerializeField] private int turnsPlayed;
     [HideInInspector] public int totalTimesJumped;
+
+    private Controls controls;
 
     [Header("Players")]
     public GameObject player1;
@@ -52,17 +61,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject aftermatchUI;
     [SerializeField] private GameObject gameUI;
     [SerializeField] private TMP_Text turnCounter;
-    [SerializeField] private GameObject messagePanel;
+    [SerializeField] private TransitionController messagePanel;
     [SerializeField] private TMP_Text message;
-    [SerializeField] private TransitionController controlsPanel; // for this and customization, use TransitionController instead !!
+    [SerializeField] private TransitionController controlsPanel; 
     [SerializeField] private TransitionController titleCard;
+    [SerializeField] private TransitionController menuInputPrompts;
     [SerializeField] private TransitionController blackOutScreen;
+    [SerializeField] private GameObject quitGamePromptText;
 
     [Header("")]
     [SerializeField] private Sprite soundIcon;
     [SerializeField] private Sprite noSoundIcon;
 
-    #region Singleton + black screen
+    #region Singleton + black screen + assigning inputs
     public static GameManager Instance;
     private void Awake()
     {
@@ -76,12 +87,25 @@ public class GameManager : MonoBehaviour
         }
 
         blackOutScreen.Appear(true, true);
+
+        // assigning input controls
+        controls = new Controls();
+        controls.Menu.Continue.performed += ctx => ContinueAction();
+        controls.Menu.Controls.performed += ctx => ControlsAction();
+        controls.Menu.Customize.performed += ctx => CustomizeAction();
+        controls.Menu.Mute.performed += ctx => MuteAction();
+        controls.Menu.Quit.performed += ctx => QuitAction();
+        controls.Match.Forfeit.performed += ctx => ForfeitAction();
     }
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        #if UNITY_WEBGL
+        quitGamePromptText.SetActive(false);
+        #endif
+
         Cursor.lockState = CursorLockMode.Locked;
         pScript1 = player1.GetComponent<PlayerScript>();
         pScript2 = player2.GetComponent<PlayerScript>();
@@ -95,78 +119,8 @@ public class GameManager : MonoBehaviour
         aftermatchUI.SetActive(false);
         controlsPanel.Appear(false, true);
         gameUI.SetActive(false);
-        messagePanel.SetActive(false);
+        messagePanel.Appear(false, true);
         blackOutScreen.Appear(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-            if (gameState == GameState.AFTERMATCH) 
-            {
-                gameState = GameState.MENU;
-                PrepareMatch();
-                CameraController.Instance.ResetCamera();
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
-
-                // display menu screen
-                menuUI.SetActive(true);
-                titleCard.Appear(true);
-                gameUI.SetActive(false);
-                messagePanel.SetActive(false);
-            }
-            else if(gameState == GameState.MENU) 
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                StartCoroutine(StartMatch());
-            }
-            else if(CameraController.Instance.cameraTurningAround == true) // skip animation
-            {
-                CameraController.Instance.InterruptAftermatchDisplay();
-            }
-        }
-
-        if(gameState == GameState.MENU)
-        {
-            if (Input.GetKeyDown(KeyCode.H)) // or whatever
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                // show or hide controls panel
-                controlsPanel.Appear(!controlsPanel.visible);
-                menuUI.SetActive(!menuUI.activeSelf);
-            }
-
-            if (Input.GetKeyDown(KeyCode.M)) // mute sound or unmute
-            {
-                SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
-                if (SoundManager.Instance.GetVolume() > 0)
-                {
-                    SoundManager.Instance.SetVolume(0f);
-                    soundIndicatorImage.sprite = noSoundIcon;
-                }
-                else
-                {
-                    SoundManager.Instance.SetVolume(1f);
-                    soundIndicatorImage.sprite = soundIcon;
-                }
-            }
-        }
-
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            if ((gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT) 
-                && pScript1.state != PlayerState.DEAD && pScript2.state != PlayerState.DEAD)
-            {
-                StartCoroutine(ForfeitMatch());
-            }
-            else
-            {
-                Application.Quit();
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -174,7 +128,7 @@ public class GameManager : MonoBehaviour
         if (gameState == GameState.ACTIVE_COMBAT)
         {
             if ((horse1.side == false && player1.transform.position.x > player2.transform.position.x) ||
-            (horse1.side == true && player1.transform.position.x < player2.transform.position.x))
+           (horse1.side == true && player1.transform.position.x < player2.transform.position.x))
             {
                 horse1.hasPassedTheOpponent = true;
                 horse2.hasPassedTheOpponent = true;
@@ -191,6 +145,170 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    #region Input Actions
+    private void OnEnable()
+    {
+        controls.Menu.Enable();
+        controls.Match.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Menu.Disable();
+        controls.Match.Disable();
+    }
+
+    void ContinueAction()
+    {
+        if (gameState == GameState.AFTERMATCH)
+        {
+            gameState = GameState.MENU;
+            PrepareMatch();
+            CameraController.Instance.ResetCamera();
+            SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+            SoundManager.Instance.PlayLongSound(SoundType.MENU_BG_MUSIC, 0.7f);
+
+            // display menu screen
+            menuUI.SetActive(true);
+            titleCard.Appear(true);
+            menuInputPrompts.Appear(true);
+            gameUI.SetActive(false);
+            messagePanel.Appear(false, true);
+        }
+        else if (gameState == GameState.MENU && !controlsPanel.visible && !CustomizationManager.Instance.inCustomization)
+        {
+            SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+            StartCoroutine(StartMatch());
+        }
+        else if (CameraController.Instance.cameraTurningAround == true) // skip animation
+        {
+            CameraController.Instance.InterruptAftermatchDisplay();
+        }
+    }
+
+    void ControlsAction()
+    {
+        if (CustomizationManager.Instance.inCustomization || gameState != GameState.MENU) { return; }
+
+        SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+
+        if (controlsPanel.visible && ((InputBindingsController.Instance.currentPlayer1Input == 2 && InputBindingsController.Instance.player1Gamepad == null) ||
+                (InputBindingsController.Instance.currentPlayer2Input == 2 && InputBindingsController.Instance.player2Gamepad == null)))
+        {
+            DisplayMessage("Unable to proceed", 1f);
+            return;
+        }
+
+        // show or hide controls panel
+        if (controlsPanel.visible)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        controlsPanel.Appear(!controlsPanel.visible);
+    }
+
+    void CustomizeAction()
+    {
+        if (controlsPanel.visible)
+        {
+            controlsPanel.Appear(false);
+        }
+    }
+
+    void MuteAction()
+    {
+        if (gameState != GameState.MENU) { return; }
+
+        SoundManager.Instance.PlaySound(SoundType.INTERACT_SOUND);
+        if (SoundManager.Instance.GetVolume() > 0)
+        {
+            SoundManager.Instance.SetVolume(0f);
+            soundIndicatorImage.sprite = noSoundIcon;
+        }
+        else
+        {
+            SoundManager.Instance.SetVolume(1f);
+            soundIndicatorImage.sprite = soundIcon;
+        }
+    }
+
+    void QuitAction()
+    {
+        if (gameState != GameState.MENU) { return; }
+
+        int sessionID;
+        try
+        {
+            sessionID = PlayerPrefs.GetInt("SessionID");
+        }
+        catch
+        {
+            sessionID = 0;
+        }
+        sessionID++;
+        PlayerPrefs.SetInt("SessionID", sessionID);
+
+        #if UNITY_WEBGL
+
+        #else
+        OnGameCloseEvent?.Invoke(true);
+        CancelInvoke();
+        StopAllCoroutines();
+        messagePanel.Appear(true, true);
+        message.text = "Quitting tournament...";
+        Application.Quit();
+        #endif
+    }
+
+    void ForfeitAction()
+    {
+        if ((gameState == GameState.MATCH || gameState == GameState.ACTIVE_COMBAT)
+                && pScript1.state != PlayerState.DEAD && pScript2.state != PlayerState.DEAD)
+        {
+            StartCoroutine(ForfeitMatch());
+        }
+    }
+#endregion
+
+    #region Controls
+    /// <summary>
+    /// Assigns a new control scheme to a chosen player.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player to receive new control scheme.</param>
+    /// <param name="newControlScheme">The string identifying the control scheme.</param>
+    public void AssignControlSchemeToPlayer(int playerIndex, string newControlScheme)
+    {
+        if (playerIndex == 1) { pScript1.AssignControlScheme(newControlScheme); }
+        else if (playerIndex == 2) { pScript2.AssignControlScheme(newControlScheme); }
+    }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player to receive new control scheme.</param>
+    /// <param name="gamepad">The string identifying the control scheme.</param>
+    public void AssignGamepadToPlayer(int playerIndex, Gamepad gamepad)
+    {
+        if (playerIndex == 1) { pScript1.AssignGamepad(gamepad); }
+        else if (playerIndex == 2) { pScript2.AssignGamepad(gamepad); }
+    }
+
+    /// <summary>
+    /// Removes the recently removed gamepad from the player of given index.
+    /// </summary>
+    /// <param name="playerIndex">The index of the player to receive new control scheme.</param>
+    /// <param name="newControlScheme">The string identifying the control scheme.</param>
+    public void RemoveGamepadFromPlayer(int playerIndex, Gamepad gamepad)
+    {
+        if (playerIndex == 1) { pScript1.RemoveGamepad(gamepad); }
+        else if (playerIndex == 2) { pScript2.RemoveGamepad(gamepad); }
+    }
+    #endregion
 
     #region Match initialization
 
@@ -234,11 +352,14 @@ public class GameManager : MonoBehaviour
         turnCounter.text = turnsPlayed.ToString();
         hasPlayer1ArrivedToEndZone = false;
         hasPlayer2ArrivedToEndZone = false;
+        pScript1.Charge(false);
+        pScript2.Charge(false);
         gameState = GameState.MATCH;
 
         SoundManager.Instance.InterruptPlayingSound();
         SoundManager.Instance.PlaySound(SoundType.APPLAUSE, 0.7f);
         titleCard.Appear(false);
+        menuInputPrompts.Appear(false);
 
         yield return new WaitForSeconds(1.5f);
 
@@ -252,7 +373,7 @@ public class GameManager : MonoBehaviour
         pScript2.state = PlayerState.COMBAT;
         CameraController.Instance.ResetCamera();
         Debug.Log("JOUST!");
-        StartCoroutine(ShowMessage("JOUST!"));
+        DisplayMessage("JOUST!");
         pScript1.Charge(true);
         pScript2.Charge(true);
     }
@@ -266,18 +387,19 @@ public class GameManager : MonoBehaviour
     IEnumerator ForfeitMatch()
     {
         Debug.Log("The match has been forfeited. Returning to menu.");
-        StartCoroutine(ShowMessage("Match forfeited"));
+        DisplayMessage("Match forfeited");
 
         SoundManager.Instance.InterruptPlayingSound();
         gameState = GameState.MATCH;
         OnEnableGameUIEvent?.Invoke(false);
         blackOutScreen.Appear(true);
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.2f);
         blackOutScreen.Appear(false);
         PrepareMatch();
         gameUI.SetActive(false);
         menuUI.SetActive(true);
         titleCard.Appear(true);
+        menuInputPrompts.Appear(true);
         gameState = GameState.MENU;
     }
 
@@ -301,18 +423,18 @@ public class GameManager : MonoBehaviour
         if (winnerIndex == 0)
         {
             // draw
-            StartCoroutine(ShowMessage("Draw!"));
+            DisplayMessage("Draw!");
         }
 
         if (winnerIndex == 1)
         {
             horse1.TurnAround();
-            StartCoroutine(ShowMessage("Player 1 wins!"));
+            DisplayMessage("Player 1 wins!");
         }
         if (winnerIndex == 2)
         {
             horse2.TurnAround();
-            StartCoroutine(ShowMessage("Player 2 wins!"));
+            DisplayMessage("Player 2 wins!");
         }
 
         OnEnableGameUIEvent?.Invoke(false);
@@ -321,9 +443,9 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(false);
         // display result / some fancy animation
         calc.SetupReactionScreen(reactionIndex);
-        CameraController.Instance.DisplayViewersReaction(6.5f, 5f);
+        CameraController.Instance.DisplayViewersReaction(6.5f, 5.5f);
 
-        yield return new WaitForSeconds(19f);
+        yield return new WaitForSeconds(19.5f);
 
         // display input prompt
         gameState = GameState.AFTERMATCH;
@@ -427,6 +549,17 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Starts a coroutine to display a message panel in the center of the screen, conveying a message.
+    /// </summary>
+    /// <param name="content">The string to be written on the panel.</param>
+    /// <param name="duration">How long the message should be visible.</param>
+    /// <returns></returns>
+    public void DisplayMessage(string content, float duration = 1.5f)
+    {
+        StartCoroutine(ShowMessage(content, duration));
+    }
+
+    /// <summary>
     /// Display a message panel in the center of the screen, conveying a message.
     /// </summary>
     /// <param name="content">The string to be written on the panel.</param>
@@ -434,9 +567,12 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator ShowMessage(string content, float duration = 1.5f)
     {
-        messagePanel.SetActive(true);
+        messagePanel.Appear(true);
         message.text = content;
-        yield return new WaitForSeconds(duration);
-        messagePanel.SetActive(false);
+        if(duration > 0)
+        {
+            yield return new WaitForSeconds(duration);
+            messagePanel.Appear(false);
+        }
     }
 }

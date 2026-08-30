@@ -1,42 +1,39 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
+/// <summary>
+/// This script controls the movement of the lance, including taking inputs.
+/// </summary>
 public class LanceController : MonoBehaviour
 {
+    [HideInInspector] public LanceScript parentLanceScript;
+
     [SerializeField] private bool holdButton;
     [SerializeField] private bool releasedButton;
     [SerializeField] private float chargeAccumulationMultiplier;
     [SerializeField] private float directionMultiplier;
 
     [Header("")]
-    [SerializeField] private KeyCode lowerLanceKeyCode;
-    private HingeJoint2D joint;
+    private Controls controls;
+    [SerializeField] private string controlScheme;
+
+    [Header("")]
+    public HingeJoint2D joint;
     private Vector3 verticalPosition, startVerticalPosition;
+
+    private float accumulatedCharge;
+
+    private void Awake()
+    {
+        controls = new Controls();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        joint = GetComponent<HingeJoint2D>();
         verticalPosition = this.transform.localPosition;
         startVerticalPosition = verticalPosition;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(GameManager.Instance.gameState == GameState.ACTIVE_COMBAT)
-        {
-            if (Input.GetKeyDown(lowerLanceKeyCode) && !releasedButton)
-            {
-                holdButton = true;
-            }
-
-            if (Input.GetKeyUp(lowerLanceKeyCode) && holdButton)
-            {
-                holdButton = false;
-                releasedButton = true;
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -54,7 +51,80 @@ public class LanceController : MonoBehaviour
             newMotor.motorSpeed = 0;
             joint.motor = newMotor;
         }
+
+        if (holdButton)
+        {
+            accumulatedCharge += chargeAccumulationMultiplier * directionMultiplier * Time.deltaTime;
+
+            if (accumulatedCharge > 25f) 
+            {
+                parentLanceScript.SetLanceOpacity(1f);
+            }
+        }
     }
+
+    #region Input Actions
+    void LanceKeyDownAction()
+    {
+        if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT) { return; }
+        if (!releasedButton)
+        {
+            holdButton = true;
+        }
+    }
+
+    void LanceKeyUpAction()
+    {
+        if (GameManager.Instance.gameState != GameState.ACTIVE_COMBAT) { return; }
+        if (holdButton)
+        {
+            holdButton = false;
+            releasedButton = true;
+        }
+    }
+    #endregion
+
+    #region Adding and removing this instance as listener
+    void OnEnable() // subscribe to the event
+    {
+        controls.Match.Enable();
+    }
+
+    void OnDisable() // unsubscribe to the event
+    {
+        controls.Match.Disable();
+    }
+    #endregion
+
+    #region Controls
+    /// <summary>
+    /// Assigns a new control scheme to the lance.
+    /// </summary>
+    /// <param name="newControlScheme"></param>
+    public void AssignControlScheme(string newControlScheme)
+    {
+        controlScheme = newControlScheme;
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+    }
+
+    /// <summary>
+    /// Adds the newly detected gamepad to the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void AssignGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { gamepad });
+    }
+
+    /// <summary>
+    /// Removes the gamepad from the player of given index.
+    /// </summary>
+    /// <param name="gamepad"></param>
+    public void RemoveGamepad(Gamepad gamepad)
+    {
+        controls.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { Keyboard.current });
+    }
+    #endregion
 
     /// <summary>
     /// Setter function for the vertical position vector. Adjustments may be needed when lance segments are broken off.
@@ -81,22 +151,28 @@ public class LanceController : MonoBehaviour
 
         holdButton = false;
         releasedButton = false;
+        accumulatedCharge = 0f;
     }
 
     /// <summary>
     /// Called initially to assign the input keycode based on starting side;
     /// </summary>
     /// <param name="side">False for left, True for right.</param>
-    public void AssignInputKey(bool side)
+    /// <param name="caller">The parent lance script.</param>
+    public void AssignInputKey(bool side, LanceScript caller)
     {
+        parentLanceScript = caller;
         if (!side)
         {
-            lowerLanceKeyCode = KeyCode.W;
+            controlScheme = "KeyboardP1";
         }
         else
         {
-            lowerLanceKeyCode = KeyCode.RightArrow;
+            controlScheme = "KeyboardP2";
         }
+        controls.bindingMask = InputBinding.MaskByGroup(controlScheme);
+        controls.Match.Lance.started += ctx => LanceKeyDownAction();
+        controls.Match.Lance.canceled += ctx => LanceKeyUpAction();
     }
 
     /// <summary>
@@ -119,5 +195,14 @@ public class LanceController : MonoBehaviour
             newLimits.max = 0;
         }
         joint.limits = newLimits;
+    }
+
+    /// <summary>
+    /// Getter function for the charge accumulated by lowering the lance.
+    /// </summary>
+    /// <returns></returns>
+    public float GetAccumulatedCharge()
+    {
+        return Mathf.Abs(accumulatedCharge);
     }
 }
